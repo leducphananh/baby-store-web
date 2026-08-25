@@ -18,5 +18,12 @@ export default defineConfig([
     languageOptions: {
       globals: globals.browser,
     },
+    rules: {
+      // shadcn/ui primitives and a few other files export a stable
+      // constant (a `cva` variant map, a hook) alongside a component —
+      // that's safe for Fast Refresh, so allow it instead of forcing an
+      // artificial file split for every primitive.
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+    },
   },
 ])

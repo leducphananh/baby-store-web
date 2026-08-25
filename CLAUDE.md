@@ -60,15 +60,28 @@ reusable — see `clean-code` on justified abstraction.
 
 ```
 src/
-  app/            # app shell: root component, router setup, providers wiring
-  components/     # shared, feature-agnostic UI (Button, DataTable, Dialog, ...)
+  app/            # app shell: root component (app.tsx), router setup (router.tsx)
+  components/
+    ui/           # shadcn/ui primitives (button, input, dialog, table, ...) — generated/
+                   # hand-authored per components.json, not hand-edited business logic
+    common/        # shared feature-agnostic composites (PageHeader, EmptyState, ErrorState,
+                   # PageLoading) — the app's loading/empty/error/page-layout conventions
+    layout/        # app shell layout (AppShell topbar today; sidebar/nav once features exist)
   features/       # one folder per business domain — see below
   hooks/          # shared, feature-agnostic hooks
-  lib/            # framework glue: supabase client, query client, utils
-  providers/      # top-level React context/providers
-  routes/         # route definitions / route components (thin, compose features)
-  types/          # cross-feature shared types only
+  lib/            # framework/client glue: supabase.ts, query-client.ts, utils.ts (cn())
+  providers/      # top-level React context/providers (AppProviders; AuthProvider later)
+  routes/         # route *page* components + route-paths.ts (thin, compose features)
+  types/          # cross-feature shared types only (database.ts = generated Supabase types)
+  utils/          # pure, domain-agnostic formatting helpers (currency.ts, date.ts, number.ts)
 ```
+
+`lib/` vs `utils/`: `lib/` is framework/client glue tied to a specific library (the Supabase
+client, the Query client, the shadcn `cn()` helper). `utils/` is plain, dependency-free
+formatting/calculation functions reused across features (VND formatting, date formatting).
+A feature's own `features/<name>/utils/` stays for logic specific to that one feature (e.g.
+FEFO batch ordering) — only promote something to the top-level `utils/` once it's genuinely
+cross-feature (see §9 in `react-project-architecture` and `clean-code`).
 
 Each feature is self-contained:
 

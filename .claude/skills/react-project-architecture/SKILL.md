@@ -14,13 +14,17 @@ existing code is in the right layer.
 ```
 src/
   app/            # root component, router wiring, top-level providers composition
-  components/     # shared, feature-agnostic UI (DataTable, ConfirmDialog, PageHeader...)
+  components/
+    ui/            # shadcn/ui primitives
+    common/        # shared feature-agnostic composites (PageHeader, EmptyState, ErrorState...)
+    layout/        # app shell layout (AppShell, future sidebar/nav)
   features/       # one folder per business domain (see below)
   hooks/          # shared, feature-agnostic hooks (useDebounce, useMediaQuery...)
-  lib/            # framework glue: supabase client, query client, generic utils
+  lib/            # framework/client glue: supabase client, query client, cn() helper
   providers/      # top-level context providers (auth, theme)
-  routes/         # route components — thin, compose features, no business logic
-  types/          # cross-feature shared types only (e.g. Money, PaginationParams)
+  routes/         # route components + route-paths.ts — thin, compose features, no business logic
+  types/          # cross-feature shared types only (e.g. generated Database types)
+  utils/          # pure, dependency-free, cross-feature helpers (currency/date/number formatting)
 ```
 
 ```
