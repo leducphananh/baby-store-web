@@ -1,12 +1,23 @@
 /**
  * Centralized route path constants. Use these instead of hardcoding path
- * strings in `<Link>`/`navigate()` calls, so a path never has to be updated
- * in more than one place (see `clean-code`).
+ * strings in `<Link>`/`<NavLink>`/`navigate()` calls, so a path never has
+ * to be updated in more than one place (see `clean-code`).
  *
- * Extend this object as real feature routes are added — one entry per
- * route, grouped by feature once features exist (e.g.
- * `ROUTES.products.list`, `ROUTES.products.detail(id)`).
+ * Feature routes below `home` are currently wired to `ComingSoonPage`
+ * placeholders (see `src/app/router.tsx`) — real feature pages replace
+ * them one phase at a time without changing these paths or the sidebar.
  */
 export const ROUTES = {
+  login: '/login',
   home: '/',
+  categories: '/categories',
+  products: '/products',
+  suppliers: '/suppliers',
+  imports: '/imports',
+  inventory: '/inventory',
+  customers: '/customers',
+  orders: '/orders',
+  reports: '/reports',
+  alerts: '/alerts',
+  settings: '/settings',
 } as const
