@@ -1,19 +1,28 @@
 ---
 name: table-data-grid
-description: Conventions for data tables in this app — pagination, sorting, filtering, search, reusable table pattern built on TanStack Table + shadcn. Apply whenever displaying a list of business records.
+description: Conventions for data tables in this app — pagination, sorting, filtering, search, reusable table pattern built on shadcn Table primitives. Apply whenever displaying a list of business records.
 ---
 
 # Data table conventions
 
 ## Apply when
-Building any list view: products, orders, suppliers, import receipts, inventory
+Building any list view: categories, products, orders, suppliers, import receipts, inventory
 transactions, customers, batches.
 
 ## Rules
 
-1. **One shared `DataTable` component** (in `src/components/`, built on `@tanstack/react-table`
-   + shadcn `Table` primitives) used by every feature's list view — don't hand-build table
-   markup per feature.
+1. **One shared `DataTable` component** (`src/components/common/data-table.tsx`) used by
+   every feature's list view — don't hand-build table markup per feature. It's a small
+   hand-rolled component on top of the shadcn `Table` primitives (`src/components/ui/table.tsx`),
+   **not** built on `@tanstack/react-table` — this project's installed major version (9.x)
+   ships a ground-up-redesigned API (atoms/store/feature-slots), with the familiar v8-style
+   hooks (`useReactTable`, `ColumnDef`, `getCoreRowModel`) only available as an explicitly
+   `@deprecated` compatibility shim (`@tanstack/react-table/legacy`). Since every table in
+   this app is manually/server-driven (rule 2/3 below) — the client-side row-model
+   computation TanStack Table exists to do is never actually exercised — the shared
+   `DataTable` implements manual sorting/pagination directly instead of taking on that
+   dependency. Re-evaluate only if a future feature has a genuine need for client-side
+   filtering/grouping/virtualization that justifies it.
 2. **Server-side pagination, sorting, and filtering** once a dataset can realistically grow
    (products, orders, inventory transactions) — page/sort/filter state is passed into the
    query hook and becomes part of the query key (see `react-query`), not applied to an
@@ -26,9 +35,11 @@ transactions, customers, batches.
 5. **Column definitions live in the feature**, not in the shared `DataTable`:
    ```ts
    // features/products/components/product-columns.ts
-   export const productColumns: ColumnDef<Product>[] = [
-     { accessorKey: 'name', header: 'Tên sản phẩm' },
-     { accessorKey: 'unitPriceVnd', header: 'Giá', cell: (c) => formatVnd(c.getValue()) },
+   import type { DataTableColumn } from '@/components/common/data-table'
+
+   export const productColumns: DataTableColumn<Product>[] = [
+     { id: 'name', header: 'Tên sản phẩm', cell: (p) => p.name, sortable: true },
+     { id: 'price', header: 'Giá', cell: (p) => formatCurrencyVND(p.unitPriceVnd), align: 'right' },
      ...
    ]
    ```

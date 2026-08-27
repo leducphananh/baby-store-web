@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router'
 
 import { AppShell } from '@/components/layout/app-shell'
+import { CategoriesPage } from '@/routes/categories-page'
 import { ComingSoonPage } from '@/routes/coming-soon-page'
 import { HomePage } from '@/routes/home-page'
 import { LoginPage } from '@/routes/login-page'
@@ -40,7 +41,7 @@ export const router = createBrowserRouter([
         element: <AppShell />,
         children: [
           { index: true, element: <HomePage /> },
-          { path: 'categories', element: <ComingSoonPage title="Danh mục" /> },
+          { path: 'categories', element: <CategoriesPage /> },
           { path: 'products', element: <ComingSoonPage title="Sản phẩm" /> },
           { path: 'suppliers', element: <ComingSoonPage title="Nhà cung cấp" /> },
           { path: 'imports', element: <ComingSoonPage title="Nhập hàng" /> },
