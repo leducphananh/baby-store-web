@@ -10,6 +10,7 @@ import { PublicOnlyRoute } from '@/routes/public-only-route'
 import { RequireAuth } from '@/routes/require-auth'
 import { ROUTES } from '@/routes/route-paths'
 import { RouteErrorBoundary } from '@/routes/route-error-boundary'
+import { SuppliersPage } from '@/routes/suppliers-page'
 
 /**
  * App-wide router definition. `/login` is public (guarded the other way,
@@ -43,7 +44,7 @@ export const router = createBrowserRouter([
           { index: true, element: <HomePage /> },
           { path: 'categories', element: <CategoriesPage /> },
           { path: 'products', element: <ComingSoonPage title="Sản phẩm" /> },
-          { path: 'suppliers', element: <ComingSoonPage title="Nhà cung cấp" /> },
+          { path: 'suppliers', element: <SuppliersPage /> },
           { path: 'imports', element: <ComingSoonPage title="Nhập hàng" /> },
           { path: 'inventory', element: <ComingSoonPage title="Kho hàng" /> },
           { path: 'customers', element: <ComingSoonPage title="Khách hàng" /> },
