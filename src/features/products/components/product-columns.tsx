@@ -14,6 +14,7 @@ import type { DataTableColumn } from '@/components/common/data-table'
 import { ROUTES } from '@/routes/route-paths'
 import { formatCurrencyVND } from '@/utils/currency'
 import { formatNumber } from '@/utils/number'
+import { formatUnitLabel } from '@/utils/unit'
 import { ProductStatusBadge } from '@/features/products/components/product-status-badge'
 import { ProductThumbnail } from '@/features/products/components/product-thumbnail'
 import type { Product } from '@/features/products/types/product'
@@ -89,22 +90,32 @@ export function getProductColumns({
     },
     {
       id: 'unit',
-      header: 'Đơn vị',
-      cell: (product) => <span className="text-muted-foreground">{product.unit}</span>,
+      header: 'Đơn vị bán',
+      cell: (product) => <span className="text-muted-foreground">{formatUnitLabel(product.unit)}</span>,
     },
     {
       id: 'default_purchase_price',
       header: 'Giá nhập',
       sortable: true,
       align: 'right',
-      cell: (product) => formatCurrencyVND(product.defaultPurchasePrice),
+      cell: (product) => (
+        <span className="whitespace-nowrap">
+          {formatCurrencyVND(product.defaultPurchasePrice)}
+          <span className="text-xs text-muted-foreground">/{formatUnitLabel(product.unit)}</span>
+        </span>
+      ),
     },
     {
       id: 'selling_price',
       header: 'Giá bán',
       sortable: true,
       align: 'right',
-      cell: (product) => formatCurrencyVND(product.sellingPrice),
+      cell: (product) => (
+        <span className="whitespace-nowrap">
+          {formatCurrencyVND(product.sellingPrice)}
+          <span className="text-xs text-muted-foreground">/{formatUnitLabel(product.unit)}</span>
+        </span>
+      ),
     },
     {
       id: 'stock',
@@ -116,6 +127,9 @@ export function getProductColumns({
           <div className="flex items-center justify-end gap-2">
             <span className={isLow ? 'font-medium text-destructive' : undefined}>
               {formatNumber(product.stockQuantity)}
+              <span className="ml-1 text-xs font-normal text-muted-foreground">
+                {formatUnitLabel(product.unit)}
+              </span>
             </span>
             {isLow && (
               <Badge variant="warning" className="font-normal">

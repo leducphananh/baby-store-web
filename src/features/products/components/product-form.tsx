@@ -170,10 +170,14 @@ export function ProductForm({
               name="unit"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Đơn vị tính</FormLabel>
+                  <FormLabel>Đơn vị bán</FormLabel>
                   <FormControl>
-                    <Input placeholder="VD: Gói, Lon, Hộp" disabled={isSubmitting} {...field} />
+                    <Input placeholder="VD: Gói, Hộp, Lon, Chai" disabled={isSubmitting} {...field} />
                   </FormControl>
+                  <FormDescription>
+                    Đơn vị bán lẻ cơ bản. Mọi số lượng (tồn kho, đơn hàng, nhập hàng) đều tính theo
+                    đơn vị này.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

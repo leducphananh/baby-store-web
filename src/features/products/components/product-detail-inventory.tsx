@@ -5,7 +5,7 @@ import { EmptyState } from '@/components/common/empty-state'
 import { ErrorState } from '@/components/common/error-state'
 import { formatCurrencyVND } from '@/utils/currency'
 import { formatDate } from '@/utils/date'
-import { formatNumber } from '@/utils/number'
+import { formatQuantityWithUnit } from '@/utils/unit'
 import { useProductBatches } from '@/features/products/hooks/use-product-batches'
 import type { Product, ProductBatch } from '@/features/products/types/product'
 
@@ -30,49 +30,51 @@ function isExpired(date: string | null): boolean {
   return date < today
 }
 
-const batchColumns: DataTableColumn<ProductBatch>[] = [
-  {
-    id: 'lot',
-    header: 'Số lô',
-    cell: (batch) => <span className="font-mono text-xs">{batch.lotNumber || '—'}</span>,
-  },
-  {
-    id: 'mfg',
-    header: 'Ngày sản xuất',
-    cell: (batch) => (batch.manufactureDate ? formatDate(batch.manufactureDate) : '—'),
-  },
-  {
-    id: 'exp',
-    header: 'Hạn sử dụng',
-    cell: (batch) =>
-      batch.expirationDate ? (
-        <span className="flex items-center gap-2">
-          {formatDate(batch.expirationDate)}
-          {isExpired(batch.expirationDate) && <Badge variant="destructive">Hết hạn</Badge>}
-        </span>
-      ) : (
-        '—'
-      ),
-  },
-  {
-    id: 'initial',
-    header: 'SL nhập',
-    align: 'right',
-    cell: (batch) => formatNumber(batch.initialQuantity),
-  },
-  {
-    id: 'remaining',
-    header: 'Còn lại',
-    align: 'right',
-    cell: (batch) => formatNumber(batch.remainingQuantity),
-  },
-  {
-    id: 'cost',
-    header: 'Giá nhập',
-    align: 'right',
-    cell: (batch) => formatCurrencyVND(batch.purchasePrice),
-  },
-]
+function getBatchColumns(unit: string | null): DataTableColumn<ProductBatch>[] {
+  return [
+    {
+      id: 'lot',
+      header: 'Số lô',
+      cell: (batch) => <span className="font-mono text-xs">{batch.lotNumber || '—'}</span>,
+    },
+    {
+      id: 'mfg',
+      header: 'Ngày sản xuất',
+      cell: (batch) => (batch.manufactureDate ? formatDate(batch.manufactureDate) : '—'),
+    },
+    {
+      id: 'exp',
+      header: 'Hạn sử dụng',
+      cell: (batch) =>
+        batch.expirationDate ? (
+          <span className="flex items-center gap-2">
+            {formatDate(batch.expirationDate)}
+            {isExpired(batch.expirationDate) && <Badge variant="destructive">Hết hạn</Badge>}
+          </span>
+        ) : (
+          '—'
+        ),
+    },
+    {
+      id: 'initial',
+      header: 'SL nhập',
+      align: 'right',
+      cell: (batch) => formatQuantityWithUnit(batch.initialQuantity, unit),
+    },
+    {
+      id: 'remaining',
+      header: 'Còn lại',
+      align: 'right',
+      cell: (batch) => formatQuantityWithUnit(batch.remainingQuantity, unit),
+    },
+    {
+      id: 'cost',
+      header: 'Giá nhập',
+      align: 'right',
+      cell: (batch) => formatCurrencyVND(batch.purchasePrice),
+    },
+  ]
+}
 
 /**
  * On-hand stock summary + the batch (lot) breakdown, ordered FEFO. All real
@@ -81,6 +83,7 @@ const batchColumns: DataTableColumn<ProductBatch>[] = [
  */
 export function ProductDetailInventory({ product }: { product: Product }) {
   const batchesQuery = useProductBatches(product.id)
+  const batchColumns = getBatchColumns(product.unit)
 
   return (
     <Card>
@@ -100,7 +103,7 @@ export function ProductDetailInventory({ product }: { product: Product }) {
                 label="Tổng tồn kho"
                 value={
                   batchesQuery.data
-                    ? `${formatNumber(batchesQuery.data.summary.totalRemaining)} ${product.unit}`
+                    ? formatQuantityWithUnit(batchesQuery.data.summary.totalRemaining, product.unit)
                     : '…'
                 }
                 tone={
@@ -112,7 +115,11 @@ export function ProductDetailInventory({ product }: { product: Product }) {
               />
               <Stat
                 label="Số lô còn hàng"
-                value={batchesQuery.data ? formatNumber(batchesQuery.data.summary.batchCount) : '…'}
+                value={
+                  batchesQuery.data
+                    ? formatQuantityWithUnit(batchesQuery.data.summary.batchCount, 'lô')
+                    : '…'
+                }
               />
               <Stat
                 label="Hạn dùng gần nhất"

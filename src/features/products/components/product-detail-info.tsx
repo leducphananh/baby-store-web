@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatDateTime } from '@/utils/date'
+import { formatUnitLabel } from '@/utils/unit'
 import { DetailRow } from '@/features/products/components/detail-row'
 import type { Product } from '@/features/products/types/product'
 
@@ -21,7 +22,7 @@ export function ProductDetailInfo({ product }: { product: Product }) {
             />
             <DetailRow label="Danh mục" value={product.categoryName} />
             <DetailRow label="Thương hiệu" value={product.brand} />
-            <DetailRow label="Đơn vị tính" value={product.unit} />
+            <DetailRow label="Đơn vị bán" value={formatUnitLabel(product.unit)} />
             <DetailRow label="Mô tả" value={product.description} />
             <DetailRow
               label="Ngày tạo"
