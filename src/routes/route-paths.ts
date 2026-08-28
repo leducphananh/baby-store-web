@@ -16,6 +16,8 @@ export const ROUTES = {
   productDetail: (id: string) => `/products/${id}`,
   suppliers: '/suppliers',
   imports: '/imports',
+  /** Import receipt detail — `importDetail(id)` builds `/imports/<id>`. */
+  importDetail: (id: string) => `/imports/${id}`,
   inventory: '/inventory',
   customers: '/customers',
   orders: '/orders',

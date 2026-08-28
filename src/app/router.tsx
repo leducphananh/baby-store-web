@@ -4,6 +4,8 @@ import { AppShell } from '@/components/layout/app-shell'
 import { CategoriesPage } from '@/routes/categories-page'
 import { ComingSoonPage } from '@/routes/coming-soon-page'
 import { HomePage } from '@/routes/home-page'
+import { ImportReceiptDetailPage } from '@/routes/import-receipt-detail-page'
+import { ImportsPage } from '@/routes/imports-page'
 import { LoginPage } from '@/routes/login-page'
 import { NotFoundPage } from '@/routes/not-found-page'
 import { ProductDetailPage } from '@/routes/product-detail-page'
@@ -48,7 +50,8 @@ export const router = createBrowserRouter([
           { path: 'products', element: <ProductsPage /> },
           { path: 'products/:id', element: <ProductDetailPage /> },
           { path: 'suppliers', element: <SuppliersPage /> },
-          { path: 'imports', element: <ComingSoonPage title="Nhập hàng" /> },
+          { path: 'imports', element: <ImportsPage /> },
+          { path: 'imports/:id', element: <ImportReceiptDetailPage /> },
           { path: 'inventory', element: <ComingSoonPage title="Kho hàng" /> },
           { path: 'customers', element: <ComingSoonPage title="Khách hàng" /> },
           { path: 'orders', element: <ComingSoonPage title="Đơn hàng" /> },

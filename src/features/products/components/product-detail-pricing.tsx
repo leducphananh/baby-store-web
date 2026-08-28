@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatPricePerUnit, formatQuantityWithUnit } from '@/utils/unit'
-import { DetailRow } from '@/features/products/components/detail-row'
+import { DetailRow } from '@/components/common/detail-row'
 import type { Product } from '@/features/products/types/product'
 
 /**
