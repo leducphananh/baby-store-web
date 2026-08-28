@@ -1,11 +1,14 @@
 import { supabase } from '@/lib/supabase'
 import type { ProductImage } from '@/features/products/types/product'
 
+export const PRODUCT_IMAGES_BUCKET = 'product-images'
+const SIGNED_URL_TTL_SECONDS = 60 * 60
+
 /**
  * Product images with short-lived signed URLs — the `product-images` bucket
- * is private (see `supabase-storage`). Uploading images is a later phase;
- * this read path exists now so the detail view shows real images once they
- * exist rather than a placeholder forever. Primary image first.
+ * is private (see `supabase-storage`). Primary image first, then oldest
+ * first. A row whose object can't be signed (e.g. file went missing) is
+ * dropped from the result rather than rendering a broken tile.
  */
 export async function getProductImages(productId: string): Promise<ProductImage[]> {
   const { data, error } = await supabase
@@ -21,10 +24,10 @@ export async function getProductImages(productId: string): Promise<ProductImage[
   if (rows.length === 0) return []
 
   const { data: signed, error: signError } = await supabase.storage
-    .from('product-images')
+    .from(PRODUCT_IMAGES_BUCKET)
     .createSignedUrls(
       rows.map((row) => row.storage_path),
-      60 * 60,
+      SIGNED_URL_TTL_SECONDS,
     )
   if (signError) throw signError
 
@@ -34,10 +37,16 @@ export async function getProductImages(productId: string): Promise<ProductImage[
   }
 
   return rows
-    .map((row) => {
+    .map((row): ProductImage | null => {
       const url = urlByPath.get(row.storage_path)
       if (!url) return null
-      return { id: row.id, isPrimary: row.is_primary ?? false, url }
+      return {
+        id: row.id,
+        storagePath: row.storage_path,
+        isPrimary: row.is_primary ?? false,
+        createdAt: row.created_at,
+        url,
+      }
     })
     .filter((image): image is ProductImage => image !== null)
 }

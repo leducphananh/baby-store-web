@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import { PRODUCT_IMAGES_BUCKET } from '@/features/products/api/get-product-images'
 import type { Product, ProductFilters, ProductStatus } from '@/features/products/types/product'
 
 /**
@@ -186,7 +187,7 @@ async function getThumbnailByProduct(productIds: string[]): Promise<Map<string, 
 
   const paths = [...pathByProduct.values()]
   const { data: signed, error: signError } = await supabase.storage
-    .from('product-images')
+    .from(PRODUCT_IMAGES_BUCKET)
     .createSignedUrls(paths, 60 * 60)
   if (signError || !signed) return byProduct
 

@@ -57,8 +57,11 @@ export type ProductBatch = {
 
 export type ProductImage = {
   id: string
+  /** Object key inside the private `product-images` bucket — needed to delete it. */
+  storagePath: string
   isPrimary: boolean
-  /** Short-lived signed URL for the private `product-images` bucket. */
+  createdAt: string | null
+  /** Short-lived signed URL for display; regenerated on each fetch. */
   url: string
 }
 

@@ -1,6 +1,8 @@
+import { Link } from 'react-router'
 import type { UseFormReturn } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
+import { ROUTES } from '@/routes/route-paths'
 import {
   Dialog,
   DialogContent,
@@ -100,6 +102,20 @@ export function ProductFormDialog({
             onSubmit={handleSubmit}
             isSubmitting={isSubmitting}
           />
+
+          {product && (
+            <p className="mt-4 border-t pt-4 text-sm text-muted-foreground">
+              Hình ảnh sản phẩm được quản lý ở{' '}
+              <Link
+                to={ROUTES.productDetail(product.id)}
+                className="font-medium text-foreground underline underline-offset-4"
+                onClick={() => onOpenChange(false)}
+              >
+                trang chi tiết
+              </Link>
+              .
+            </p>
+          )}
         </div>
 
         <DialogFooter className="border-t px-6 py-4">

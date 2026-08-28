@@ -9,11 +9,11 @@ import { PageContent } from '@/components/common/page-content'
 import { PageHeader } from '@/components/common/page-header'
 import { PageLoading } from '@/components/common/page-loading'
 import { ROUTES } from '@/routes/route-paths'
-import { ProductDetailImages } from '@/features/products/components/product-detail-images'
 import { ProductDetailInfo } from '@/features/products/components/product-detail-info'
 import { ProductDetailInventory } from '@/features/products/components/product-detail-inventory'
 import { ProductDetailPricing } from '@/features/products/components/product-detail-pricing'
 import { ProductFormDialog } from '@/features/products/components/product-form-dialog'
+import { ProductImagesManager } from '@/features/products/components/product-images-manager'
 import { ProductStatusBadge } from '@/features/products/components/product-status-badge'
 import { useProduct } from '@/features/products/hooks/use-product'
 import { useSetProductStatus } from '@/features/products/hooks/use-set-product-status'
@@ -111,7 +111,7 @@ function ProductDetailPage() {
       <ProductDetailInfo product={product} />
       <ProductDetailPricing product={product} />
       <ProductDetailInventory product={product} />
-      <ProductDetailImages productId={product.id} />
+      <ProductImagesManager productId={product.id} />
 
       <ProductFormDialog open={isEditOpen} onOpenChange={setIsEditOpen} product={product} />
     </PageContent>
