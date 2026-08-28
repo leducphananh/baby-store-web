@@ -6,6 +6,8 @@ import { ComingSoonPage } from '@/routes/coming-soon-page'
 import { HomePage } from '@/routes/home-page'
 import { LoginPage } from '@/routes/login-page'
 import { NotFoundPage } from '@/routes/not-found-page'
+import { ProductDetailPage } from '@/routes/product-detail-page'
+import { ProductsPage } from '@/routes/products-page'
 import { PublicOnlyRoute } from '@/routes/public-only-route'
 import { RequireAuth } from '@/routes/require-auth'
 import { ROUTES } from '@/routes/route-paths'
@@ -43,7 +45,8 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <HomePage /> },
           { path: 'categories', element: <CategoriesPage /> },
-          { path: 'products', element: <ComingSoonPage title="Sản phẩm" /> },
+          { path: 'products', element: <ProductsPage /> },
+          { path: 'products/:id', element: <ProductDetailPage /> },
           { path: 'suppliers', element: <SuppliersPage /> },
           { path: 'imports', element: <ComingSoonPage title="Nhập hàng" /> },
           { path: 'inventory', element: <ComingSoonPage title="Kho hàng" /> },

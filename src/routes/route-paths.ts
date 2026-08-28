@@ -12,6 +12,8 @@ export const ROUTES = {
   home: '/',
   categories: '/categories',
   products: '/products',
+  /** Product detail page — `productDetail(id)` builds `/products/<id>`. */
+  productDetail: (id: string) => `/products/${id}`,
   suppliers: '/suppliers',
   imports: '/imports',
   inventory: '/inventory',
