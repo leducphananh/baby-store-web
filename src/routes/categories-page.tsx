@@ -16,8 +16,11 @@ import { useCategories } from '@/features/categories/hooks/use-categories'
 import { useDeleteCategory } from '@/features/categories/hooks/use-delete-category'
 import type { Category, CategoryFilters, CategorySortField } from '@/features/categories/types/category'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
+import { usePersistedPageSize } from '@/hooks/use-persisted-page-size'
 
-const PAGE_SIZE = 10
+const PAGE_SIZE_OPTIONS = [10, 20, 50, 100]
+const DEFAULT_PAGE_SIZE = 10
+const PAGE_SIZE_STORAGE_KEY = 'baby-wale.categories.page-size'
 const SORTABLE_FIELDS: CategorySortField[] = ['name', 'created_at']
 
 function isCategorySortField(value: string): value is CategorySortField {
@@ -27,6 +30,11 @@ function isCategorySortField(value: string): value is CategorySortField {
 function CategoriesPage() {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = usePersistedPageSize(
+    PAGE_SIZE_STORAGE_KEY,
+    PAGE_SIZE_OPTIONS,
+    DEFAULT_PAGE_SIZE,
+  )
   const [sorting, setSorting] = useState<{ id: CategorySortField; desc: boolean }>({
     id: 'name',
     desc: false,
@@ -39,10 +47,15 @@ function CategoriesPage() {
     setPage(1) // a new search always starts back at page 1
   }
 
+  function handlePageSizeChange(nextPageSize: number) {
+    setPageSize(nextPageSize)
+    setPage(1)
+  }
+
   const filters: CategoryFilters = {
     search: debouncedSearch,
     page,
-    pageSize: PAGE_SIZE,
+    pageSize,
     sortField: sorting.id,
     sortDesc: sorting.desc,
   }
@@ -149,7 +162,14 @@ function CategoriesPage() {
               setPage(1)
             }
           }}
-          pagination={{ pageIndex: page, pageSize: PAGE_SIZE, total, onPageChange: setPage }}
+          pagination={{
+            pageIndex: page,
+            pageSize,
+            total,
+            onPageChange: setPage,
+            pageSizeOptions: PAGE_SIZE_OPTIONS,
+            onPageSizeChange: handlePageSizeChange,
+          }}
         />
       )}
 

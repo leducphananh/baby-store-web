@@ -12,12 +12,15 @@ import type { ProductSearchResult } from '@/features/products/api/search-product
 import { inventoryTransactionColumns } from '@/features/inventory/components/inventory-transaction-columns'
 import { InventoryTransactionFilters } from '@/features/inventory/components/inventory-transaction-filters'
 import { useInventoryTransactions } from '@/features/inventory/hooks/use-inventory-transactions'
+import { usePersistedPageSize } from '@/hooks/use-persisted-page-size'
 import type {
   InventoryTransactionFilters as InventoryTransactionFiltersState,
   InventoryTransactionTypeFilter,
 } from '@/features/inventory/types/inventory-transaction'
 
-const PAGE_SIZE = 20
+const PAGE_SIZE_OPTIONS = [10, 20, 50, 100]
+const DEFAULT_PAGE_SIZE = 20
+const PAGE_SIZE_STORAGE_KEY = 'baby-wale.inventory-transactions.page-size'
 
 function InventoryTransactionsPage() {
   const [selectedProduct, setSelectedProduct] = useState<ProductSearchResult | null>(null)
@@ -26,6 +29,11 @@ function InventoryTransactionsPage() {
   const [fromDate, setFromDate] = useState<string | null>(null)
   const [toDate, setToDate] = useState<string | null>(null)
   const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = usePersistedPageSize(
+    PAGE_SIZE_STORAGE_KEY,
+    PAGE_SIZE_OPTIONS,
+    DEFAULT_PAGE_SIZE,
+  )
 
   const filters: InventoryTransactionFiltersState = {
     productId: selectedProduct?.id ?? null,
@@ -34,13 +42,18 @@ function InventoryTransactionsPage() {
     fromDate,
     toDate,
     page,
-    pageSize: PAGE_SIZE,
+    pageSize,
   }
 
   const transactionsQuery = useInventoryTransactions(filters)
 
   function resetToFirstPage() {
     setPage(1)
+  }
+
+  function handlePageSizeChange(nextPageSize: number) {
+    setPageSize(nextPageSize)
+    resetToFirstPage()
   }
 
   function handleProductChange(product: ProductSearchResult | null) {
@@ -141,7 +154,14 @@ function InventoryTransactionsPage() {
           columns={inventoryTransactionColumns}
           data={transactions}
           getRowId={(transaction) => transaction.id}
-          pagination={{ pageIndex: page, pageSize: PAGE_SIZE, total, onPageChange: setPage }}
+          pagination={{
+            pageIndex: page,
+            pageSize,
+            total,
+            onPageChange: setPage,
+            pageSizeOptions: PAGE_SIZE_OPTIONS,
+            onPageSizeChange: handlePageSizeChange,
+          }}
         />
       )}
     </PageContent>

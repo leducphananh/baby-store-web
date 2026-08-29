@@ -8,6 +8,7 @@ import { ErrorState } from '@/components/common/error-state'
 import { PageContent } from '@/components/common/page-content'
 import { PageHeader } from '@/components/common/page-header'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
+import { usePersistedPageSize } from '@/hooks/use-persisted-page-size'
 import { inventoryOverviewColumns } from '@/features/inventory/components/inventory-overview-columns'
 import { InventoryOverviewFilters } from '@/features/inventory/components/inventory-overview-filters'
 import { InventorySummaryCards } from '@/features/inventory/components/inventory-summary-cards'
@@ -20,7 +21,9 @@ import type {
   StockStatusFilter,
 } from '@/features/inventory/types/inventory-overview'
 
-const PAGE_SIZE = 20
+const PAGE_SIZE_OPTIONS = [10, 20, 50, 100]
+const DEFAULT_PAGE_SIZE = 20
+const PAGE_SIZE_STORAGE_KEY = 'baby-wale.inventory.page-size'
 const SORTABLE_FIELDS: InventoryOverviewSortField[] = ['name', 'stock_quantity', 'nearest_expiration']
 
 function isInventorySortField(value: string): value is InventoryOverviewSortField {
@@ -42,6 +45,11 @@ function InventoryPage() {
   const [stockStatus, setStockStatus] = useState<StockStatusFilter>('all')
   const [expiryStatus, setExpiryStatus] = useState<ExpiryStatusFilter>('all')
   const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = usePersistedPageSize(
+    PAGE_SIZE_STORAGE_KEY,
+    PAGE_SIZE_OPTIONS,
+    DEFAULT_PAGE_SIZE,
+  )
   const [sorting, setSorting] = useState<{ id: InventoryOverviewSortField; desc: boolean }>({
     id: 'name',
     desc: false,
@@ -54,13 +62,18 @@ function InventoryPage() {
     setPage(1)
   }
 
+  function handlePageSizeChange(nextPageSize: number) {
+    setPageSize(nextPageSize)
+    resetToFirstPage()
+  }
+
   const filters: InventoryOverviewFiltersState = {
     search: debouncedSearch,
     categoryId,
     stockStatus,
     expiryStatus,
     page,
-    pageSize: PAGE_SIZE,
+    pageSize,
     sortField: sorting.id,
     sortDesc: sorting.desc,
   }
@@ -176,7 +189,14 @@ function InventoryPage() {
                 resetToFirstPage()
               }
             }}
-            pagination={{ pageIndex: page, pageSize: PAGE_SIZE, total, onPageChange: setPage }}
+            pagination={{
+              pageIndex: page,
+              pageSize,
+              total,
+              onPageChange: setPage,
+              pageSizeOptions: PAGE_SIZE_OPTIONS,
+              onPageSizeChange: handlePageSizeChange,
+            }}
           />
         )}
       </div>

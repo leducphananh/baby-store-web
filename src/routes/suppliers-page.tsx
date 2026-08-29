@@ -17,8 +17,11 @@ import { useDeleteSupplier } from '@/features/suppliers/hooks/use-delete-supplie
 import { useSuppliers } from '@/features/suppliers/hooks/use-suppliers'
 import type { Supplier, SupplierFilters, SupplierSortField } from '@/features/suppliers/types/supplier'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
+import { usePersistedPageSize } from '@/hooks/use-persisted-page-size'
 
-const PAGE_SIZE = 10
+const PAGE_SIZE_OPTIONS = [10, 20, 50, 100]
+const DEFAULT_PAGE_SIZE = 10
+const PAGE_SIZE_STORAGE_KEY = 'baby-wale.suppliers.page-size'
 // 'created_at' stays a valid SupplierSortField (the column still exists in
 // the DB and the domain type — only its table column was removed from the
 // list per this update), but with no sortable header left to trigger it,
@@ -32,6 +35,11 @@ function isSupplierSortField(value: string): value is SupplierSortField {
 function SuppliersPage() {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = usePersistedPageSize(
+    PAGE_SIZE_STORAGE_KEY,
+    PAGE_SIZE_OPTIONS,
+    DEFAULT_PAGE_SIZE,
+  )
   const [sorting, setSorting] = useState<{ id: SupplierSortField; desc: boolean }>({
     id: 'name',
     desc: false,
@@ -44,10 +52,15 @@ function SuppliersPage() {
     setPage(1)
   }
 
+  function handlePageSizeChange(nextPageSize: number) {
+    setPageSize(nextPageSize)
+    setPage(1)
+  }
+
   const filters: SupplierFilters = {
     search: debouncedSearch,
     page,
-    pageSize: PAGE_SIZE,
+    pageSize,
     sortField: sorting.id,
     sortDesc: sorting.desc,
   }
@@ -156,7 +169,14 @@ function SuppliersPage() {
               setPage(1)
             }
           }}
-          pagination={{ pageIndex: page, pageSize: PAGE_SIZE, total, onPageChange: setPage }}
+          pagination={{
+            pageIndex: page,
+            pageSize,
+            total,
+            onPageChange: setPage,
+            pageSizeOptions: PAGE_SIZE_OPTIONS,
+            onPageSizeChange: handlePageSizeChange,
+          }}
         />
       )}
 

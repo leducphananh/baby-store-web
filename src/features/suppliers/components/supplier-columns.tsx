@@ -9,24 +9,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import type { DataTableColumn } from '@/components/common/data-table'
+import { TruncatedCell } from '@/components/common/truncated-cell'
 import type { Supplier } from '@/features/suppliers/types/supplier'
-
-/**
- * Address/notes can be long — truncate to two lines in the table and rely on
- * the native `title` attribute for a full-text hover tooltip (no tooltip
- * primitive exists in the project yet, so this stays dependency-free); the
- * underlying value is never altered, and the full text is always reachable
- * via "Xem chi tiết" (`SupplierDetailSheet`), which already shows every
- * field in full.
- */
-function TruncatedCell({ value }: { value: string | null }) {
-  if (!value) return <span className="text-muted-foreground">—</span>
-  return (
-    <span className="line-clamp-2 max-w-56 text-muted-foreground" title={value}>
-      {value}
-    </span>
-  )
-}
 
 /** Same shape as `category-columns.tsx` — see `table-data-grid`. */
 export function getSupplierColumns({
@@ -66,12 +50,12 @@ export function getSupplierColumns({
     {
       id: 'address',
       header: 'Địa chỉ',
-      cell: (supplier) => <TruncatedCell value={supplier.address} />,
+      cell: (supplier) => <TruncatedCell value={supplier.address} maxWidth="max-w-56" />,
     },
     {
       id: 'notes',
       header: 'Ghi chú',
-      cell: (supplier) => <TruncatedCell value={supplier.notes} />,
+      cell: (supplier) => <TruncatedCell value={supplier.notes} maxWidth="max-w-56" />,
     },
     {
       id: 'status',

@@ -11,6 +11,7 @@ import { PageContent } from '@/components/common/page-content'
 import { PageHeader } from '@/components/common/page-header'
 import { PageLoading } from '@/components/common/page-loading'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
+import { usePersistedPageSize } from '@/hooks/use-persisted-page-size'
 import { ROUTES } from '@/routes/route-paths'
 import { getImportReceiptColumns } from '@/features/import-receipts/components/import-receipt-columns'
 import { ImportReceiptFilters } from '@/features/import-receipts/components/import-receipt-filters'
@@ -24,7 +25,9 @@ import type {
   ImportReceiptStatusFilter,
 } from '@/features/import-receipts/types/import-receipt'
 
-const PAGE_SIZE = 10
+const PAGE_SIZE_OPTIONS = [10, 20, 50, 100]
+const DEFAULT_PAGE_SIZE = 10
+const PAGE_SIZE_STORAGE_KEY = 'baby-wale.imports.page-size'
 const SORTABLE_FIELDS: ImportReceiptSortField[] = ['import_date', 'receipt_number', 'created_at']
 
 function isSortField(value: string): value is ImportReceiptSortField {
@@ -40,6 +43,11 @@ function ImportsPage() {
   const [fromDate, setFromDate] = useState<string | null>(null)
   const [toDate, setToDate] = useState<string | null>(null)
   const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = usePersistedPageSize(
+    PAGE_SIZE_STORAGE_KEY,
+    PAGE_SIZE_OPTIONS,
+    DEFAULT_PAGE_SIZE,
+  )
   const [sorting, setSorting] = useState<{ id: ImportReceiptSortField; desc: boolean }>({
     id: 'import_date',
     desc: true,
@@ -51,6 +59,11 @@ function ImportsPage() {
     setPage(1)
   }
 
+  function handlePageSizeChange(nextPageSize: number) {
+    setPageSize(nextPageSize)
+    resetToFirstPage()
+  }
+
   const filters: ImportReceiptFiltersState = {
     search: debouncedSearch,
     supplierId,
@@ -58,7 +71,7 @@ function ImportsPage() {
     fromDate,
     toDate,
     page,
-    pageSize: PAGE_SIZE,
+    pageSize,
     sortField: sorting.id,
     sortDesc: sorting.desc,
   }
@@ -187,7 +200,14 @@ function ImportsPage() {
               resetToFirstPage()
             }
           }}
-          pagination={{ pageIndex: page, pageSize: PAGE_SIZE, total, onPageChange: setPage }}
+          pagination={{
+            pageIndex: page,
+            pageSize,
+            total,
+            onPageChange: setPage,
+            pageSizeOptions: PAGE_SIZE_OPTIONS,
+            onPageSizeChange: handlePageSizeChange,
+          }}
         />
       )}
 
