@@ -144,4 +144,17 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+  /* Tailwind's Preflight deliberately resets `<button>` to `cursor: default`
+     instead of the browser's native `pointer` (their reasoning: a disabled
+     or non-interactive-looking button shouldn't always look clickable).
+     Every button in this app IS clickable, so restore the expected pointer
+     cursor here once, app-wide, rather than adding `cursor-pointer` to each
+     button usage — covers the shared `Button` primitive and every bare
+     `<button>`/`[role="button"]` (sort headers, pagination, dropdown/select
+     triggers, ...). Disabled buttons keep the "not allowed" cursor instead. */
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']) {
+    cursor: pointer;
+  }
 }
