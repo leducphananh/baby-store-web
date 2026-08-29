@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link, useParams } from 'react-router'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useParams } from 'react-router'
 import { ArchiveRestore, ArchiveX, ArrowLeft, Copy, Pencil } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -32,10 +32,22 @@ function BackLink() {
 
 function ProductDetailPage() {
   const { id } = useParams<{ id: string }>()
+  const location = useLocation()
   const productQuery = useProduct(id)
   const setProductStatus = useSetProductStatus()
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isCopyOpen, setIsCopyOpen] = useState(false)
+
+  // Deep link from the Inventory Dashboard ("Xem lô hàng" — see
+  // `inventory-overview-columns.tsx`): scroll the batch table into view once
+  // the product has actually loaded and the section exists in the DOM.
+  // Syncing scroll position to the URL hash has no declarative equivalent,
+  // so a `useEffect` is the justified exception here (same category as
+  // `useDebouncedValue`'s timer).
+  useEffect(() => {
+    if (location.hash !== '#batches' || !productQuery.data) return
+    document.getElementById('batches')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [location.hash, productQuery.data])
 
   if (productQuery.isLoading) {
     return <PageLoading />
@@ -115,7 +127,9 @@ function ProductDetailPage() {
 
       <ProductDetailInfo product={product} />
       <ProductDetailPricing product={product} />
-      <ProductDetailInventory product={product} />
+      <div id="batches" className="scroll-mt-20">
+        <ProductDetailInventory product={product} />
+      </div>
       <ProductImagesManager productId={product.id} />
 
       <ProductFormDialog open={isEditOpen} onOpenChange={setIsEditOpen} product={product} />

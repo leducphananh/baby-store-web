@@ -130,6 +130,13 @@ export type Database = {
             foreignKeyName: "import_receipt_items_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
+            referencedRelation: "product_inventory_overview"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "import_receipt_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
             referencedRelation: "products"
             referencedColumns: ["id"]
           },
@@ -248,6 +255,13 @@ export type Database = {
             foreignKeyName: "inventory_transactions_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
+            referencedRelation: "product_inventory_overview"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "inventory_transactions_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
             referencedRelation: "products"
             referencedColumns: ["id"]
           },
@@ -330,6 +344,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "product_inventory_overview"
+            referencedColumns: ["product_id"]
           },
           {
             foreignKeyName: "order_items_product_id_fkey"
@@ -506,6 +527,13 @@ export type Database = {
             foreignKeyName: "product_batches_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
+            referencedRelation: "product_inventory_overview"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "product_batches_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
             referencedRelation: "products"
             referencedColumns: ["id"]
           },
@@ -534,6 +562,13 @@ export type Database = {
           storage_path?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "product_images_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "product_inventory_overview"
+            referencedColumns: ["product_id"]
+          },
           {
             foreignKeyName: "product_images_product_id_fkey"
             columns: ["product_id"]
@@ -778,7 +813,33 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      product_inventory_overview: {
+        Row: {
+          barcode: string | null
+          batch_count: number | null
+          category_id: string | null
+          category_name: string | null
+          expiry_status: string | null
+          minimum_stock: number | null
+          name: string | null
+          nearest_expiration: string | null
+          product_id: string | null
+          product_status: string | null
+          sku: string | null
+          stock_quantity: number | null
+          stock_status: string | null
+          unit: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       add_import_receipt_item: {
