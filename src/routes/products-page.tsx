@@ -13,6 +13,7 @@ import { PageHeader } from '@/components/common/page-header'
 import { PageLoading } from '@/components/common/page-loading'
 import { useColumnVisibility } from '@/hooks/use-column-visibility'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
+import { usePersistedPageSize } from '@/hooks/use-persisted-page-size'
 import { ROUTES } from '@/routes/route-paths'
 import { getProductColumns } from '@/features/products/components/product-columns'
 import { ProductFilters } from '@/features/products/components/product-filters'
@@ -27,7 +28,9 @@ import type {
   ProductStatusFilter,
 } from '@/features/products/types/product'
 
-const PAGE_SIZE = 10
+const PAGE_SIZE_OPTIONS = [10, 20, 50, 100]
+const DEFAULT_PAGE_SIZE = 10
+const PAGE_SIZE_STORAGE_KEY = 'baby-wale.products.page-size'
 const SORTABLE_FIELDS: ProductSortField[] = [
   'name',
   'sku',
@@ -55,6 +58,7 @@ const PRODUCT_COLUMNS_META = [
   { id: 'name', label: 'Tên sản phẩm', defaultVisible: true },
   { id: 'sku', label: 'SKU / Mã vạch', defaultVisible: true },
   { id: 'category', label: 'Danh mục', defaultVisible: true },
+  { id: 'supplier', label: 'Nhà cung cấp', defaultVisible: true },
   { id: 'unit', label: 'Đơn vị bán', defaultVisible: false },
   { id: 'default_purchase_price', label: 'Giá nhập', defaultVisible: false },
   { id: 'selling_price', label: 'Giá bán', defaultVisible: true },
@@ -72,6 +76,11 @@ function ProductsPage() {
   const [categoryId, setCategoryId] = useState<string | null>(null)
   const [status, setStatus] = useState<ProductStatusFilter>('all')
   const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = usePersistedPageSize(
+    PAGE_SIZE_STORAGE_KEY,
+    PAGE_SIZE_OPTIONS,
+    DEFAULT_PAGE_SIZE,
+  )
   const [sorting, setSorting] = useState<{ id: ProductSortField; desc: boolean }>({
     id: 'name',
     desc: false,
@@ -83,12 +92,17 @@ function ProductsPage() {
     setPage(1)
   }
 
+  function handlePageSizeChange(nextPageSize: number) {
+    setPageSize(nextPageSize)
+    resetToFirstPage()
+  }
+
   const filters: ProductFiltersState = {
     search: debouncedSearch,
     categoryId,
     status,
     page,
-    pageSize: PAGE_SIZE,
+    pageSize,
     sortField: sorting.id,
     sortDesc: sorting.desc,
   }
@@ -109,6 +123,7 @@ function ProductsPage() {
 
   const allColumns = getProductColumns({
     thumbnails: productsQuery.data?.thumbnails ?? new Map<string, string>(),
+    supplierNames: productsQuery.data?.supplierNames ?? new Map<string, string>(),
     onView: (product) => navigate(ROUTES.productDetail(product.id)),
     onEdit: (product) => setFormDialog({ product }),
     onCopy: (product) => setFormDialog({ copyFrom: product }),
@@ -224,7 +239,14 @@ function ProductsPage() {
               resetToFirstPage()
             }
           }}
-          pagination={{ pageIndex: page, pageSize: PAGE_SIZE, total, onPageChange: setPage }}
+          pagination={{
+            pageIndex: page,
+            pageSize,
+            total,
+            onPageChange: setPage,
+            pageSizeOptions: PAGE_SIZE_OPTIONS,
+            onPageSizeChange: handlePageSizeChange,
+          }}
         />
       )}
 

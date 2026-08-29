@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import type { DataTableColumn } from '@/components/common/data-table'
+import { TruncatedCell } from '@/components/common/truncated-cell'
 import { ROUTES } from '@/routes/route-paths'
 import { formatCurrencyVND } from '@/utils/currency'
 import { formatNumber } from '@/utils/number'
@@ -27,6 +28,8 @@ type ProductColumnActions = {
   onDelete: (product: Product) => void
   /** Signed thumbnail URLs by product id, for the current page (see `getProducts`). */
   thumbnails: Map<string, string>
+  /** Supplier of the most recent confirmed import, by product id (see `getProducts`). */
+  supplierNames: Map<string, string>
 }
 
 /**
@@ -43,6 +46,7 @@ export function getProductColumns({
   onToggleStatus,
   onDelete,
   thumbnails,
+  supplierNames,
 }: ProductColumnActions): DataTableColumn<Product>[] {
   return [
     {
@@ -57,15 +61,16 @@ export function getProductColumns({
       header: 'Tên sản phẩm',
       sortable: true,
       cell: (product) => (
-        <div className="flex flex-col">
+        <div className="flex max-w-56 flex-col">
           <Link
             to={ROUTES.productDetail(product.id)}
-            className="font-medium text-foreground hover:underline"
+            title={product.name}
+            className="truncate font-medium text-foreground hover:underline"
           >
             {product.name}
           </Link>
           {product.brand && (
-            <span className="text-xs text-muted-foreground">{product.brand}</span>
+            <span className="truncate text-xs text-muted-foreground">{product.brand}</span>
           )}
         </div>
       ),
@@ -86,9 +91,12 @@ export function getProductColumns({
     {
       id: 'category',
       header: 'Danh mục',
-      cell: (product) => (
-        <span className="text-muted-foreground">{product.categoryName ?? '—'}</span>
-      ),
+      cell: (product) => <TruncatedCell value={product.categoryName} />,
+    },
+    {
+      id: 'supplier',
+      header: 'Nhà cung cấp',
+      cell: (product) => <TruncatedCell value={supplierNames.get(product.id) ?? null} />,
     },
     {
       id: 'unit',
@@ -96,15 +104,17 @@ export function getProductColumns({
       cell: (product) => <span className="text-muted-foreground">{formatUnitLabel(product.unit)}</span>,
     },
     {
+      // Display-only: no currency suffix for these two columns (product
+      // list request) — the value is still the same integer VND amount,
+      // just formatted with `formatNumber` instead of `formatCurrencyVND`.
+      // Every other consumer (create/edit form, detail page, TikTok/Shopee
+      // columns below) still shows the full "₫" currency formatting.
       id: 'default_purchase_price',
       header: 'Giá nhập',
       sortable: true,
       align: 'right',
       cell: (product) => (
-        <span className="whitespace-nowrap">
-          {formatCurrencyVND(product.defaultPurchasePrice)}
-          <span className="text-xs text-muted-foreground">/{formatUnitLabel(product.unit)}</span>
-        </span>
+        <span className="whitespace-nowrap">{formatNumber(product.defaultPurchasePrice)}</span>
       ),
     },
     {
@@ -113,10 +123,7 @@ export function getProductColumns({
       sortable: true,
       align: 'right',
       cell: (product) => (
-        <span className="whitespace-nowrap">
-          {formatCurrencyVND(product.sellingPrice)}
-          <span className="text-xs text-muted-foreground">/{formatUnitLabel(product.unit)}</span>
-        </span>
+        <span className="whitespace-nowrap">{formatNumber(product.sellingPrice)}</span>
       ),
     },
     {

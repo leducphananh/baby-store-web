@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
@@ -30,6 +31,15 @@ export type DataTablePagination = {
   pageSize: number
   total: number
   onPageChange: (pageIndex: number) => void
+  /**
+   * Opt-in "rows per page" selector — omit both this and `onPageSizeChange`
+   * to keep a table exactly as before (see `table-data-grid`: don't turn
+   * this on for every screen unexpectedly, enable it explicitly per table).
+   * The caller owns resetting to page 1 on change, same as it already owns
+   * resetting on every other filter change.
+   */
+  pageSizeOptions?: number[]
+  onPageSizeChange?: (pageSize: number) => void
 }
 
 /**
@@ -155,17 +165,39 @@ function DataTable<TData>({
 }
 
 function DataTablePaginationControls({ pagination }: { pagination: DataTablePagination }) {
-  const { pageIndex, pageSize, total, onPageChange } = pagination
+  const { pageIndex, pageSize, total, onPageChange, pageSizeOptions, onPageSizeChange } = pagination
   const pageCount = Math.max(1, Math.ceil(total / pageSize))
   const from = total === 0 ? 0 : (pageIndex - 1) * pageSize + 1
   const to = Math.min(pageIndex * pageSize, total)
+  const showPageSizeSelector = Boolean(pageSizeOptions?.length) && Boolean(onPageSizeChange)
 
   return (
     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
       <p className="text-sm text-muted-foreground">
         Hiển thị {from}–{to} trên {total}
       </p>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
+        {showPageSizeSelector && (
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">Hiển thị</span>
+            <Select
+              value={String(pageSize)}
+              onValueChange={(value) => onPageSizeChange?.(Number(value))}
+            >
+              <SelectTrigger size="sm" className="w-20" aria-label="Số dòng mỗi trang">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {pageSizeOptions?.map((option) => (
+                  <SelectItem key={option} value={String(option)}>
+                    {option}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <span className="text-sm text-muted-foreground">dòng/trang</span>
+          </div>
+        )}
         <span className="text-sm text-muted-foreground">
           Trang {pageIndex}/{pageCount}
         </span>

@@ -54,6 +54,13 @@ export type ProductsPage = {
    * full images separately.
    */
   thumbnails: Map<string, string>
+  /**
+   * Supplier name by product id, for the page's rows only — same rationale
+   * as `thumbnails` (a list-view-only derived value, not a real `Product`
+   * field; see `getSupplierNameByProduct`). Absent from the map for a
+   * product with no confirmed purchase history.
+   */
+  supplierNames: Map<string, string>
 }
 
 /**
@@ -61,10 +68,10 @@ export type ProductsPage = {
  * pagination all run in Postgres (see `table-data-grid`, `supabase-database`)
  * — the client never downloads the whole catalog.
  *
- * On-hand stock and the thumbnail come from two extra **batched** queries
- * keyed by the page's product ids (`.in('product_id', ids)`), not one query
- * per row — three round trips total regardless of page size, never N+1
- * (CLAUDE.md §12, `frontend-performance`).
+ * On-hand stock, the thumbnail, and the supplier name come from three extra
+ * **batched** queries keyed by the page's product ids (`.in('product_id',
+ * ids)`), not one query per row — four round trips total regardless of page
+ * size, never N+1 (CLAUDE.md §12, `frontend-performance`).
  */
 export async function getProducts(filters: ProductFilters): Promise<ProductsPage> {
   const from = (filters.page - 1) * filters.pageSize
@@ -106,9 +113,10 @@ export async function getProducts(filters: ProductFilters): Promise<ProductsPage
   const rows = data ?? []
   const ids = rows.map((row) => row.id)
 
-  const [stockByProduct, thumbByProduct] = await Promise.all([
+  const [stockByProduct, thumbByProduct, supplierByProduct] = await Promise.all([
     getStockByProduct(ids),
     getThumbnailByProduct(ids),
+    getSupplierNameByProduct(ids),
   ])
 
   const products: Product[] = rows.map((row) => ({
@@ -136,7 +144,7 @@ export async function getProducts(filters: ProductFilters): Promise<ProductsPage
     updatedAt: row.updated_at,
   }))
 
-  return { data: products, total: count ?? 0, thumbnails: thumbByProduct }
+  return { data: products, total: count ?? 0, thumbnails: thumbByProduct, supplierNames: supplierByProduct }
 }
 
 /** Sum of `remaining_quantity` per product, in one query for the whole page. */
@@ -202,6 +210,60 @@ async function getThumbnailByProduct(productIds: string[]): Promise<Map<string, 
   for (const [productId, path] of pathByProduct) {
     const url = urlByPath.get(path)
     if (url) byProduct.set(productId, url)
+  }
+  return byProduct
+}
+
+/**
+ * Explicit shape of the supplier-lookup select — same reasoning as
+ * `ProductListRow`: the nested `import_receipts -> suppliers` embed
+ * degrades supabase-js's generic inference.
+ */
+type SupplierByImportRow = {
+  product_id: string | null
+  import_receipts: {
+    suppliers: { name: string } | null
+  } | null
+}
+
+/**
+ * The product schema has no direct `products.supplier_id` — a product's
+ * "supplier" is only ever known through its purchase history
+ * (`import_receipt_items -> import_receipts -> suppliers`). This resolves it
+ * as **the supplier of the most recent CONFIRMED import** for each product
+ * (draft/cancelled receipts never actually happened — see
+ * `ImportReceiptStatus`), which is the one supplier-like fact this schema
+ * can state without inventing a relationship. A product never purchased
+ * from (or only via a draft/cancelled receipt) simply has no entry here —
+ * the column renders "—", never a guess.
+ *
+ * `!inner` on the `import_receipts` embed is required to filter it by
+ * `status` server-side; ordering by the receipt's own `import_date` (its
+ * business date) then `confirmed_at` (tiebreaker) means the first row seen
+ * per product, scanned in order below, is already its latest one — no
+ * separate MAX() query needed.
+ */
+async function getSupplierNameByProduct(productIds: string[]): Promise<Map<string, string>> {
+  const byProduct = new Map<string, string>()
+  if (productIds.length === 0) return byProduct
+
+  const { data, error } = await supabase
+    .from('import_receipt_items')
+    .select('product_id, import_receipts!inner(import_date, confirmed_at, status, suppliers(name))')
+    .in('product_id', productIds)
+    .eq('import_receipts.status', 'confirmed')
+    .order('import_date', { referencedTable: 'import_receipts', ascending: false })
+    .order('confirmed_at', { referencedTable: 'import_receipts', ascending: false })
+    .returns<SupplierByImportRow[]>()
+
+  // Cosmetic/derived, same as the thumbnail lookup above — never break the
+  // whole list over a supplier-name lookup failure.
+  if (error || !data) return byProduct
+
+  for (const row of data) {
+    if (!row.product_id || byProduct.has(row.product_id)) continue
+    const supplierName = row.import_receipts?.suppliers?.name
+    if (supplierName) byProduct.set(row.product_id, supplierName)
   }
   return byProduct
 }
