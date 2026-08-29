@@ -91,7 +91,7 @@ export function ProductImagesManager({ productId }: { productId: string }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Hình ảnh</CardTitle>
+        <CardTitle>Ảnh sản phẩm</CardTitle>
         <p className="text-sm text-muted-foreground">
           {ACCEPTED_IMAGE_LABEL} · tối đa 5MB · nhiều ảnh, chọn một ảnh chính
         </p>

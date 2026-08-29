@@ -41,17 +41,27 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
  * and the same pattern in `supplier-form.tsx`). The dialog decides which
  * mutation `onSubmit` runs; it receives the RHF instance too so it can map a
  * server-side unique-constraint error back onto the `sku`/`barcode` field.
+ *
+ * `imagesSection` is an optional slot for the dialog's image manager
+ * (`ProductImagesManager` in edit mode, `PendingProductImages` in create
+ * mode — see `product-form-dialog.tsx`). Images are deliberately NOT part of
+ * `productFormSchema`/`ProductFormValues` — this form stays schema-driven
+ * and has no idea whether it's looking at real uploaded images or local
+ * pending files; it only renders whatever the dialog hands it, in the
+ * "Ảnh sản phẩm" section of the form.
  */
 export function ProductForm({
   defaultValues,
   onSubmit,
   isSubmitting,
   formId,
+  imagesSection,
 }: {
   defaultValues: ProductFormValues
   onSubmit: (values: ProductFormValues, form: UseFormReturn<ProductFormValues>) => void
   isSubmitting: boolean
   formId: string
+  imagesSection?: ReactNode
 }) {
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productFormSchema),
@@ -328,6 +338,11 @@ export function ProductForm({
             />
           </div>
         </Section>
+
+        {/* Not wrapped in a `Section` — `ProductImagesManager`/`PendingProductImages`
+            are each already a self-contained `Card` with their own title, matching
+            how `ProductDetailPage` stacks its section cards (see those components). */}
+        {imagesSection}
       </form>
     </Form>
   )
