@@ -1,4 +1,5 @@
-import { Badge } from '@/components/ui/badge'
+import { Link } from 'react-router'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DataTable, type DataTableColumn } from '@/components/common/data-table'
 import { EmptyState } from '@/components/common/empty-state'
@@ -6,6 +7,8 @@ import { ErrorState } from '@/components/common/error-state'
 import { formatCurrencyVND } from '@/utils/currency'
 import { formatDate } from '@/utils/date'
 import { formatQuantityWithUnit } from '@/utils/unit'
+import { ROUTES } from '@/routes/route-paths'
+import { BatchExpiryBadge } from '@/features/batches/components/batch-expiry-badge'
 import { useProductBatches } from '@/features/products/hooks/use-product-batches'
 import type { Product, ProductBatch } from '@/features/products/types/product'
 
@@ -20,14 +23,6 @@ function Stat({ label, value, tone }: { label: string; value: string; tone?: 'wa
       </p>
     </div>
   )
-}
-
-function isExpired(date: string | null): boolean {
-  if (!date) return false
-  // Date-only comparison; a full expiry classification ("expiring soon"
-  // threshold, days-remaining) belongs to the alerts phase, not here.
-  const today = new Date().toISOString().slice(0, 10)
-  return date < today
 }
 
 function getBatchColumns(unit: string | null): DataTableColumn<ProductBatch>[] {
@@ -47,10 +42,25 @@ function getBatchColumns(unit: string | null): DataTableColumn<ProductBatch>[] {
       header: 'Hạn sử dụng',
       cell: (batch) =>
         batch.expirationDate ? (
-          <span className="flex items-center gap-2">
-            {formatDate(batch.expirationDate)}
-            {isExpired(batch.expirationDate) && <Badge variant="destructive">Hết hạn</Badge>}
-          </span>
+          <div className="flex flex-col items-start gap-1">
+            <span>{formatDate(batch.expirationDate)}</span>
+            <BatchExpiryBadge expirationDate={batch.expirationDate} />
+          </div>
+        ) : (
+          '—'
+        ),
+    },
+    {
+      id: 'source',
+      header: 'Nguồn nhập',
+      cell: (batch) =>
+        batch.sourceReceiptId && batch.sourceReceiptNumber ? (
+          <Link
+            to={ROUTES.importDetail(batch.sourceReceiptId)}
+            className="font-mono text-xs text-foreground hover:underline"
+          >
+            {batch.sourceReceiptNumber}
+          </Link>
         ) : (
           '—'
         ),
@@ -78,8 +88,10 @@ function getBatchColumns(unit: string | null): DataTableColumn<ProductBatch>[] {
 
 /**
  * On-hand stock summary + the batch (lot) breakdown, ordered FEFO. All real
- * data from `product_batches`; batches appear once import receipts create
- * them (a later phase), so an empty state here is expected, not a bug.
+ * data from `product_batches`; batches appear once import receipts are
+ * confirmed, so an empty state here is expected, not a bug. Expiry status is
+ * classified and badged by the shared `features/batches` helpers — no
+ * threshold logic lives in this component.
  */
 export function ProductDetailInventory({ product }: { product: Product }) {
   const batchesQuery = useProductBatches(product.id)
@@ -147,7 +159,7 @@ export function ProductDetailInventory({ product }: { product: Product }) {
             ) : (
               <EmptyState
                 title="Chưa có lô hàng nào"
-                description="Lô hàng được tạo tự động khi có phiếu nhập hàng cho sản phẩm này."
+                description="Lô hàng được tạo tự động khi phiếu nhập hàng cho sản phẩm này được xác nhận."
               />
             )}
           </>

@@ -40,7 +40,9 @@ export const importReceiptLineFormSchema = z
       !values.manufactureDate || !values.expirationDate
         ? true
         : values.expirationDate >= values.manufactureDate,
-    { message: 'Hạn sử dụng phải sau ngày sản xuất', path: ['expirationDate'] },
+    // Matches the DB CHECK and the import-item RPCs: equal dates are allowed,
+    // expiry simply may not fall before manufacture.
+    { message: 'Hạn sử dụng không được trước ngày sản xuất', path: ['expirationDate'] },
   )
 
 export type ImportReceiptLineFormValues = z.infer<typeof importReceiptLineFormSchema>

@@ -53,6 +53,14 @@ export type ProductBatch = {
   remainingQuantity: number
   purchasePrice: number
   createdAt: string | null
+  /**
+   * The import receipt this batch was created from, for traceability back to
+   * its purchase source (`domain-driven-frontend` rule 2). `null` only if a
+   * batch ever exists without an `import_item_id` (not produced by the
+   * current confirm-receipt flow).
+   */
+  sourceReceiptId: string | null
+  sourceReceiptNumber: string | null
 }
 
 export type ProductImage = {

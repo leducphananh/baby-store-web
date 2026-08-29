@@ -17,8 +17,11 @@ export function getImportReceiptLineErrorMessage(error: unknown): string {
   if (message.includes('Purchase price must be')) {
     return 'Đơn giá không được âm.'
   }
-  if (message.includes('Expiration date must be')) {
-    return 'Hạn sử dụng phải sau ngày sản xuất.'
+  if (
+    message.includes('Expiration date must be') ||
+    message.includes('expiry_after_manufacture')
+  ) {
+    return 'Hạn sử dụng không được trước ngày sản xuất.'
   }
   if (message.includes('not found')) {
     return 'Không tìm thấy dữ liệu. Vui lòng tải lại trang.'

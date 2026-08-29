@@ -36,7 +36,7 @@ export function nextDay(ymd: string): string {
   return date.toISOString().slice(0, 10)
 }
 
-/** Today as `YYYY-MM-DD` in the viewer's local timezone. */
-export function todayYmd(): string {
-  return ymdOf(new Date())
-}
+// `todayYmd` now lives in the shared date utils (used across import receipts,
+// purchase invoices and batch-expiry). Re-exported here so existing importers
+// of this module keep working, but there is one definition.
+export { todayYmd } from '@/utils/date'

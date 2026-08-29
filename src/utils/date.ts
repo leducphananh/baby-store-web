@@ -39,3 +39,24 @@ export function formatDateTime(value: string | Date): string {
   const date = value instanceof Date ? value : new Date(value)
   return `${formatDate(date)} ${pad2(date.getHours())}:${pad2(date.getMinutes())}`
 }
+
+/** Today as a plain `YYYY-MM-DD` string in the viewer's local timezone. */
+export function todayYmd(): string {
+  const now = new Date()
+  return `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`
+}
+
+/**
+ * Whole calendar days from `fromYmd` to `toYmd` (both plain `YYYY-MM-DD`),
+ * e.g. `daysBetweenYmd('2026-01-01', '2026-01-31') === 30`. Positive when
+ * `toYmd` is the later date, negative when earlier.
+ *
+ * Both ends are read at UTC midnight so a DST change or the viewer's
+ * timezone can never shift the count by a day — these are calendar dates,
+ * not instants (the same hazard `formatDate` warns about).
+ */
+export function daysBetweenYmd(fromYmd: string, toYmd: string): number {
+  const from = Date.parse(`${fromYmd}T00:00:00Z`)
+  const to = Date.parse(`${toYmd}T00:00:00Z`)
+  return Math.round((to - from) / 86_400_000)
+}
