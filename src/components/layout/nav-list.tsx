@@ -6,7 +6,9 @@ import { NAV_ITEMS } from '@/components/layout/nav-items'
 /**
  * Renders the app's navigation links. Shared by the desktop `Sidebar` and
  * the mobile/tablet drawer in `Header` — one list, two presentations (see
- * `reusable-components`).
+ * `reusable-components`). Both hosts are the dark `bg-sidebar` surface
+ * (brand layout reference), so this always assumes a dark background —
+ * light inactive text, filled `sidebar-accent` pill for the active route.
  */
 function NavList({
   collapsed = false,
@@ -28,9 +30,9 @@ function NavList({
           title={collapsed ? item.label : undefined}
           className={({ isActive }) =>
             cn(
-              'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors',
-              'hover:bg-accent hover:text-accent-foreground',
-              isActive && 'bg-accent text-accent-foreground',
+              'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold text-sidebar-muted-foreground transition-colors',
+              'hover:bg-white/10 hover:text-sidebar-foreground',
+              isActive && 'bg-sidebar-accent text-sidebar-accent-foreground hover:bg-sidebar-accent',
               collapsed && 'justify-center px-2',
             )
           }

@@ -1,47 +1,79 @@
 @import 'tailwindcss';
 
 /*
- * shadcn/ui-style design tokens (OKLCH color space).
- * Light theme is the default — this is a desktop-first admin tool, dark mode
- * is not a current requirement, but the token structure supports adding a
- * `.dark` variant later without touching component code.
+ * "Baby Wale" brand theme — see public/branding/favicon.png for the source
+ * mark (used as the logo throughout the app, see `README.md`) and the
+ * branding brief for the full design-token spec.
+ *
+ * Token names follow the shadcn/ui convention already used throughout
+ * components/ui (bg-primary, text-muted-foreground, etc.) — retheming
+ * happens here, once, and cascades through every component automatically;
+ * no component file needed a hardcoded color (verified: no raw Tailwind
+ * gray/slate classes or hex literals anywhere in src, everything already
+ * goes through these variables). `--sidebar-*` is the one new token group,
+ * for the sidebar's dark-navy surface (see `components/layout/sidebar.tsx`),
+ * kept separate from `--primary` so re-theming the sidebar independently of
+ * primary buttons stays possible later.
  */
 :root {
-  --radius: 0.5rem;
+  --radius: 0.875rem;
 
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --background: #fff7f1;
+  --foreground: #0d2b4e;
 
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card: #ffffff;
+  --card-foreground: #0d2b4e;
 
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
+  --popover: #ffffff;
+  --popover-foreground: #0d2b4e;
 
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
+  --primary: #0d2b4e;
+  --primary-foreground: #ffffff;
 
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
+  /* Secondary (brand pink) uses dark navy text, not white, for contrast —
+     #FF8FA3 against white is ~2.2:1, well under the 4.5:1 WCAG AA minimum
+     for text; against navy it's ~6.6:1. The pink itself is unchanged. */
+  --secondary: #ff8fa3;
+  --secondary-foreground: #0d2b4e;
 
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
+  --muted: #f5f8fc;
+  --muted-foreground: #64748b;
 
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  /* Same contrast reasoning as secondary: navy text on the accent blue. */
+  --accent: #6fa8dc;
+  --accent-foreground: #0d2b4e;
 
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
+  /* Soft informational blue — new token, not in the base shadcn set, for
+     info badges/callouts (see `components/ui/alert.tsx`, `badge.tsx`). */
+  --info: #b7d5f0;
+  --info-foreground: #0d2b4e;
 
-  --success: oklch(0.6 0.155 148);
-  --success-foreground: oklch(0.985 0 0);
+  /* Decorative pastel surface (e.g. the login page background gradient) —
+     background only, no text is ever placed directly on it, so there's no
+     `-foreground` pair here (unlike the other tokens). */
+  --pastel-pink: #ffe4e9;
 
-  --warning: oklch(0.75 0.15 75);
-  --warning-foreground: oklch(0.205 0 0);
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
 
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --success: #22c55e;
+  --success-foreground: #ffffff;
+
+  /* Navy text, not white: #F59E0B against white is ~2.1:1. */
+  --warning: #f59e0b;
+  --warning-foreground: #0d2b4e;
+
+  --border: #e6eef8;
+  --input: #e6eef8;
+  --ring: #6fa8dc;
+
+  /* Sidebar surface — dark navy, matching the brand layout reference. */
+  --sidebar: #0d2b4e;
+  --sidebar-foreground: #fff7f1;
+  --sidebar-muted-foreground: #9fb8d6;
+  --sidebar-accent: #6fa8dc;
+  --sidebar-accent-foreground: #0d2b4e;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
 }
 
 @theme inline {
@@ -66,6 +98,11 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
 
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+
+  --color-pastel-pink: var(--pastel-pink);
+
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
 
@@ -79,8 +116,19 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-muted-foreground: var(--sidebar-muted-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+
+  --shadow-soft: 0 2px 8px rgba(13, 43, 78, 0.06);
+
+  --font-sans: 'Nunito', system-ui, 'Segoe UI', Roboto, sans-serif;
+
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 4px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 }
@@ -92,7 +140,7 @@
 
   body {
     @apply bg-background text-foreground;
-    font: 15px/1.5 system-ui, 'Segoe UI', Roboto, sans-serif;
+    font: 15px/1.5 var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }

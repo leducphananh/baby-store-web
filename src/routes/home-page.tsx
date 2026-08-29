@@ -18,7 +18,7 @@ function HomePage() {
   return (
     <PageContent>
       <PageHeader
-        title="Baby Store Management"
+        title="Baby Wale"
         description="Nền tảng ứng dụng đã sẵn sàng. Các module nghiệp vụ sẽ được triển khai ở các giai đoạn tiếp theo."
       />
       <EmptyState

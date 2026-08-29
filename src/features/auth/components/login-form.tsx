@@ -1,6 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 
+import { AlertCircle } from 'lucide-react'
+
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -29,12 +32,10 @@ function LoginForm() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" noValidate>
         {signIn.isError && (
-          <div
-            role="alert"
-            className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive"
-          >
-            {getSignInErrorMessage(signIn.error)}
-          </div>
+          <Alert variant="destructive">
+            <AlertCircle />
+            <AlertDescription>{getSignInErrorMessage(signIn.error)}</AlertDescription>
+          </Alert>
         )}
 
         <FormField

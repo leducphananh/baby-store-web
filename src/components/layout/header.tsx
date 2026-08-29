@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { LogOut, Menu, UserCircle } from 'lucide-react'
-import { useLocation } from 'react-router'
+import { Bell, LogOut, Menu, UserCircle } from 'lucide-react'
+import { Link, useLocation } from 'react-router'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -17,6 +17,7 @@ import { NAV_ITEMS } from '@/components/layout/nav-items'
 import { useProfile } from '@/features/auth/hooks/use-profile'
 import { useSignOut } from '@/features/auth/hooks/use-sign-out'
 import { useAuth } from '@/providers/auth-provider'
+import { ROUTES } from '@/routes/route-paths'
 
 const PROFILE_ROLE_LABEL: Record<'owner' | 'staff', string> = {
   owner: 'Chủ cửa hàng',
@@ -26,7 +27,7 @@ const PROFILE_ROLE_LABEL: Record<'owner' | 'staff', string> = {
 function usePageTitle(): string {
   const { pathname } = useLocation()
   return NAV_ITEMS.find((item) => (item.end ? pathname === item.path : pathname.startsWith(item.path)))
-    ?.label ?? 'Baby Store Management'
+    ?.label ?? 'Baby Wale'
 }
 
 /**
@@ -35,6 +36,11 @@ function usePageTitle(): string {
  * open state locally — nothing else needs to read it (see `zustand` skill:
  * don't reach for global state to avoid one level of prop drilling that
  * doesn't even exist here).
+ *
+ * The bell links to the real "Cảnh báo" route rather than being decorative —
+ * there's no notification/badge-count backend yet, so it's just navigation,
+ * not a fake feature (see CLAUDE.md: presentation changes only, no invented
+ * functionality).
  */
 function Header() {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false)
@@ -54,9 +60,14 @@ function Header() {
             <Menu className="size-5" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="w-72 p-0">
-          <SheetHeader className="border-b">
-            <SheetTitle>Baby Store Management</SheetTitle>
+        <SheetContent side="left" className="w-72 border-sidebar-border bg-sidebar p-0 text-sidebar-foreground">
+          <SheetHeader className="flex-row items-center gap-2 border-b border-sidebar-border">
+            <img
+              src="/branding/favicon.png"
+              alt=""
+              className="size-7 shrink-0 rounded-full object-cover"
+            />
+            <SheetTitle className="text-sidebar-foreground">Baby Wale</SheetTitle>
           </SheetHeader>
           <div className="p-3">
             <NavList onNavigate={() => setIsMobileNavOpen(false)} />
@@ -64,9 +75,15 @@ function Header() {
         </SheetContent>
       </Sheet>
 
-      <h1 className="truncate text-sm font-semibold text-foreground">{pageTitle}</h1>
+      <h1 className="truncate text-sm font-bold text-foreground">{pageTitle}</h1>
 
-      <div className="ml-auto flex items-center gap-2">
+      <div className="ml-auto flex items-center gap-1">
+        <Button variant="ghost" size="icon" asChild aria-label="Xem cảnh báo">
+          <Link to={ROUTES.alerts}>
+            <Bell className="size-5" />
+          </Link>
+        </Button>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="gap-2 px-2">
