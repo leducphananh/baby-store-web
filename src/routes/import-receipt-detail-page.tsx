@@ -16,6 +16,7 @@ import { ImportReceiptLinesCard } from '@/features/import-receipts/components/im
 import { ImportReceiptStatusBadge } from '@/features/import-receipts/components/import-receipt-status-badge'
 import { useCancelImportReceipt } from '@/features/import-receipts/hooks/use-cancel-import-receipt'
 import { useImportReceipt } from '@/features/import-receipts/hooks/use-import-receipt'
+import { PurchaseInvoicesCard } from '@/features/purchase-invoices/components/purchase-invoices-card'
 
 function BackLink() {
   return (
@@ -112,6 +113,7 @@ function ImportReceiptDetailPage() {
 
       <ImportReceiptDetailHeader receipt={receipt} />
       <ImportReceiptLinesCard receipt={receipt} />
+      <PurchaseInvoicesCard receipt={receipt} />
 
       <ImportReceiptFormDialog
         open={isEditOpen}
