@@ -28,8 +28,6 @@ type ProductColumnActions = {
   onDelete: (product: Product) => void
   /** Signed thumbnail URLs by product id, for the current page (see `getProducts`). */
   thumbnails: Map<string, string>
-  /** Supplier of the most recent confirmed import, by product id (see `getProducts`). */
-  supplierNames: Map<string, string>
 }
 
 /**
@@ -46,7 +44,6 @@ export function getProductColumns({
   onToggleStatus,
   onDelete,
   thumbnails,
-  supplierNames,
 }: ProductColumnActions): DataTableColumn<Product>[] {
   return [
     {
@@ -92,11 +89,6 @@ export function getProductColumns({
       id: 'category',
       header: 'Danh mục',
       cell: (product) => <TruncatedCell value={product.categoryName} />,
-    },
-    {
-      id: 'supplier',
-      header: 'Nhà cung cấp',
-      cell: (product) => <TruncatedCell value={supplierNames.get(product.id) ?? null} />,
     },
     {
       id: 'unit',

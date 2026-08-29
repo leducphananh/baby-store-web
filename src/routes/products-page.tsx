@@ -58,7 +58,6 @@ const PRODUCT_COLUMNS_META = [
   { id: 'name', label: 'Tên sản phẩm', defaultVisible: true },
   { id: 'sku', label: 'SKU / Mã vạch', defaultVisible: true },
   { id: 'category', label: 'Danh mục', defaultVisible: true },
-  { id: 'supplier', label: 'Nhà cung cấp', defaultVisible: true },
   { id: 'unit', label: 'Đơn vị bán', defaultVisible: false },
   { id: 'default_purchase_price', label: 'Giá nhập', defaultVisible: false },
   { id: 'selling_price', label: 'Giá bán', defaultVisible: true },
@@ -123,7 +122,6 @@ function ProductsPage() {
 
   const allColumns = getProductColumns({
     thumbnails: productsQuery.data?.thumbnails ?? new Map<string, string>(),
-    supplierNames: productsQuery.data?.supplierNames ?? new Map<string, string>(),
     onView: (product) => navigate(ROUTES.productDetail(product.id)),
     onEdit: (product) => setFormDialog({ product }),
     onCopy: (product) => setFormDialog({ copyFrom: product }),
