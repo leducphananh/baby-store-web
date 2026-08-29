@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { ImagePlus, Star, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { EmptyState } from '@/components/common/empty-state'
+import { useImagePaste } from '@/features/products/hooks/use-image-paste'
 import {
   ACCEPTED_IMAGE_ACCEPT,
   ACCEPTED_IMAGE_LABEL,
@@ -62,8 +64,9 @@ export function PendingProductImages({
   })
   useEffect(() => () => revokePendingProductImages(imagesRef.current), [])
 
-  async function handleFiles(files: File[]) {
-    if (files.length === 0) return
+  /** Returns how many of `files` were actually accepted — the paste handler uses this for its confirmation toast. */
+  async function handleFiles(files: File[]): Promise<number> {
+    if (files.length === 0) return 0
 
     const accepted: File[] = []
     const nextRejections: string[] = []
@@ -73,7 +76,7 @@ export function PendingProductImages({
       else nextRejections.push(result.message)
     }
     setRejections(nextRejections)
-    if (accepted.length === 0) return
+    if (accepted.length === 0) return 0
 
     const hasPrimaryAlready = images.some((image) => image.isPrimary)
     const added: PendingProductImage[] = accepted.map((file, index) => ({
@@ -86,12 +89,30 @@ export function PendingProductImages({
       isPrimary: !hasPrimaryAlready && index === 0,
     }))
     onImagesChange([...images, ...added])
+    return accepted.length
   }
 
   function openFilePicker() {
     setRejections([])
     fileInputRef.current?.click()
   }
+
+  // Clipboard paste — same `handleFiles` pipeline as the file picker above,
+  // just a different source of `File[]` (see `useImagePaste`). Unlike the
+  // silent file picker, paste gets an explicit confirmation toast (there's
+  // no picker dialog moment to already tell the user something happened).
+  const handlePaste = useImagePaste((files) => {
+    if (files.length === 0) {
+      setRejections(['Clipboard không chứa ảnh có thể sử dụng.'])
+      return
+    }
+    setRejections([])
+    void handleFiles(files).then((accepted) => {
+      if (accepted > 0) {
+        toast.success(accepted === 1 ? 'Đã thêm 1 ảnh từ clipboard' : `Đã thêm ${accepted} ảnh từ clipboard`)
+      }
+    })
+  })
 
   function removeImage(id: string) {
     const target = images.find((image) => image.id === id)
@@ -117,6 +138,9 @@ export function PendingProductImages({
           {ACCEPTED_IMAGE_LABEL} · tối đa 5MB · nhiều ảnh, chọn một ảnh chính. Ảnh chỉ được tải lên
           sau khi sản phẩm được tạo thành công.
         </p>
+        <p className="text-sm text-muted-foreground">
+          Chọn hoặc dán ảnh vào đây — sao chép ảnh từ nơi khác rồi nhấn Ctrl+V (⌘V trên macOS).
+        </p>
         <CardAction>
           <input
             ref={fileInputRef}
@@ -139,7 +163,12 @@ export function PendingProductImages({
         </CardAction>
       </CardHeader>
 
-      <CardContent className="space-y-3">
+      <CardContent
+        className="space-y-3 rounded-lg outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+        tabIndex={0}
+        onPaste={handlePaste}
+        aria-label="Vùng thêm ảnh sản phẩm. Có thể chọn tệp hoặc dán ảnh từ clipboard bằng Ctrl+V."
+      >
         {rejections.length > 0 && (
           <div
             role="alert"
@@ -155,7 +184,7 @@ export function PendingProductImages({
           <EmptyState
             icon={ImagePlus}
             title="Chưa chọn ảnh nào"
-            description="Chọn ảnh để minh họa sản phẩm — ảnh sẽ được tải lên khi bạn lưu sản phẩm."
+            description="Chọn ảnh hoặc dán bằng Ctrl+V để minh họa sản phẩm — ảnh sẽ được tải lên khi bạn lưu sản phẩm."
             action={
               <Button type="button" size="sm" variant="outline" onClick={openFilePicker} disabled={disabled}>
                 <ImagePlus />

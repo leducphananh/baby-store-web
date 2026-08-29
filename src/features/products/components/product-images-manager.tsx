@@ -10,6 +10,7 @@ import { EmptyState } from '@/components/common/empty-state'
 import { ErrorState } from '@/components/common/error-state'
 import { ProductImageTile } from '@/features/products/components/product-image-tile'
 import { useDeleteProductImage } from '@/features/products/hooks/use-delete-product-image'
+import { useImagePaste } from '@/features/products/hooks/use-image-paste'
 import { useProductImages } from '@/features/products/hooks/use-product-images'
 import { useSetPrimaryProductImage } from '@/features/products/hooks/use-set-primary-product-image'
 import { useUploadProductImage } from '@/features/products/hooks/use-upload-product-image'
@@ -84,6 +85,20 @@ export function ProductImagesManager({ productId }: { productId: string }) {
     fileInputRef.current?.click()
   }
 
+  // Clipboard paste — same `handleFiles` pipeline as the file picker above
+  // (see `useImagePaste`); the existing "Đã tải lên N ảnh" toast at the end
+  // of `handleFiles` already confirms success, so no separate paste toast
+  // is needed here (see `pending-product-images.tsx` for the create-mode
+  // case, which has no such toast of its own).
+  const handlePaste = useImagePaste((files) => {
+    if (files.length === 0) {
+      setRejections(['Clipboard không chứa ảnh có thể sử dụng.'])
+      return
+    }
+    setRejections([])
+    void handleFiles(files)
+  })
+
   const images = imagesQuery.data ?? []
   const showEmpty =
     !imagesQuery.isLoading && !imagesQuery.isError && images.length === 0 && pending.length === 0
@@ -94,6 +109,9 @@ export function ProductImagesManager({ productId }: { productId: string }) {
         <CardTitle>Ảnh sản phẩm</CardTitle>
         <p className="text-sm text-muted-foreground">
           {ACCEPTED_IMAGE_LABEL} · tối đa 5MB · nhiều ảnh, chọn một ảnh chính
+        </p>
+        <p className="text-sm text-muted-foreground">
+          Chọn hoặc dán ảnh vào đây — sao chép ảnh từ nơi khác rồi nhấn Ctrl+V (⌘V trên macOS).
         </p>
         <CardAction>
           <input
@@ -120,7 +138,12 @@ export function ProductImagesManager({ productId }: { productId: string }) {
         </CardAction>
       </CardHeader>
 
-      <CardContent className="space-y-3">
+      <CardContent
+        className="space-y-3 rounded-lg outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+        tabIndex={0}
+        onPaste={handlePaste}
+        aria-label="Vùng thêm ảnh sản phẩm. Có thể chọn tệp hoặc dán ảnh từ clipboard bằng Ctrl+V."
+      >
         {rejections.length > 0 && (
           <div
             role="alert"
@@ -147,7 +170,7 @@ export function ProductImagesManager({ productId }: { productId: string }) {
           <EmptyState
             icon={ImagePlus}
             title="Chưa có hình ảnh"
-            description="Tải ảnh lên để minh họa sản phẩm trong danh sách và trang chi tiết."
+            description="Tải ảnh lên hoặc dán bằng Ctrl+V để minh họa sản phẩm trong danh sách và trang chi tiết."
             action={
               <Button type="button" size="sm" variant="outline" onClick={openFilePicker} disabled={isUploading}>
                 <ImagePlus />
