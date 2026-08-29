@@ -19,7 +19,11 @@ import type { Supplier, SupplierFilters, SupplierSortField } from '@/features/su
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
 
 const PAGE_SIZE = 10
-const SORTABLE_FIELDS: SupplierSortField[] = ['name', 'created_at']
+// 'created_at' stays a valid SupplierSortField (the column still exists in
+// the DB and the domain type — only its table column was removed from the
+// list per this update), but with no sortable header left to trigger it,
+// it's dropped from the reachable set here to avoid dead code.
+const SORTABLE_FIELDS: SupplierSortField[] = ['name']
 
 function isSupplierSortField(value: string): value is SupplierSortField {
   return (SORTABLE_FIELDS as string[]).includes(value)

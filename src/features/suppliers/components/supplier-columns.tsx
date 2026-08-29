@@ -9,8 +9,24 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import type { DataTableColumn } from '@/components/common/data-table'
-import { formatDate } from '@/utils/date'
 import type { Supplier } from '@/features/suppliers/types/supplier'
+
+/**
+ * Address/notes can be long — truncate to two lines in the table and rely on
+ * the native `title` attribute for a full-text hover tooltip (no tooltip
+ * primitive exists in the project yet, so this stays dependency-free); the
+ * underlying value is never altered, and the full text is always reachable
+ * via "Xem chi tiết" (`SupplierDetailSheet`), which already shows every
+ * field in full.
+ */
+function TruncatedCell({ value }: { value: string | null }) {
+  if (!value) return <span className="text-muted-foreground">—</span>
+  return (
+    <span className="line-clamp-2 max-w-56 text-muted-foreground" title={value}>
+      {value}
+    </span>
+  )
+}
 
 /** Same shape as `category-columns.tsx` — see `table-data-grid`. */
 export function getSupplierColumns({
@@ -48,6 +64,16 @@ export function getSupplierColumns({
       cell: (supplier) => <span className="text-muted-foreground">{supplier.phone || '—'}</span>,
     },
     {
+      id: 'address',
+      header: 'Địa chỉ',
+      cell: (supplier) => <TruncatedCell value={supplier.address} />,
+    },
+    {
+      id: 'notes',
+      header: 'Ghi chú',
+      cell: (supplier) => <TruncatedCell value={supplier.notes} />,
+    },
+    {
       id: 'status',
       header: 'Trạng thái',
       cell: (supplier) => (
@@ -55,12 +81,6 @@ export function getSupplierColumns({
           {supplier.status === 'active' ? 'Đang hợp tác' : 'Ngừng hợp tác'}
         </Badge>
       ),
-    },
-    {
-      id: 'created_at',
-      header: 'Ngày tạo',
-      sortable: true,
-      cell: (supplier) => (supplier.createdAt ? formatDate(supplier.createdAt) : '—'),
     },
     {
       id: 'actions',

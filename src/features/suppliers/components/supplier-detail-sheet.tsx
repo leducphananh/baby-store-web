@@ -52,7 +52,13 @@ function SupplierDetailSheet({
             <DetailRow label="Email" value={supplier.email} />
             <DetailRow label="Địa chỉ" value={supplier.address} />
             <DetailRow label="Mã số thuế" value={supplier.taxCode} />
-            <DetailRow label="Ghi chú" value={supplier.notes} />
+            <DetailRow
+              label="Ghi chú"
+              // `whitespace-pre-wrap` so line breaks the user actually typed
+              // survive here — a plain string collapses them like any other
+              // HTML text node. Always interpolated as text, never HTML.
+              value={supplier.notes ? <span className="whitespace-pre-wrap">{supplier.notes}</span> : null}
+            />
             <DetailRow
               label="Ngày tạo"
               value={supplier.createdAt ? formatDate(supplier.createdAt) : null}

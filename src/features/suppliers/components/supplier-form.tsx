@@ -110,7 +110,30 @@ function SupplierForm({
             <FormItem>
               <FormLabel>Địa chỉ</FormLabel>
               <FormControl>
-                <Input placeholder="Không bắt buộc" disabled={isSubmitting} {...field} />
+                <Textarea
+                  placeholder="Nhập địa chỉ nhà cung cấp"
+                  rows={2}
+                  disabled={isSubmitting}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="notes"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Ghi chú</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Nhập ghi chú về nhà cung cấp"
+                  disabled={isSubmitting}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -134,20 +157,6 @@ function SupplierForm({
                   <SelectItem value="archived">Ngừng hợp tác</SelectItem>
                 </SelectContent>
               </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="notes"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Ghi chú</FormLabel>
-              <FormControl>
-                <Textarea placeholder="Không bắt buộc" disabled={isSubmitting} {...field} />
-              </FormControl>
               <FormMessage />
             </FormItem>
           )}
