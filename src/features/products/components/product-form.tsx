@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { useAllCategories } from '@/features/categories/hooks/use-all-categories'
-import { IntegerField } from '@/features/products/components/integer-field'
+import { IntegerField } from '@/components/common/integer-field'
 import { productFormSchema, type ProductFormValues } from '@/features/products/schemas/product-schema'
 
 /** Sentinel for "no category" — Radix Select items can't have an empty value. */

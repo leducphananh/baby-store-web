@@ -23,7 +23,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: '14.15'
+    PostgrestVersion: '14.5'
   }
   public: {
     Tables: {
@@ -775,6 +775,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_import_receipt_item: {
+        Args: {
+          p_expiration_date?: string
+          p_lot_number?: string
+          p_manufacture_date?: string
+          p_product_id: string
+          p_purchase_price: number
+          p_quantity: number
+          p_receipt_id: string
+        }
+        Returns: string
+      }
       adjust_inventory: {
         Args: {
           p_adj_quantity: number
@@ -789,6 +801,25 @@ export type Database = {
       complete_order: { Args: { p_order_id: string }; Returns: undefined }
       confirm_import_receipt: {
         Args: { p_receipt_id: string }
+        Returns: undefined
+      }
+      delete_import_receipt_item: {
+        Args: { p_item_id: string }
+        Returns: undefined
+      }
+      recalc_import_receipt_total: {
+        Args: { p_receipt_id: string }
+        Returns: undefined
+      }
+      update_import_receipt_item: {
+        Args: {
+          p_expiration_date?: string
+          p_item_id: string
+          p_lot_number?: string
+          p_manufacture_date?: string
+          p_purchase_price: number
+          p_quantity: number
+        }
         Returns: undefined
       }
     }
