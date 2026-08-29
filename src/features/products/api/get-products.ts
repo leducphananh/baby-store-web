@@ -20,6 +20,8 @@ type ProductListRow = {
   description: string | null
   default_purchase_price: number
   selling_price: number
+  tiktok_price: number | null
+  shopee_price: number | null
   minimum_stock: number
   status: string
   origin_country: string | null
@@ -33,8 +35,8 @@ type ProductListRow = {
 
 const LIST_COLUMNS =
   'id, name, sku, barcode, category_id, brand, unit, description, default_purchase_price, ' +
-  'selling_price, minimum_stock, status, origin_country, manufacturer, distributor, ' +
-  'source_description, created_at, updated_at, categories(name)'
+  'selling_price, tiktok_price, shopee_price, minimum_stock, status, origin_country, ' +
+  'manufacturer, distributor, source_description, created_at, updated_at, categories(name)'
 
 function toStatus(value: string): ProductStatus {
   // The DB CHECK constraint guarantees one of these two; fall back rather
@@ -121,6 +123,8 @@ export async function getProducts(filters: ProductFilters): Promise<ProductsPage
     description: row.description,
     defaultPurchasePrice: row.default_purchase_price,
     sellingPrice: row.selling_price,
+    tiktokPrice: row.tiktok_price,
+    shopeePrice: row.shopee_price,
     minimumStock: row.minimum_stock,
     status: toStatus(row.status),
     originCountry: row.origin_country,

@@ -27,6 +27,13 @@ export type Product = {
   description: string | null
   defaultPurchasePrice: number
   sellingPrice: number
+  /**
+   * Listing price on TikTok Shop / Shopee. `null` means "not listed on this
+   * channel yet" — distinct from an actual `0` price, so never default a
+   * missing value to `0` when displaying or editing these (CLAUDE.md §8).
+   */
+  tiktokPrice: number | null
+  shopeePrice: number | null
   minimumStock: number
   status: ProductStatus
   originCountry: string | null
@@ -85,6 +92,8 @@ export type ProductSortField =
   | 'sku'
   | 'default_purchase_price'
   | 'selling_price'
+  | 'tiktok_price'
+  | 'shopee_price'
   | 'created_at'
 
 /** `'all'` skips the status filter entirely. */

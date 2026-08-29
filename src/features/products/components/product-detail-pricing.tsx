@@ -29,6 +29,22 @@ export function ProductDetailPricing({ product }: { product: Product }) {
             value={formatPricePerUnit(product.sellingPrice, product.unit)}
           />
           <DetailRow
+            label="Giá TikTok"
+            value={
+              product.tiktokPrice === null
+                ? null
+                : formatPricePerUnit(product.tiktokPrice, product.unit)
+            }
+          />
+          <DetailRow
+            label="Giá Shopee"
+            value={
+              product.shopeePrice === null
+                ? null
+                : formatPricePerUnit(product.shopeePrice, product.unit)
+            }
+          />
+          <DetailRow
             label="Chênh lệch giá niêm yết"
             value={
               <span className={priceGap < 0 ? 'text-destructive' : undefined}>

@@ -40,6 +40,21 @@ export const productFormSchema = z.object({
     .int('Giá bán phải là số nguyên')
     .min(0, 'Giá bán không được âm')
     .max(MAX_VND, 'Giá bán vượt quá giới hạn cho phép'),
+  // Optional per-channel listing prices — `null` means "not listed on this
+  // channel", so unlike defaultPurchasePrice/sellingPrice these are
+  // nullable rather than defaulting to 0 (CLAUDE.md §8).
+  tiktokPrice: z
+    .number()
+    .int('Giá TikTok phải là số nguyên')
+    .min(0, 'Giá TikTok không được âm')
+    .max(MAX_VND, 'Giá TikTok vượt quá giới hạn cho phép')
+    .nullable(),
+  shopeePrice: z
+    .number()
+    .int('Giá Shopee phải là số nguyên')
+    .min(0, 'Giá Shopee không được âm')
+    .max(MAX_VND, 'Giá Shopee vượt quá giới hạn cho phép')
+    .nullable(),
   minimumStock: z
     .number()
     .int('Tồn kho tối thiểu phải là số nguyên')

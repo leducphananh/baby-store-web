@@ -26,6 +26,8 @@ export function toProductRow(values: ProductFormValues): TablesInsert<'products'
     source_description: orNull(values.sourceDescription),
     default_purchase_price: values.defaultPurchasePrice,
     selling_price: values.sellingPrice,
+    tiktok_price: values.tiktokPrice,
+    shopee_price: values.shopeePrice,
     minimum_stock: values.minimumStock,
     status: values.status,
   }

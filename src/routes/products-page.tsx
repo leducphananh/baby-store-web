@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router'
 import { Package, Plus, Search } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { ColumnVisibilityMenu } from '@/components/common/column-visibility-menu'
 import { ConfirmDialog } from '@/components/common/confirm-dialog'
 import { DataTable } from '@/components/common/data-table'
 import { EmptyState } from '@/components/common/empty-state'
@@ -10,6 +11,7 @@ import { ErrorState } from '@/components/common/error-state'
 import { PageContent } from '@/components/common/page-content'
 import { PageHeader } from '@/components/common/page-header'
 import { PageLoading } from '@/components/common/page-loading'
+import { useColumnVisibility } from '@/hooks/use-column-visibility'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
 import { ROUTES } from '@/routes/route-paths'
 import { getProductColumns } from '@/features/products/components/product-columns'
@@ -31,12 +33,37 @@ const SORTABLE_FIELDS: ProductSortField[] = [
   'sku',
   'default_purchase_price',
   'selling_price',
+  'tiktok_price',
+  'shopee_price',
   'created_at',
 ]
 
 function isProductSortField(value: string): value is ProductSortField {
   return (SORTABLE_FIELDS as string[]).includes(value)
 }
+
+/**
+ * Column visibility config for the product list — stable ids matching
+ * `getProductColumns`' `DataTableColumn.id`s, never translated header text
+ * (see `useColumnVisibility`). Kept not-excessively-wide by default: less
+ * critical metadata (packaging unit, purchase cost) starts hidden, and the
+ * Actions column can never be hidden.
+ */
+const PRODUCT_COLUMN_VISIBILITY_STORAGE_KEY = 'baby-wale.products.column-visibility'
+const PRODUCT_COLUMNS_META = [
+  { id: 'image', label: 'Ảnh', defaultVisible: true },
+  { id: 'name', label: 'Tên sản phẩm', defaultVisible: true },
+  { id: 'sku', label: 'SKU / Mã vạch', defaultVisible: true },
+  { id: 'category', label: 'Danh mục', defaultVisible: true },
+  { id: 'unit', label: 'Đơn vị bán', defaultVisible: false },
+  { id: 'default_purchase_price', label: 'Giá nhập', defaultVisible: false },
+  { id: 'selling_price', label: 'Giá bán', defaultVisible: true },
+  { id: 'tiktok_price', label: 'Giá TikTok', defaultVisible: true },
+  { id: 'shopee_price', label: 'Giá Shopee', defaultVisible: true },
+  { id: 'stock', label: 'Tồn kho', defaultVisible: true },
+  { id: 'status', label: 'Trạng thái', defaultVisible: true },
+  { id: 'actions', label: 'Thao tác', defaultVisible: true, alwaysVisible: true },
+]
 
 function ProductsPage() {
   const navigate = useNavigate()
@@ -70,13 +97,21 @@ function ProductsPage() {
   const deleteProduct = useDeleteProduct()
   const setProductStatus = useSetProductStatus()
 
-  const [formDialog, setFormDialog] = useState<{ product?: Product } | null>(null)
+  const [formDialog, setFormDialog] = useState<{ product?: Product; copyFrom?: Product } | null>(
+    null,
+  )
   const [deleteTarget, setDeleteTarget] = useState<Product | null>(null)
 
-  const columns = getProductColumns({
+  const { visibility, setVisible } = useColumnVisibility(
+    PRODUCT_COLUMN_VISIBILITY_STORAGE_KEY,
+    PRODUCT_COLUMNS_META,
+  )
+
+  const allColumns = getProductColumns({
     thumbnails: productsQuery.data?.thumbnails ?? new Map<string, string>(),
     onView: (product) => navigate(ROUTES.productDetail(product.id)),
     onEdit: (product) => setFormDialog({ product }),
+    onCopy: (product) => setFormDialog({ copyFrom: product }),
     onToggleStatus: (product) =>
       setProductStatus.mutate({
         id: product.id,
@@ -84,6 +119,7 @@ function ProductsPage() {
       }),
     onDelete: (product) => setDeleteTarget(product),
   })
+  const columns = allColumns.filter((column) => visibility[column.id] ?? true)
 
   if (productsQuery.isLoading) {
     return <PageLoading />
@@ -114,23 +150,30 @@ function ProductsPage() {
   return (
     <PageContent
       filters={
-        <ProductFilters
-          search={search}
-          onSearchChange={(value) => {
-            setSearch(value)
-            resetToFirstPage()
-          }}
-          categoryId={categoryId}
-          onCategoryChange={(value) => {
-            setCategoryId(value)
-            resetToFirstPage()
-          }}
-          status={status}
-          onStatusChange={(value) => {
-            setStatus(value)
-            resetToFirstPage()
-          }}
-        />
+        <>
+          <ProductFilters
+            search={search}
+            onSearchChange={(value) => {
+              setSearch(value)
+              resetToFirstPage()
+            }}
+            categoryId={categoryId}
+            onCategoryChange={(value) => {
+              setCategoryId(value)
+              resetToFirstPage()
+            }}
+            status={status}
+            onStatusChange={(value) => {
+              setStatus(value)
+              resetToFirstPage()
+            }}
+          />
+          <ColumnVisibilityMenu
+            columns={PRODUCT_COLUMNS_META}
+            visibility={visibility}
+            onToggle={setVisible}
+          />
+        </>
       }
     >
       <PageHeader
@@ -189,6 +232,7 @@ function ProductsPage() {
         open={formDialog !== null}
         onOpenChange={(open) => !open && setFormDialog(null)}
         product={formDialog?.product}
+        copyFrom={formDialog?.copyFrom}
       />
 
       <ConfirmDialog

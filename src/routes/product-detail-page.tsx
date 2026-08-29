@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router'
-import { ArchiveRestore, ArchiveX, ArrowLeft, Pencil } from 'lucide-react'
+import { ArchiveRestore, ArchiveX, ArrowLeft, Copy, Pencil } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/common/empty-state'
@@ -35,6 +35,7 @@ function ProductDetailPage() {
   const productQuery = useProduct(id)
   const setProductStatus = useSetProductStatus()
   const [isEditOpen, setIsEditOpen] = useState(false)
+  const [isCopyOpen, setIsCopyOpen] = useState(false)
 
   if (productQuery.isLoading) {
     return <PageLoading />
@@ -94,6 +95,10 @@ function ProductDetailPage() {
               {isActive ? <ArchiveX /> : <ArchiveRestore />}
               {isActive ? 'Ngừng kinh doanh' : 'Kinh doanh lại'}
             </Button>
+            <Button variant="outline" onClick={() => setIsCopyOpen(true)}>
+              <Copy />
+              Nhân bản sản phẩm
+            </Button>
             <Button onClick={() => setIsEditOpen(true)}>
               <Pencil />
               Sửa
@@ -114,6 +119,7 @@ function ProductDetailPage() {
       <ProductImagesManager productId={product.id} />
 
       <ProductFormDialog open={isEditOpen} onOpenChange={setIsEditOpen} product={product} />
+      <ProductFormDialog open={isCopyOpen} onOpenChange={setIsCopyOpen} copyFrom={product} />
     </PageContent>
   )
 }

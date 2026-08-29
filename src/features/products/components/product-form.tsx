@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { useAllCategories } from '@/features/categories/hooks/use-all-categories'
-import { IntegerField } from '@/components/common/integer-field'
+import { IntegerField, NullableIntegerField } from '@/components/common/integer-field'
 import { productFormSchema, type ProductFormValues } from '@/features/products/schemas/product-schema'
 
 /** Sentinel for "no category" — Radix Select items can't have an empty value. */
@@ -218,6 +218,20 @@ export function ProductForm({
               name="sellingPrice"
               label="Giá bán"
               description="VND, số nguyên."
+              disabled={isSubmitting}
+            />
+            <NullableIntegerField
+              control={form.control}
+              name="tiktokPrice"
+              label="Giá TikTok"
+              description="Để trống nếu chưa lên sàn TikTok Shop."
+              disabled={isSubmitting}
+            />
+            <NullableIntegerField
+              control={form.control}
+              name="shopeePrice"
+              label="Giá Shopee"
+              description="Để trống nếu chưa lên sàn Shopee."
               disabled={isSubmitting}
             />
             <IntegerField

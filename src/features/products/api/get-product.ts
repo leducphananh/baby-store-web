@@ -12,6 +12,8 @@ type ProductDetailRow = {
   description: string | null
   default_purchase_price: number
   selling_price: number
+  tiktok_price: number | null
+  shopee_price: number | null
   minimum_stock: number
   status: string
   origin_country: string | null
@@ -38,8 +40,8 @@ export async function getProduct(id: string): Promise<Product | null> {
     .from('products')
     .select(
       'id, name, sku, barcode, category_id, brand, unit, description, default_purchase_price, ' +
-        'selling_price, minimum_stock, status, origin_country, manufacturer, distributor, ' +
-        'source_description, created_at, updated_at, categories(name)',
+        'selling_price, tiktok_price, shopee_price, minimum_stock, status, origin_country, ' +
+        'manufacturer, distributor, source_description, created_at, updated_at, categories(name)',
     )
     .eq('id', id)
     .maybeSingle<ProductDetailRow>()
@@ -68,6 +70,8 @@ export async function getProduct(id: string): Promise<Product | null> {
     description: data.description,
     defaultPurchasePrice: data.default_purchase_price,
     sellingPrice: data.selling_price,
+    tiktokPrice: data.tiktok_price,
+    shopeePrice: data.shopee_price,
     minimumStock: data.minimum_stock,
     status: toStatus(data.status),
     originCountry: data.origin_country,

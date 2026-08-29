@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { ArchiveRestore, ArchiveX, Eye, MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
+import { ArchiveRestore, ArchiveX, Copy, Eye, MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -22,6 +22,7 @@ import type { Product } from '@/features/products/types/product'
 type ProductColumnActions = {
   onView: (product: Product) => void
   onEdit: (product: Product) => void
+  onCopy: (product: Product) => void
   onToggleStatus: (product: Product) => void
   onDelete: (product: Product) => void
   /** Signed thumbnail URLs by product id, for the current page (see `getProducts`). */
@@ -38,6 +39,7 @@ type ProductColumnActions = {
 export function getProductColumns({
   onView,
   onEdit,
+  onCopy,
   onToggleStatus,
   onDelete,
   thumbnails,
@@ -118,6 +120,36 @@ export function getProductColumns({
       ),
     },
     {
+      id: 'tiktok_price',
+      header: 'Giá TikTok',
+      sortable: true,
+      align: 'right',
+      cell: (product) =>
+        product.tiktokPrice === null ? (
+          <span className="text-muted-foreground">—</span>
+        ) : (
+          <span className="whitespace-nowrap">
+            {formatCurrencyVND(product.tiktokPrice)}
+            <span className="text-xs text-muted-foreground">/{formatUnitLabel(product.unit)}</span>
+          </span>
+        ),
+    },
+    {
+      id: 'shopee_price',
+      header: 'Giá Shopee',
+      sortable: true,
+      align: 'right',
+      cell: (product) =>
+        product.shopeePrice === null ? (
+          <span className="text-muted-foreground">—</span>
+        ) : (
+          <span className="whitespace-nowrap">
+            {formatCurrencyVND(product.shopeePrice)}
+            <span className="text-xs text-muted-foreground">/{formatUnitLabel(product.unit)}</span>
+          </span>
+        ),
+    },
+    {
       id: 'stock',
       header: 'Tồn kho',
       align: 'right',
@@ -170,6 +202,10 @@ export function getProductColumns({
               <DropdownMenuItem onClick={() => onEdit(product)}>
                 <Pencil />
                 Sửa
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onCopy(product)}>
+                <Copy />
+                Nhân bản sản phẩm
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => onToggleStatus(product)}>
                 {isActive ? <ArchiveX /> : <ArchiveRestore />}
