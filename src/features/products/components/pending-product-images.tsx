@@ -157,7 +157,7 @@ export function PendingProductImages({
             title="Chưa chọn ảnh nào"
             description="Chọn ảnh để minh họa sản phẩm — ảnh sẽ được tải lên khi bạn lưu sản phẩm."
             action={
-              <Button size="sm" variant="outline" onClick={openFilePicker} disabled={disabled}>
+              <Button type="button" size="sm" variant="outline" onClick={openFilePicker} disabled={disabled}>
                 <ImagePlus />
                 Chọn ảnh
               </Button>

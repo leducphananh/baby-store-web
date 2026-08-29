@@ -149,7 +149,7 @@ export function ProductImagesManager({ productId }: { productId: string }) {
             title="Chưa có hình ảnh"
             description="Tải ảnh lên để minh họa sản phẩm trong danh sách và trang chi tiết."
             action={
-              <Button size="sm" variant="outline" onClick={openFilePicker} disabled={isUploading}>
+              <Button type="button" size="sm" variant="outline" onClick={openFilePicker} disabled={isUploading}>
                 <ImagePlus />
                 Tải ảnh lên
               </Button>
