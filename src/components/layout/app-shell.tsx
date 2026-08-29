@@ -9,17 +9,26 @@ import { Sidebar } from '@/components/layout/sidebar'
  * and the routed page content. See `responsive-design` for the breakpoint
  * rationale and `react-router` for where this sits in the route tree
  * (nested under `RequireAuth`).
+ *
+ * The shell itself is pinned to exactly the viewport height (`h-svh`, not
+ * `min-h-svh`) with `<main>` as the one scrolling region — on a long page
+ * the sidebar and header must stay put while only the content scrolls, not
+ * scroll away with the rest of the document (the previous `min-h-svh`
+ * let the whole page grow taller than the viewport, so everything —
+ * sidebar included — scrolled together).
  */
 function AppShell() {
   return (
-    <div className="flex min-h-svh bg-background">
+    <div className="flex h-svh overflow-hidden bg-background">
       <Sidebar />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <Header />
 
-        <main className="mx-auto w-full max-w-(--breakpoint-2xl) flex-1 px-4 py-6 sm:px-6">
-          <Outlet />
+        <main className="flex-1 overflow-y-auto">
+          <div className="mx-auto w-full max-w-(--breakpoint-2xl) px-4 py-6 sm:px-6">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>
