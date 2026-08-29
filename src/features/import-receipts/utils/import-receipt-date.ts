@@ -29,14 +29,9 @@ export function toDateInputValue(value: string | null | undefined): string {
   return Number.isNaN(date.getTime()) ? '' : ymdOf(date)
 }
 
-/** `"2026-08-28"` → `"2026-08-29"` — for an exclusive upper bound on a date range. */
-export function nextDay(ymd: string): string {
-  const date = new Date(`${ymd}T00:00:00Z`)
-  date.setUTCDate(date.getUTCDate() + 1)
-  return date.toISOString().slice(0, 10)
-}
-
-// `todayYmd` now lives in the shared date utils (used across import receipts,
-// purchase invoices and batch-expiry). Re-exported here so existing importers
-// of this module keep working, but there is one definition.
-export { todayYmd } from '@/utils/date'
+// `todayYmd` and `nextDay` (an exclusive upper bound for an inclusive date
+// range) now live in the shared date utils — used across import receipts,
+// purchase invoices, batch expiry and inventory transactions. Re-exported
+// here so existing importers of this module keep working, but there is one
+// definition of each.
+export { todayYmd, nextDayYmd as nextDay } from '@/utils/date'

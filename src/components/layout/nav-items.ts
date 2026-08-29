@@ -1,6 +1,7 @@
 import type { ComponentType } from 'react'
 import {
   AlertTriangle,
+  ArrowLeftRight,
   BarChart3,
   FolderTree,
   LayoutDashboard,
@@ -36,7 +37,8 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Sản phẩm', path: ROUTES.products, icon: Package },
   { label: 'Nhà cung cấp', path: ROUTES.suppliers, icon: Truck },
   { label: 'Nhập hàng', path: ROUTES.imports, icon: PackagePlus },
-  { label: 'Kho hàng', path: ROUTES.inventory, icon: Warehouse },
+  { label: 'Kho hàng', path: ROUTES.inventory, icon: Warehouse, end: true },
+  { label: 'Giao dịch kho', path: ROUTES.inventoryTransactions, icon: ArrowLeftRight },
   { label: 'Khách hàng', path: ROUTES.customers, icon: Users },
   { label: 'Đơn hàng', path: ROUTES.orders, icon: ShoppingCart },
   { label: 'Báo cáo', path: ROUTES.reports, icon: BarChart3 },

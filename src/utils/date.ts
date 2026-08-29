@@ -60,3 +60,14 @@ export function daysBetweenYmd(fromYmd: string, toYmd: string): number {
   const to = Date.parse(`${toYmd}T00:00:00Z`)
   return Math.round((to - from) / 86_400_000)
 }
+
+/**
+ * The day after `ymd` as `YYYY-MM-DD`, e.g. `nextDayYmd('2026-08-28')` →
+ * `'2026-08-29'`. Used as an exclusive upper bound so an inclusive
+ * `toDate` range still covers the whole of that last day.
+ */
+export function nextDayYmd(ymd: string): string {
+  const date = new Date(`${ymd}T00:00:00Z`)
+  date.setUTCDate(date.getUTCDate() + 1)
+  return date.toISOString().slice(0, 10)
+}

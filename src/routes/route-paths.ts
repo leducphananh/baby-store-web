@@ -19,6 +19,8 @@ export const ROUTES = {
   /** Import receipt detail — `importDetail(id)` builds `/imports/<id>`. */
   importDetail: (id: string) => `/imports/${id}`,
   inventory: '/inventory',
+  /** Inventory movement ledger. */
+  inventoryTransactions: '/inventory/transactions',
   customers: '/customers',
   orders: '/orders',
   reports: '/reports',

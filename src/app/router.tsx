@@ -6,6 +6,7 @@ import { ComingSoonPage } from '@/routes/coming-soon-page'
 import { HomePage } from '@/routes/home-page'
 import { ImportReceiptDetailPage } from '@/routes/import-receipt-detail-page'
 import { ImportsPage } from '@/routes/imports-page'
+import { InventoryTransactionsPage } from '@/routes/inventory-transactions-page'
 import { LoginPage } from '@/routes/login-page'
 import { NotFoundPage } from '@/routes/not-found-page'
 import { ProductDetailPage } from '@/routes/product-detail-page'
@@ -53,6 +54,7 @@ export const router = createBrowserRouter([
           { path: 'imports', element: <ImportsPage /> },
           { path: 'imports/:id', element: <ImportReceiptDetailPage /> },
           { path: 'inventory', element: <ComingSoonPage title="Kho hàng" /> },
+          { path: 'inventory/transactions', element: <InventoryTransactionsPage /> },
           { path: 'customers', element: <ComingSoonPage title="Khách hàng" /> },
           { path: 'orders', element: <ComingSoonPage title="Đơn hàng" /> },
           { path: 'reports', element: <ComingSoonPage title="Báo cáo" /> },
