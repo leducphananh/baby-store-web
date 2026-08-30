@@ -909,6 +909,15 @@ export type Database = {
         Args: { p_receipt_id: string }
         Returns: undefined
       }
+      record_order_payment: {
+        Args: {
+          p_amount: number
+          p_note: string
+          p_order_id: string
+          p_payment_method: string
+        }
+        Returns: string
+      }
       update_import_receipt_item: {
         Args: {
           p_expiration_date?: string
