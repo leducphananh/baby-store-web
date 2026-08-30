@@ -3,6 +3,7 @@ import { createBrowserRouter } from 'react-router'
 import { AppShell } from '@/components/layout/app-shell'
 import { CategoriesPage } from '@/routes/categories-page'
 import { ComingSoonPage } from '@/routes/coming-soon-page'
+import { CustomersPage } from '@/routes/customers-page'
 import { HelpCenterPage } from '@/routes/help-center-page'
 import { HomePage } from '@/routes/home-page'
 import { ImportReceiptDetailPage } from '@/routes/import-receipt-detail-page'
@@ -57,7 +58,7 @@ export const router = createBrowserRouter([
           { path: 'imports/:id', element: <ImportReceiptDetailPage /> },
           { path: 'inventory', element: <InventoryPage /> },
           { path: 'inventory/transactions', element: <InventoryTransactionsPage /> },
-          { path: 'customers', element: <ComingSoonPage title="Khách hàng" /> },
+          { path: 'customers', element: <CustomersPage /> },
           { path: 'orders', element: <ComingSoonPage title="Đơn hàng" /> },
           { path: 'reports', element: <ComingSoonPage title="Báo cáo" /> },
           { path: 'alerts', element: <ComingSoonPage title="Cảnh báo" /> },
