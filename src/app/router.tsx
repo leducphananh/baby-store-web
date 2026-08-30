@@ -14,6 +14,7 @@ import { InventoryPage } from '@/routes/inventory-page'
 import { InventoryTransactionsPage } from '@/routes/inventory-transactions-page'
 import { LoginPage } from '@/routes/login-page'
 import { NotFoundPage } from '@/routes/not-found-page'
+import { OrderDetailPage } from '@/routes/order-detail-page'
 import { OrdersPage } from '@/routes/orders-page'
 import { ProductDetailPage } from '@/routes/product-detail-page'
 import { ProductsPage } from '@/routes/products-page'
@@ -69,10 +70,7 @@ export const router = createBrowserRouter([
           // always wins the match regardless of order, but this keeps
           // intent obvious on read.
           { path: 'orders/new', element: <CreateOrderPage /> },
-          // Order detail isn't built yet (Orders is a later phase) — stubbed
-          // so purchase-history links from Customer Detail navigate
-          // somewhere real instead of a dead href (see `route-paths.ts`).
-          { path: 'orders/:id', element: <ComingSoonPage title="Đơn hàng" /> },
+          { path: 'orders/:id', element: <OrderDetailPage /> },
           { path: 'reports', element: <ComingSoonPage title="Báo cáo" /> },
           { path: 'alerts', element: <ComingSoonPage title="Cảnh báo" /> },
           { path: 'settings', element: <ComingSoonPage title="Cài đặt" /> },

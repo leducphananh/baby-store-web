@@ -13,13 +13,9 @@ import { ROUTES } from '@/routes/route-paths'
 import { formatDate } from '@/utils/date'
 import { formatQuantityWithUnit } from '@/utils/unit'
 import { BatchExpiryBadge } from '@/features/batches/components/batch-expiry-badge'
+import { productBatchesHref as batchesHref } from '@/features/batches/utils/batch-links'
 import { StockStatusBadge } from '@/features/inventory/components/stock-status-badge'
 import type { InventoryOverviewRow } from '@/features/inventory/types/inventory-overview'
-
-/** `/products/:id#batches` — the product detail page scrolls to its batch table for this hash (see `product-detail-page.tsx`). */
-function batchesHref(productId: string): string {
-  return `${ROUTES.productDetail(productId)}#batches`
-}
 
 /**
  * Column definitions live in the feature, not the shared `DataTable` (see

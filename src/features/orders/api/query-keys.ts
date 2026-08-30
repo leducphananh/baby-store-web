@@ -9,4 +9,8 @@ export const orderKeys = {
   byCustomerList: (filters: CustomerOrdersFilters) =>
     [...orderKeys.byCustomer(filters.customerId), 'list', filters] as const,
   customerSummary: (customerId: string) => [...orderKeys.all, 'customer-summary', customerId] as const,
+  details: () => [...orderKeys.all, 'detail'] as const,
+  detail: (id: string) => [...orderKeys.details(), id] as const,
+  lines: (id: string) => [...orderKeys.detail(id), 'lines'] as const,
+  payments: (id: string) => [...orderKeys.detail(id), 'payments'] as const,
 }
