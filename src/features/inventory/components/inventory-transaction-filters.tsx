@@ -55,7 +55,7 @@ export function InventoryTransactionFilters({
 
   return (
     <>
-      <div className="w-full max-w-xs">
+      <div className="w-full max-w-xs" data-tour="inventory-tx-filters">
         {selectedProduct ? (
           <div className="flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm">
             <span className="min-w-0 flex-1 truncate">

@@ -45,7 +45,7 @@ export function InventorySummaryCards({
   onSelect: (kind: AlertKind) => void
 }) {
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4" data-tour="inventory-summary-cards">
       {CARDS.map(({ kind, label, Icon, tone }) => (
         <button
           key={kind}

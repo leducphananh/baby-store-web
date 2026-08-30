@@ -44,6 +44,7 @@ export function ProductThumbnail({
         className={cn(frameClassName, 'transition-opacity hover:opacity-80')}
         aria-label={`Xem ${alt}`}
         title="Xem ảnh"
+        data-tour="product-thumbnail"
       >
         <img src={url} alt={alt} className="size-full object-cover" loading="lazy" />
       </button>

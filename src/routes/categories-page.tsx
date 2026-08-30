@@ -92,7 +92,7 @@ function CategoriesPage() {
   return (
     <PageContent
       filters={
-        <div className="relative w-full max-w-xs">
+        <div className="relative w-full max-w-xs" data-tour="categories-search">
           <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={search}
@@ -118,7 +118,7 @@ function CategoriesPage() {
         title="Danh mục"
         description="Quản lý danh mục sản phẩm của cửa hàng."
         actions={
-          <Button onClick={() => setFormDialog({})}>
+          <Button onClick={() => setFormDialog({})} data-tour="categories-add-button">
             <Plus />
             Thêm danh mục
           </Button>
@@ -151,26 +151,28 @@ function CategoriesPage() {
           />
         )
       ) : (
-        <DataTable
-          columns={columns}
-          data={categories}
-          getRowId={(category) => category.id}
-          sorting={sorting}
-          onSortingChange={(next) => {
-            if (isCategorySortField(next.id)) {
-              setSorting({ id: next.id, desc: next.desc })
-              setPage(1)
-            }
-          }}
-          pagination={{
-            pageIndex: page,
-            pageSize,
-            total,
-            onPageChange: setPage,
-            pageSizeOptions: PAGE_SIZE_OPTIONS,
-            onPageSizeChange: handlePageSizeChange,
-          }}
-        />
+        <div data-tour="categories-table">
+          <DataTable
+            columns={columns}
+            data={categories}
+            getRowId={(category) => category.id}
+            sorting={sorting}
+            onSortingChange={(next) => {
+              if (isCategorySortField(next.id)) {
+                setSorting({ id: next.id, desc: next.desc })
+                setPage(1)
+              }
+            }}
+            pagination={{
+              pageIndex: page,
+              pageSize,
+              total,
+              onPageChange: setPage,
+              pageSizeOptions: PAGE_SIZE_OPTIONS,
+              onPageSizeChange: handlePageSizeChange,
+            }}
+          />
+        </div>
       )}
 
       <CategoryFormDialog

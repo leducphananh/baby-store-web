@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
+import { CircleHelp } from 'lucide-react'
 import { toast } from 'sonner'
 import type { UseFormReturn } from 'react-hook-form'
 
@@ -26,6 +27,8 @@ import { useUpdateProduct } from '@/features/products/hooks/use-update-product'
 import type { ProductFormValues } from '@/features/products/schemas/product-schema'
 import type { Product } from '@/features/products/types/product'
 import { getProductUniqueField } from '@/features/products/utils/get-product-error-message'
+import { TOUR_REGISTRY } from '@/features/help/config/tours'
+import { useTourStore } from '@/features/help/hooks/use-tour-store'
 
 const FORM_ID = 'product-form'
 
@@ -107,6 +110,7 @@ export function ProductFormDialog({
   const queryClient = useQueryClient()
   const createProduct = useCreateProduct()
   const updateProduct = useUpdateProduct()
+  const startTour = useTourStore((state) => state.start)
 
   const [pendingImages, setPendingImages] = useState<PendingProductImage[]>([])
   const [isUploadingImages, setIsUploadingImages] = useState(false)
@@ -254,11 +258,47 @@ export function ProductFormDialog({
       <DialogContent
         className="max-h-[90vh] gap-0 overflow-hidden p-0 sm:max-w-2xl"
         onCloseAutoFocus={(event) => event.preventDefault()}
+        onInteractOutside={(event) => {
+          // The `product-form` tour's card is portaled to `document.body`
+          // (see `TourOverlay`), outside this dialog's own DOM subtree, so
+          // Radix would otherwise treat every click on "Tiếp theo"/"Quay
+          // lại"/"Bỏ qua" as an outside interaction and dismiss the dialog
+          // mid-tour. It's still the same screen — never a real dismissal.
+          if ((event.target as HTMLElement | null)?.closest('[data-tour-overlay]')) {
+            event.preventDefault()
+          }
+        }}
+        onEscapeKeyDown={(event) => {
+          // While the tour runs, Escape should close only the tour overlay
+          // (see `TourOverlay`'s own keydown handler) — Radix isn't aware of
+          // that separate, non-layered overlay sitting on top, so without
+          // this it would also dismiss the dialog itself on the same keypress.
+          if (useTourStore.getState().isOpen) {
+            event.preventDefault()
+          }
+        }}
       >
         <DialogHeader className="border-b px-6 py-4">
-          <DialogTitle>
-            {isEditMode ? 'Sửa sản phẩm' : isCopyMode ? 'Tạo sản phẩm từ bản sao' : 'Thêm sản phẩm'}
-          </DialogTitle>
+          <div className="flex items-center justify-between gap-2">
+            <DialogTitle>
+              {isEditMode ? 'Sửa sản phẩm' : isCopyMode ? 'Tạo sản phẩm từ bản sao' : 'Thêm sản phẩm'}
+            </DialogTitle>
+            {/* Launched directly (not via the floating Help button): Radix
+                marks everything outside a Dialog's own portal `aria-hidden`
+                while it's open, so the floating button can't actually be
+                reached from here — see `resolve-active-tour.ts`. */}
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="mr-6 shrink-0"
+              aria-label="Hướng dẫn biểu mẫu sản phẩm"
+              title="Hướng dẫn"
+              onClick={() => startTour(TOUR_REGISTRY['product-form'])}
+            >
+              <CircleHelp className="size-4" />
+            </Button>
+          </div>
           <DialogDescription>
             {isEditMode
               ? `Cập nhật thông tin sản phẩm "${product?.name}".`
@@ -288,7 +328,12 @@ export function ProductFormDialog({
           >
             Hủy
           </Button>
-          <Button type="submit" form={FORM_ID} disabled={isSubmitting}>
+          <Button
+            type="submit"
+            form={FORM_ID}
+            disabled={isSubmitting}
+            data-tour="product-form-submit"
+          >
             {submitLabel}
           </Button>
         </DialogFooter>

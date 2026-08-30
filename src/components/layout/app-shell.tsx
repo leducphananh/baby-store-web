@@ -2,6 +2,9 @@ import { Outlet } from 'react-router'
 
 import { Header } from '@/components/layout/header'
 import { Sidebar } from '@/components/layout/sidebar'
+import { HelpButton } from '@/features/help/components/help-button'
+import { TourOverlay } from '@/features/help/components/tour-overlay'
+import { WelcomeInvitation } from '@/features/help/components/welcome-invitation'
 
 /**
  * Root admin shell for every authenticated page: a persistent sidebar on
@@ -31,6 +34,10 @@ function AppShell() {
           </div>
         </main>
       </div>
+
+      <HelpButton />
+      <TourOverlay />
+      <WelcomeInvitation />
     </div>
   )
 }

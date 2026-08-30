@@ -156,7 +156,7 @@ function ImportsPage() {
         title="Nhập hàng"
         description="Quản lý phiếu nhập hàng từ nhà cung cấp."
         actions={
-          <Button onClick={() => setFormDialog({})}>
+          <Button onClick={() => setFormDialog({})} data-tour="imports-add-button">
             <Plus />
             Tạo phiếu nhập
           </Button>
@@ -189,26 +189,28 @@ function ImportsPage() {
           />
         )
       ) : (
-        <DataTable
-          columns={columns}
-          data={receipts}
-          getRowId={(receipt) => receipt.id}
-          sorting={sorting}
-          onSortingChange={(next) => {
-            if (isSortField(next.id)) {
-              setSorting({ id: next.id, desc: next.desc })
-              resetToFirstPage()
-            }
-          }}
-          pagination={{
-            pageIndex: page,
-            pageSize,
-            total,
-            onPageChange: setPage,
-            pageSizeOptions: PAGE_SIZE_OPTIONS,
-            onPageSizeChange: handlePageSizeChange,
-          }}
-        />
+        <div data-tour="imports-table">
+          <DataTable
+            columns={columns}
+            data={receipts}
+            getRowId={(receipt) => receipt.id}
+            sorting={sorting}
+            onSortingChange={(next) => {
+              if (isSortField(next.id)) {
+                setSorting({ id: next.id, desc: next.desc })
+                resetToFirstPage()
+              }
+            }}
+            pagination={{
+              pageIndex: page,
+              pageSize,
+              total,
+              onPageChange: setPage,
+              pageSizeOptions: PAGE_SIZE_OPTIONS,
+              onPageSizeChange: handlePageSizeChange,
+            }}
+          />
+        </div>
       )}
 
       <ImportReceiptFormDialog

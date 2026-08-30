@@ -137,33 +137,39 @@ export function ImportReceiptLinesCard({ receipt }: { receipt: ImportReceipt }) 
         <CardTitle>Chi tiết hàng hóa</CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
-        {isEditable && <ImportReceiptLineAddPanel receiptId={receipt.id} />}
-
-        {linesQuery.isError ? (
-          <ErrorState
-            message="Không thể tải chi tiết hàng hóa."
-            onRetry={() => void linesQuery.refetch()}
-          />
-        ) : linesQuery.isLoading ? (
-          <DataTable columns={columns} data={[]} getRowId={(line) => line.id} isLoading />
-        ) : lines.length === 0 ? (
-          <EmptyState
-            title="Chưa có dòng hàng nào"
-            description={
-              isEditable
-                ? 'Tìm và thêm sản phẩm ở trên để bắt đầu.'
-                : 'Phiếu nhập này không có dòng hàng nào được ghi nhận.'
-            }
-          />
-        ) : (
-          <>
-            <DataTable columns={columns} data={lines} getRowId={(line) => line.id} />
-            <div className="flex justify-end gap-6 border-t pt-3 text-sm">
-              <span className="text-muted-foreground">Giá trị theo dòng hàng</span>
-              <span className="font-semibold text-foreground">{formatCurrencyVND(linesValue)}</span>
-            </div>
-          </>
+        {isEditable && (
+          <div data-tour="import-lines-add">
+            <ImportReceiptLineAddPanel receiptId={receipt.id} />
+          </div>
         )}
+
+        <div data-tour="import-lines-table">
+          {linesQuery.isError ? (
+            <ErrorState
+              message="Không thể tải chi tiết hàng hóa."
+              onRetry={() => void linesQuery.refetch()}
+            />
+          ) : linesQuery.isLoading ? (
+            <DataTable columns={columns} data={[]} getRowId={(line) => line.id} isLoading />
+          ) : lines.length === 0 ? (
+            <EmptyState
+              title="Chưa có dòng hàng nào"
+              description={
+                isEditable
+                  ? 'Tìm và thêm sản phẩm ở trên để bắt đầu.'
+                  : 'Phiếu nhập này không có dòng hàng nào được ghi nhận.'
+              }
+            />
+          ) : (
+            <>
+              <DataTable columns={columns} data={lines} getRowId={(line) => line.id} />
+              <div className="flex justify-end gap-6 border-t pt-3 text-sm">
+                <span className="text-muted-foreground">Giá trị theo dòng hàng</span>
+                <span className="font-semibold text-foreground">{formatCurrencyVND(linesValue)}</span>
+              </div>
+            </>
+          )}
+        </div>
       </CardContent>
 
       <ImportReceiptLineEditDialog

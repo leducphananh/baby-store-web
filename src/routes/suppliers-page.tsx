@@ -99,7 +99,7 @@ function SuppliersPage() {
   return (
     <PageContent
       filters={
-        <div className="relative w-full max-w-xs">
+        <div className="relative w-full max-w-xs" data-tour="suppliers-search">
           <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={search}
@@ -125,7 +125,7 @@ function SuppliersPage() {
         title="Nhà cung cấp"
         description="Quản lý thông tin nhà cung cấp hàng hóa cho cửa hàng."
         actions={
-          <Button onClick={() => setFormDialog({})}>
+          <Button onClick={() => setFormDialog({})} data-tour="suppliers-add-button">
             <Plus />
             Thêm nhà cung cấp
           </Button>
@@ -158,26 +158,28 @@ function SuppliersPage() {
           />
         )
       ) : (
-        <DataTable
-          columns={columns}
-          data={suppliers}
-          getRowId={(supplier) => supplier.id}
-          sorting={sorting}
-          onSortingChange={(next) => {
-            if (isSupplierSortField(next.id)) {
-              setSorting({ id: next.id, desc: next.desc })
-              setPage(1)
-            }
-          }}
-          pagination={{
-            pageIndex: page,
-            pageSize,
-            total,
-            onPageChange: setPage,
-            pageSizeOptions: PAGE_SIZE_OPTIONS,
-            onPageSizeChange: handlePageSizeChange,
-          }}
-        />
+        <div data-tour="suppliers-table">
+          <DataTable
+            columns={columns}
+            data={suppliers}
+            getRowId={(supplier) => supplier.id}
+            sorting={sorting}
+            onSortingChange={(next) => {
+              if (isSupplierSortField(next.id)) {
+                setSorting({ id: next.id, desc: next.desc })
+                setPage(1)
+              }
+            }}
+            pagination={{
+              pageIndex: page,
+              pageSize,
+              total,
+              onPageChange: setPage,
+              pageSizeOptions: PAGE_SIZE_OPTIONS,
+              onPageSizeChange: handlePageSizeChange,
+            }}
+          />
+        </div>
       )}
 
       <SupplierFormDialog

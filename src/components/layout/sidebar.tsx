@@ -1,9 +1,11 @@
-import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { BookOpen, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { NavLink } from 'react-router';
 
 import { NavList } from '@/components/layout/nav-list';
 import { Button } from '@/components/ui/button';
 import { useUiStore } from '@/hooks/use-ui-store';
 import { cn } from '@/lib/utils';
+import { ROUTES } from '@/routes/route-paths';
 
 /**
  * Persistent desktop sidebar (`lg:` and up — see `responsive-design`). Dark
@@ -43,6 +45,22 @@ function Sidebar() {
       </div>
 
       <div className="border-t border-sidebar-border p-3">
+        <NavLink
+          to={ROUTES.help}
+          title={isCollapsed ? 'Hướng dẫn sử dụng' : undefined}
+          className={({ isActive }) =>
+            cn(
+              'mb-1 flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold text-sidebar-muted-foreground transition-colors',
+              'hover:bg-white/10 hover:text-sidebar-foreground',
+              isActive && 'bg-sidebar-accent text-sidebar-accent-foreground hover:bg-sidebar-accent',
+              isCollapsed && 'justify-center px-2',
+            )
+          }
+        >
+          <BookOpen className="size-4 shrink-0" />
+          {!isCollapsed && <span className="truncate">Hướng dẫn sử dụng</span>}
+        </NavLink>
+
         <Button
           variant="ghost"
           size="icon"

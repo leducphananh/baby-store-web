@@ -27,9 +27,18 @@ import { productFormSchema, type ProductFormValues } from '@/features/products/s
 /** Sentinel for "no category" — Radix Select items can't have an empty value. */
 const NO_CATEGORY = '__none__'
 
-function Section({ title, children }: { title: string; children: ReactNode }) {
+function Section({
+  title,
+  tourId,
+  children,
+}: {
+  title: string
+  /** Optional guided-tour spotlight target for this whole section — see `features/help`. */
+  tourId?: string
+  children: ReactNode
+}) {
   return (
-    <section className="space-y-4">
+    <section className="space-y-4" data-tour={tourId}>
       <h3 className="text-sm font-semibold text-foreground">{title}</h3>
       {children}
     </section>
@@ -79,7 +88,7 @@ export function ProductForm({
         className="space-y-6"
         noValidate
       >
-        <Section title="Thông tin cơ bản">
+        <Section title="Thông tin cơ bản" tourId="product-form-basic">
           <FormField
             control={form.control}
             name="name"
@@ -214,7 +223,7 @@ export function ProductForm({
           />
         </Section>
 
-        <Section title="Giá & tồn kho">
+        <Section title="Giá & tồn kho" tourId="product-form-pricing">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <IntegerField
               control={form.control}
@@ -279,7 +288,7 @@ export function ProductForm({
           />
         </Section>
 
-        <Section title="Nguồn gốc & xuất xứ">
+        <Section title="Nguồn gốc & xuất xứ" tourId="product-form-origin">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <FormField
               control={form.control}
@@ -342,7 +351,7 @@ export function ProductForm({
         {/* Not wrapped in a `Section` — `ProductImagesManager`/`PendingProductImages`
             are each already a self-contained `Card` with their own title, matching
             how `ProductDetailPage` stacks its section cards (see those components). */}
-        {imagesSection}
+        <div data-tour="product-form-images">{imagesSection}</div>
       </form>
     </Form>
   )

@@ -47,7 +47,7 @@ export function ImportReceiptFilters({
 
   return (
     <>
-      <div className="relative w-full max-w-xs">
+      <div className="relative w-full max-w-xs" data-tour="imports-search">
         <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={search}
@@ -73,7 +73,7 @@ export function ImportReceiptFilters({
         onValueChange={(value) => onSupplierChange(value === ALL ? null : value)}
         disabled={suppliersQuery.isLoading}
       >
-        <SelectTrigger className="w-56" aria-label="Lọc theo nhà cung cấp">
+        <SelectTrigger className="w-56" aria-label="Lọc theo nhà cung cấp" data-tour="imports-filters">
           <SelectValue placeholder="Tất cả nhà cung cấp" />
         </SelectTrigger>
         <SelectContent>

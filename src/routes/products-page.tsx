@@ -193,7 +193,7 @@ function ProductsPage() {
         title="Sản phẩm"
         description="Quản lý danh mục sản phẩm, giá và định mức tồn kho của cửa hàng."
         actions={
-          <Button onClick={() => setFormDialog({})}>
+          <Button onClick={() => setFormDialog({})} data-tour="products-add-button">
             <Plus />
             Thêm sản phẩm
           </Button>
@@ -226,26 +226,28 @@ function ProductsPage() {
           />
         )
       ) : (
-        <DataTable
-          columns={columns}
-          data={products}
-          getRowId={(product) => product.id}
-          sorting={sorting}
-          onSortingChange={(next) => {
-            if (isProductSortField(next.id)) {
-              setSorting({ id: next.id, desc: next.desc })
-              resetToFirstPage()
-            }
-          }}
-          pagination={{
-            pageIndex: page,
-            pageSize,
-            total,
-            onPageChange: setPage,
-            pageSizeOptions: PAGE_SIZE_OPTIONS,
-            onPageSizeChange: handlePageSizeChange,
-          }}
-        />
+        <div data-tour="products-table">
+          <DataTable
+            columns={columns}
+            data={products}
+            getRowId={(product) => product.id}
+            sorting={sorting}
+            onSortingChange={(next) => {
+              if (isProductSortField(next.id)) {
+                setSorting({ id: next.id, desc: next.desc })
+                resetToFirstPage()
+              }
+            }}
+            pagination={{
+              pageIndex: page,
+              pageSize,
+              total,
+              onPageChange: setPage,
+              pageSizeOptions: PAGE_SIZE_OPTIONS,
+              onPageSizeChange: handlePageSizeChange,
+            }}
+          />
+        </div>
       )}
 
       <ProductFormDialog

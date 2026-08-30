@@ -150,19 +150,21 @@ function InventoryTransactionsPage() {
           />
         )
       ) : (
-        <DataTable
-          columns={inventoryTransactionColumns}
-          data={transactions}
-          getRowId={(transaction) => transaction.id}
-          pagination={{
-            pageIndex: page,
-            pageSize,
-            total,
-            onPageChange: setPage,
-            pageSizeOptions: PAGE_SIZE_OPTIONS,
-            onPageSizeChange: handlePageSizeChange,
-          }}
-        />
+        <div data-tour="inventory-tx-table">
+          <DataTable
+            columns={inventoryTransactionColumns}
+            data={transactions}
+            getRowId={(transaction) => transaction.id}
+            pagination={{
+              pageIndex: page,
+              pageSize,
+              total,
+              onPageChange: setPage,
+              pageSizeOptions: PAGE_SIZE_OPTIONS,
+              onPageSizeChange: handlePageSizeChange,
+            }}
+          />
+        </div>
       )}
     </PageContent>
   )

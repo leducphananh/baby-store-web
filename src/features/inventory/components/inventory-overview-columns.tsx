@@ -99,7 +99,12 @@ export const inventoryOverviewColumns: DataTableColumn<InventoryOverviewRow>[] =
     cell: (row) => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" aria-label={`Thao tác với sản phẩm ${row.name}`}>
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label={`Thao tác với sản phẩm ${row.name}`}
+            data-tour="inventory-row-actions"
+          >
             <MoreHorizontal className="size-4" />
           </Button>
         </DropdownMenuTrigger>

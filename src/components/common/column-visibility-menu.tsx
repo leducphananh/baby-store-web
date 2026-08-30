@@ -38,7 +38,7 @@ export function ColumnVisibilityMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm">
+        <Button variant="outline" size="sm" data-tour="column-visibility-button">
           <Columns3 />
           Cột hiển thị
         </Button>

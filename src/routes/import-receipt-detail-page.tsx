@@ -112,10 +112,16 @@ function ImportReceiptDetailPage() {
         {receipt.status === 'confirmed' && <span>· Đã ghi vào kho</span>}
       </div>
 
-      <ImportReceiptDetailHeader receipt={receipt} />
+      <div data-tour="import-detail-header">
+        <ImportReceiptDetailHeader receipt={receipt} />
+      </div>
       <ImportReceiptLinesCard receipt={receipt} />
-      <ReceiptBatchesCard receipt={receipt} />
-      <PurchaseInvoicesCard receipt={receipt} />
+      <div data-tour="import-batches">
+        <ReceiptBatchesCard receipt={receipt} />
+      </div>
+      <div data-tour="import-invoices">
+        <PurchaseInvoicesCard receipt={receipt} />
+      </div>
 
       <ImportReceiptFormDialog
         open={isEditOpen}

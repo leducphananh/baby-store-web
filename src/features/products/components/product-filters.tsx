@@ -38,7 +38,7 @@ export function ProductFilters({
 
   return (
     <>
-      <div className="relative w-full max-w-xs">
+      <div className="relative w-full max-w-xs" data-tour="products-search">
         <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={search}
@@ -64,7 +64,7 @@ export function ProductFilters({
         onValueChange={(value) => onCategoryChange(value === ALL ? null : value)}
         disabled={categoriesQuery.isLoading}
       >
-        <SelectTrigger className="w-52" aria-label="Lọc theo danh mục">
+        <SelectTrigger className="w-52" aria-label="Lọc theo danh mục" data-tour="products-filters">
           <SelectValue placeholder="Tất cả danh mục" />
         </SelectTrigger>
         <SelectContent>

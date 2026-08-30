@@ -184,7 +184,12 @@ function DataTablePaginationControls({ pagination }: { pagination: DataTablePagi
               value={String(pageSize)}
               onValueChange={(value) => onPageSizeChange?.(Number(value))}
             >
-              <SelectTrigger size="sm" className="w-20" aria-label="Số dòng mỗi trang">
+              <SelectTrigger
+                size="sm"
+                className="w-20"
+                aria-label="Số dòng mỗi trang"
+                data-tour="page-size-selector"
+              >
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

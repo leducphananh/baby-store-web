@@ -3,6 +3,7 @@ import { createBrowserRouter } from 'react-router'
 import { AppShell } from '@/components/layout/app-shell'
 import { CategoriesPage } from '@/routes/categories-page'
 import { ComingSoonPage } from '@/routes/coming-soon-page'
+import { HelpCenterPage } from '@/routes/help-center-page'
 import { HomePage } from '@/routes/home-page'
 import { ImportReceiptDetailPage } from '@/routes/import-receipt-detail-page'
 import { ImportsPage } from '@/routes/imports-page'
@@ -61,6 +62,7 @@ export const router = createBrowserRouter([
           { path: 'reports', element: <ComingSoonPage title="Báo cáo" /> },
           { path: 'alerts', element: <ComingSoonPage title="Cảnh báo" /> },
           { path: 'settings', element: <ComingSoonPage title="Cài đặt" /> },
+          { path: 'help', element: <HelpCenterPage /> },
           { path: '*', element: <NotFoundPage /> },
         ],
       },

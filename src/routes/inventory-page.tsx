@@ -151,7 +151,7 @@ function InventoryPage() {
         onSelect={handleAlertSelect}
       />
 
-      <div ref={tableRef} className="scroll-mt-20">
+      <div ref={tableRef} className="scroll-mt-20" data-tour="inventory-table">
         {overviewQuery.isError ? (
           <ErrorState
             message="Không thể tải dữ liệu tồn kho. Vui lòng thử lại."

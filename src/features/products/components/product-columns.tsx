@@ -189,6 +189,7 @@ export function getProductColumns({
                 variant="ghost"
                 size="icon"
                 aria-label={`Thao tác với sản phẩm ${product.name}`}
+                data-tour="product-row-actions"
               >
                 <MoreHorizontal className="size-4" />
               </Button>

@@ -26,4 +26,5 @@ export const ROUTES = {
   reports: '/reports',
   alerts: '/alerts',
   settings: '/settings',
+  help: '/help',
 } as const

@@ -93,7 +93,7 @@ function ProductDetailPage() {
         title={product.name}
         description={`SKU: ${product.sku}`}
         actions={
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2" data-tour="product-detail-header">
             <Button
               variant="outline"
               disabled={setProductStatus.isPending}
@@ -126,11 +126,15 @@ function ProductDetailPage() {
       </div>
 
       <ProductDetailInfo product={product} />
-      <ProductDetailPricing product={product} />
-      <div id="batches" className="scroll-mt-20">
+      <div data-tour="product-detail-pricing">
+        <ProductDetailPricing product={product} />
+      </div>
+      <div id="batches" className="scroll-mt-20" data-tour="product-detail-inventory">
         <ProductDetailInventory product={product} />
       </div>
-      <ProductImagesManager productId={product.id} />
+      <div data-tour="product-detail-images">
+        <ProductImagesManager productId={product.id} />
+      </div>
 
       <ProductFormDialog open={isEditOpen} onOpenChange={setIsEditOpen} product={product} />
       <ProductFormDialog open={isCopyOpen} onOpenChange={setIsCopyOpen} copyFrom={product} />
