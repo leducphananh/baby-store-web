@@ -19,6 +19,13 @@ import { WelcomeInvitation } from '@/features/help/components/welcome-invitation
  * scroll away with the rest of the document (the previous `min-h-svh`
  * let the whole page grow taller than the viewport, so everything —
  * sidebar included — scrolled together).
+ *
+ * `<main>` also needs `min-h-0`: a flex item's default `min-height: auto`
+ * refuses to shrink below its content's intrinsic height, so on a tall page
+ * (e.g. Product Detail) `<main>`'s own `overflow-y-auto` wasn't enough —
+ * without `min-h-0` the flex layout still let it push the document taller
+ * than the viewport, producing a second, outer page-level scrollbar
+ * alongside `<main>`'s own one.
  */
 function AppShell() {
   return (
@@ -28,7 +35,7 @@ function AppShell() {
       <div className="flex min-w-0 flex-1 flex-col">
         <Header />
 
-        <main className="flex-1 overflow-y-auto">
+        <main className="min-h-0 flex-1 overflow-y-auto">
           <div className="mx-auto w-full max-w-(--breakpoint-2xl) px-4 py-6 sm:px-6">
             <Outlet />
           </div>

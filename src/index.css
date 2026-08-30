@@ -138,6 +138,21 @@
     @apply border-border outline-ring/50;
   }
 
+  /* `AppShell` (`app-shell.tsx`) pins itself to `h-svh` with `<main>` as the
+     one scrolling region, so the sidebar/header stay fixed while only page
+     content scrolls. That alone isn't enough on a tall page (e.g. Product
+     Detail with a full image gallery): Chromium still treats `<html>` as
+     independently scrollable in that case — a nested `overflow-hidden`
+     wrapper doesn't stop it — producing a second, real page-level scrollbar
+     that scrolls the sidebar away too. Locking the root elements shut here
+     removes that possibility app-wide, regardless of any one page's content
+     height. */
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
+
   body {
     @apply bg-background text-foreground;
     font: 15px/1.5 var(--font-sans);
