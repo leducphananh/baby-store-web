@@ -3,6 +3,7 @@ import { createBrowserRouter } from 'react-router'
 import { AppShell } from '@/components/layout/app-shell'
 import { CategoriesPage } from '@/routes/categories-page'
 import { ComingSoonPage } from '@/routes/coming-soon-page'
+import { CreateOrderPage } from '@/routes/create-order-page'
 import { CustomerDetailPage } from '@/routes/customer-detail-page'
 import { CustomersPage } from '@/routes/customers-page'
 import { HelpCenterPage } from '@/routes/help-center-page'
@@ -63,6 +64,11 @@ export const router = createBrowserRouter([
           { path: 'customers', element: <CustomersPage /> },
           { path: 'customers/:id', element: <CustomerDetailPage /> },
           { path: 'orders', element: <OrdersPage /> },
+          // Static segment declared before the `:id` dynamic route below,
+          // same convention as `products`/`products/:id` — a literal path
+          // always wins the match regardless of order, but this keeps
+          // intent obvious on read.
+          { path: 'orders/new', element: <CreateOrderPage /> },
           // Order detail isn't built yet (Orders is a later phase) — stubbed
           // so purchase-history links from Customer Detail navigate
           // somewhere real instead of a dead href (see `route-paths.ts`).

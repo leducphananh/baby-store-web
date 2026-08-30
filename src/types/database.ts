@@ -897,6 +897,10 @@ export type Database = {
         Args: { p_receipt_id: string }
         Returns: undefined
       }
+      create_order: {
+        Args: { p_customer_id: string; p_items: Json; p_note: string }
+        Returns: Json
+      }
       delete_import_receipt_item: {
         Args: { p_item_id: string }
         Returns: undefined

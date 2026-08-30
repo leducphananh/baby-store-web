@@ -23,10 +23,17 @@ function CustomerFormDialog({
   open,
   onOpenChange,
   customer,
+  onCreated,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
   customer?: Customer
+  /**
+   * Called with the newly created customer right after a successful create
+   * (never on edit) — lets a caller like `CustomerComboBox`'s "quick add"
+   * flow select the new customer immediately, without a second lookup.
+   */
+  onCreated?: (customer: Customer) => void
 }) {
   const isEditMode = Boolean(customer)
   const createCustomer = useCreateCustomer()
@@ -64,7 +71,13 @@ function CustomerFormDialog({
       return
     }
 
-    createCustomer.mutate(values, { onSuccess: () => onOpenChange(false), onError })
+    createCustomer.mutate(values, {
+      onSuccess: (created) => {
+        onOpenChange(false)
+        onCreated?.(created)
+      },
+      onError,
+    })
   }
 
   return (

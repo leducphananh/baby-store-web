@@ -25,6 +25,8 @@ export const ROUTES = {
   /** Customer detail page — `customerDetail(id)` builds `/customers/<id>`. */
   customerDetail: (id: string) => `/customers/${id}`,
   orders: '/orders',
+  /** Create Order — the point-of-sale screen (Phase 6.2). */
+  newOrder: '/orders/new',
   /** Order detail — `orderDetail(id)` builds `/orders/<id>`. Not built yet
    *  (still a `ComingSoonPage` in the router); the path exists so purchase
    *  history can link to it now without a dead/placeholder href. */

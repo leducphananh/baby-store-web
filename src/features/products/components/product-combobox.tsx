@@ -31,16 +31,22 @@ function ProductComboBox({
   onSelect,
   disabled,
   placeholder = 'Tìm theo tên hoặc SKU...',
+  sellableOnly = false,
+  stockLabel = 'Tồn',
 }: {
   onSelect: (product: ProductSearchResult) => void
   disabled?: boolean
   placeholder?: string
+  /** Passed straight through to `useSearchProducts` — see its doc comment. */
+  sellableOnly?: boolean
+  /** Prefix before the stock figure, e.g. "Tồn" or "Có thể bán". */
+  stockLabel?: string
 }) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const debouncedQuery = useDebouncedValue(query, 250)
 
-  const resultsQuery = useSearchProducts(debouncedQuery)
+  const resultsQuery = useSearchProducts(debouncedQuery, { sellableOnly })
   const results = resultsQuery.data ?? []
 
   return (
@@ -94,7 +100,7 @@ function ProductComboBox({
                         <span className="font-mono text-xs text-muted-foreground">{product.sku}</span>
                       </div>
                       <span className="text-xs text-muted-foreground">
-                        Tồn: {formatQuantityWithUnit(product.stockQuantity, product.unit)}
+                        {stockLabel}: {formatQuantityWithUnit(product.stockQuantity, product.unit)}
                       </span>
                     </CommandItem>
                   ))}

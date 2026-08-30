@@ -56,6 +56,19 @@ function CommandEmpty(props: React.ComponentProps<typeof CommandPrimitive.Empty>
   )
 }
 
+function CommandSeparator({
+  className,
+  ...props
+}: React.ComponentProps<typeof CommandPrimitive.Separator>) {
+  return (
+    <CommandPrimitive.Separator
+      data-slot="command-separator"
+      className={cn('-mx-1 h-px bg-border', className)}
+      {...props}
+    />
+  )
+}
+
 function CommandGroup({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Group>) {
   return (
     <CommandPrimitive.Group
@@ -82,4 +95,12 @@ function CommandItem({ className, ...props }: React.ComponentProps<typeof Comman
   )
 }
 
-export { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem }
+export {
+  Command,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandSeparator,
+}

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
-import { Search, ShoppingCart } from 'lucide-react'
+import { Plus, Search, ShoppingCart } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/common/data-table'
@@ -149,7 +149,16 @@ function OrdersPage() {
         />
       }
     >
-      <PageHeader title="Đơn hàng" description="Theo dõi toàn bộ đơn hàng của cửa hàng." />
+      <PageHeader
+        title="Đơn hàng"
+        description="Theo dõi toàn bộ đơn hàng của cửa hàng."
+        actions={
+          <Button onClick={() => navigate(ROUTES.newOrder)}>
+            <Plus />
+            Tạo đơn hàng
+          </Button>
+        }
+      />
 
       {isEmpty ? (
         isFilterActive ? (
@@ -167,7 +176,13 @@ function OrdersPage() {
           <EmptyState
             icon={ShoppingCart}
             title="Chưa có đơn hàng nào"
-            description="Đơn hàng của cửa hàng sẽ hiển thị tại đây."
+            description="Tạo đơn hàng đầu tiên để bắt đầu ghi nhận bán hàng."
+            action={
+              <Button size="sm" onClick={() => navigate(ROUTES.newOrder)}>
+                <Plus />
+                Tạo đơn hàng
+              </Button>
+            }
           />
         )
       ) : (

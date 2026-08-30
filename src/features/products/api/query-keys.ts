@@ -1,3 +1,4 @@
+import type { ProductSearchOptions } from '@/features/products/api/search-products'
 import type { ProductFilters } from '@/features/products/types/product'
 
 /** Query key factory (see `react-query`) — same convention as `categoryKeys`/`supplierKeys`. */
@@ -10,5 +11,6 @@ export const productKeys = {
   batches: (id: string) => [...productKeys.detail(id), 'batches'] as const,
   images: (id: string) => [...productKeys.detail(id), 'images'] as const,
   /** Lean search-as-you-type results for pickers (see `search-products.ts`). */
-  search: (query: string) => [...productKeys.all, 'search', query] as const,
+  search: (query: string, options: ProductSearchOptions = {}) =>
+    [...productKeys.all, 'search', query, options] as const,
 }
