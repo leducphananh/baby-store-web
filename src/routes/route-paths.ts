@@ -22,7 +22,13 @@ export const ROUTES = {
   /** Inventory movement ledger. */
   inventoryTransactions: '/inventory/transactions',
   customers: '/customers',
+  /** Customer detail page — `customerDetail(id)` builds `/customers/<id>`. */
+  customerDetail: (id: string) => `/customers/${id}`,
   orders: '/orders',
+  /** Order detail — `orderDetail(id)` builds `/orders/<id>`. Not built yet
+   *  (still a `ComingSoonPage` in the router); the path exists so purchase
+   *  history can link to it now without a dead/placeholder href. */
+  orderDetail: (id: string) => `/orders/${id}`,
   reports: '/reports',
   alerts: '/alerts',
   settings: '/settings',

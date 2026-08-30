@@ -483,6 +483,13 @@ export type Database = {
             foreignKeyName: "orders_customer_id_fkey"
             columns: ["customer_id"]
             isOneToOne: false
+            referencedRelation: "customer_order_summary"
+            referencedColumns: ["customer_id"]
+          },
+          {
+            foreignKeyName: "orders_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
             referencedRelation: "customers"
             referencedColumns: ["id"]
           },
@@ -823,6 +830,16 @@ export type Database = {
       }
     }
     Views: {
+      customer_order_summary: {
+        Row: {
+          completed_orders: number | null
+          customer_id: string | null
+          last_order_date: string | null
+          total_orders: number | null
+          total_spent: number | null
+        }
+        Relationships: []
+      }
       product_inventory_overview: {
         Row: {
           barcode: string | null

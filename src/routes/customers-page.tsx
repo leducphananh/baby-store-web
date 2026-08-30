@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router'
 import { Plus, Search, Users, X } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -10,8 +11,8 @@ import { ErrorState } from '@/components/common/error-state'
 import { PageContent } from '@/components/common/page-content'
 import { PageHeader } from '@/components/common/page-header'
 import { PageLoading } from '@/components/common/page-loading'
+import { ROUTES } from '@/routes/route-paths'
 import { getCustomerColumns } from '@/features/customers/components/customer-columns'
-import { CustomerDetailSheet } from '@/features/customers/components/customer-detail-sheet'
 import { CustomerFormDialog } from '@/features/customers/components/customer-form-dialog'
 import { useDeleteCustomer } from '@/features/customers/hooks/use-delete-customer'
 import { useCustomers } from '@/features/customers/hooks/use-customers'
@@ -33,6 +34,7 @@ function isCustomerSortField(value: string): value is CustomerSortField {
 }
 
 function CustomersPage() {
+  const navigate = useNavigate()
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = usePersistedPageSize(
@@ -69,11 +71,10 @@ function CustomersPage() {
   const deleteCustomer = useDeleteCustomer()
 
   const [formDialog, setFormDialog] = useState<{ customer?: Customer } | null>(null)
-  const [detailTarget, setDetailTarget] = useState<Customer | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<Customer | null>(null)
 
   const columns = getCustomerColumns({
-    onView: (customer) => setDetailTarget(customer),
+    onView: (customer) => navigate(ROUTES.customerDetail(customer.id)),
     onEdit: (customer) => setFormDialog({ customer }),
     onDelete: (customer) => setDeleteTarget(customer),
   })
@@ -184,12 +185,6 @@ function CustomersPage() {
         open={formDialog !== null}
         onOpenChange={(open) => !open && setFormDialog(null)}
         customer={formDialog?.customer}
-      />
-
-      <CustomerDetailSheet
-        open={detailTarget !== null}
-        onOpenChange={(open) => !open && setDetailTarget(null)}
-        customer={detailTarget}
       />
 
       <ConfirmDialog

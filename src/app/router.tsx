@@ -3,6 +3,7 @@ import { createBrowserRouter } from 'react-router'
 import { AppShell } from '@/components/layout/app-shell'
 import { CategoriesPage } from '@/routes/categories-page'
 import { ComingSoonPage } from '@/routes/coming-soon-page'
+import { CustomerDetailPage } from '@/routes/customer-detail-page'
 import { CustomersPage } from '@/routes/customers-page'
 import { HelpCenterPage } from '@/routes/help-center-page'
 import { HomePage } from '@/routes/home-page'
@@ -59,7 +60,12 @@ export const router = createBrowserRouter([
           { path: 'inventory', element: <InventoryPage /> },
           { path: 'inventory/transactions', element: <InventoryTransactionsPage /> },
           { path: 'customers', element: <CustomersPage /> },
+          { path: 'customers/:id', element: <CustomerDetailPage /> },
           { path: 'orders', element: <ComingSoonPage title="Đơn hàng" /> },
+          // Order detail isn't built yet (Orders is a later phase) — stubbed
+          // so purchase-history links from Customer Detail navigate
+          // somewhere real instead of a dead href (see `route-paths.ts`).
+          { path: 'orders/:id', element: <ComingSoonPage title="Đơn hàng" /> },
           { path: 'reports', element: <ComingSoonPage title="Báo cáo" /> },
           { path: 'alerts', element: <ComingSoonPage title="Cảnh báo" /> },
           { path: 'settings', element: <ComingSoonPage title="Cài đặt" /> },
