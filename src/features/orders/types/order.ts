@@ -1,8 +1,8 @@
 /**
  * Domain types for `public.orders` — read-only slice needed for the
- * Customer Detail purchase-history view (Phase 5.2). Full Order
- * create/edit/complete/cancel is a later phase; this feature currently only
- * *reads* orders, scoped by customer.
+ * Customer Detail purchase-history view (Phase 5.2) and the store-wide
+ * Orders List (Phase 6.1). Full Order create/edit/complete/cancel is a later
+ * phase; this feature currently only *reads* orders.
  *
  * Lifecycle (real DB `status` CHECK — do not invent values; confirmed by
  * inspecting the existing `complete_order()`/`cancel_order()` RPCs):
@@ -48,4 +48,45 @@ export type CustomerOrderSummary = {
   /** Integer VND — sum of `completed` orders' `total` only (see `CustomerOrder`'s doc). */
   totalSpent: number
   lastOrderDate: string | null
+}
+
+/**
+ * One row of the store-wide order list (Phase 6.1). A superset of
+ * `CustomerOrder` — includes who the order belongs to, since the list isn't
+ * scoped to one customer. Deliberately excludes a line-item count: the
+ * list's required columns don't need it, and skipping the
+ * `order_items(count)` embed keeps every page load to exactly one query
+ * against `orders` (see `getOrders`).
+ */
+export type Order = {
+  id: string
+  orderNumber: string
+  customerId: string | null
+  /** `null` when the order has no linked customer (a walk-in/"khách lẻ" sale). */
+  customerName: string | null
+  customerPhone: string | null
+  orderDate: string
+  status: OrderStatus
+  paymentStatus: OrderPaymentStatus
+  /** Integer VND. Only trustworthy once `status === 'completed'` — see `CustomerOrder`'s doc. */
+  total: number
+}
+
+export type OrderSortField = 'order_date' | 'order_number' | 'total'
+
+export type OrderStatusFilter = 'all' | OrderStatus
+export type OrderPaymentStatusFilter = 'all' | OrderPaymentStatus
+
+export type OrdersFilters = {
+  /** Matches `order_number`, or the linked customer's name/phone. */
+  search: string
+  status: OrderStatusFilter
+  paymentStatus: OrderPaymentStatusFilter
+  /** Inclusive `YYYY-MM-DD` bounds on `order_date`; `null` = unbounded. */
+  fromDate: string | null
+  toDate: string | null
+  page: number
+  pageSize: number
+  sortField: OrderSortField
+  sortDesc: boolean
 }

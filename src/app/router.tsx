@@ -13,6 +13,7 @@ import { InventoryPage } from '@/routes/inventory-page'
 import { InventoryTransactionsPage } from '@/routes/inventory-transactions-page'
 import { LoginPage } from '@/routes/login-page'
 import { NotFoundPage } from '@/routes/not-found-page'
+import { OrdersPage } from '@/routes/orders-page'
 import { ProductDetailPage } from '@/routes/product-detail-page'
 import { ProductsPage } from '@/routes/products-page'
 import { PublicOnlyRoute } from '@/routes/public-only-route'
@@ -61,7 +62,7 @@ export const router = createBrowserRouter([
           { path: 'inventory/transactions', element: <InventoryTransactionsPage /> },
           { path: 'customers', element: <CustomersPage /> },
           { path: 'customers/:id', element: <CustomerDetailPage /> },
-          { path: 'orders', element: <ComingSoonPage title="Đơn hàng" /> },
+          { path: 'orders', element: <OrdersPage /> },
           // Order detail isn't built yet (Orders is a later phase) — stubbed
           // so purchase-history links from Customer Detail navigate
           // somewhere real instead of a dead href (see `route-paths.ts`).
