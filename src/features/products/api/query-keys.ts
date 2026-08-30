@@ -13,4 +13,6 @@ export const productKeys = {
   /** Lean search-as-you-type results for pickers (see `search-products.ts`). */
   search: (query: string, options: ProductSearchOptions = {}) =>
     [...productKeys.all, 'search', query, options] as const,
+  /** Live sellable-stock lookup for a known set of ids (see `use-product-stock-map.ts`). */
+  stockMap: (productIds: string[]) => [...productKeys.all, 'stock-map', productIds] as const,
 }

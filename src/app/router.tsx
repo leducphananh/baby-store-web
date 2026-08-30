@@ -6,6 +6,7 @@ import { ComingSoonPage } from '@/routes/coming-soon-page'
 import { CreateOrderPage } from '@/routes/create-order-page'
 import { CustomerDetailPage } from '@/routes/customer-detail-page'
 import { CustomersPage } from '@/routes/customers-page'
+import { EditOrderPage } from '@/routes/edit-order-page'
 import { HelpCenterPage } from '@/routes/help-center-page'
 import { HomePage } from '@/routes/home-page'
 import { ImportReceiptDetailPage } from '@/routes/import-receipt-detail-page'
@@ -71,6 +72,7 @@ export const router = createBrowserRouter([
           // intent obvious on read.
           { path: 'orders/new', element: <CreateOrderPage /> },
           { path: 'orders/:id', element: <OrderDetailPage /> },
+          { path: 'orders/:id/edit', element: <EditOrderPage /> },
           { path: 'reports', element: <ComingSoonPage title="Báo cáo" /> },
           { path: 'alerts', element: <ComingSoonPage title="Cảnh báo" /> },
           { path: 'settings', element: <ComingSoonPage title="Cài đặt" /> },

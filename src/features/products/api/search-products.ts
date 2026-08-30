@@ -75,8 +75,13 @@ export async function searchProducts(
   }))
 }
 
-/** Same batched pattern as `get-products.ts` — one query, never N+1. */
-async function getStockByProduct(
+/**
+ * Same batched pattern as `get-products.ts` — one query, never N+1.
+ * Exported: the Edit Order screen needs this same sellable-stock lookup for
+ * a known list of product ids (an order's existing lines), not a text
+ * search, so it calls this directly instead of `searchProducts`.
+ */
+export async function getStockByProduct(
   productIds: string[],
   sellableOnly: boolean,
 ): Promise<Map<string, number>> {

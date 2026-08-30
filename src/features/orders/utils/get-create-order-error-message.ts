@@ -1,3 +1,4 @@
+import { getPostgrestErrorMessage } from '@/features/orders/utils/get-error-message'
 import type { OrderItemDraft } from '@/features/orders/schemas/order-form-schema'
 
 /**
@@ -11,20 +12,8 @@ import type { OrderItemDraft } from '@/features/orders/schemas/order-form-schema
  * `items` (the cart at submit time) lets the "insufficient stock" case name
  * the actual product — the RPC's message only carries a product id.
  */
-function getErrorMessage(error: unknown): string {
-  if (error instanceof Error) return error.message
-  // supabase-js's `.rpc()` rejects with a plain object matching
-  // `PostgrestError`'s shape here (not always an actual `Error` instance —
-  // `instanceof Error` alone is not reliable for it), so fall back to
-  // reading `.message` structurally.
-  if (typeof error === 'object' && error !== null && 'message' in error) {
-    return String((error as { message: unknown }).message)
-  }
-  return ''
-}
-
 export function getCreateOrderErrorMessage(error: unknown, items: OrderItemDraft[]): string {
-  const message = getErrorMessage(error)
+  const message = getPostgrestErrorMessage(error)
 
   if (message.includes('at least one item')) {
     return 'Đơn hàng phải có ít nhất một sản phẩm.'

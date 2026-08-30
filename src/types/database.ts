@@ -920,6 +920,15 @@ export type Database = {
         }
         Returns: undefined
       }
+      update_order_draft: {
+        Args: {
+          p_customer_id: string
+          p_items: Json
+          p_note: string
+          p_order_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

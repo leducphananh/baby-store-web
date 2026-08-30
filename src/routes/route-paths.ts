@@ -27,10 +27,11 @@ export const ROUTES = {
   orders: '/orders',
   /** Create Order — the point-of-sale screen (Phase 6.2). */
   newOrder: '/orders/new',
-  /** Order detail — `orderDetail(id)` builds `/orders/<id>`. Not built yet
-   *  (still a `ComingSoonPage` in the router); the path exists so purchase
-   *  history can link to it now without a dead/placeholder href. */
+  /** Order detail — `orderDetail(id)` builds `/orders/<id>`. */
   orderDetail: (id: string) => `/orders/${id}`,
+  /** Edit Order — `editOrder(id)` builds `/orders/<id>/edit`. Only reachable
+   *  for a `draft`/`confirmed` order (see `edit-order-page.tsx`). */
+  editOrder: (id: string) => `/orders/${id}/edit`,
   reports: '/reports',
   alerts: '/alerts',
   settings: '/settings',
