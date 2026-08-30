@@ -232,10 +232,16 @@ export const TOUR_REGISTRY: Record<string, Tour> = {
           'Mỗi dòng hàng có thể khai báo số lô và hạn sử dụng — thông tin này sẽ tạo thành từng lô hàng riêng trong kho, phục vụ theo dõi hạn sử dụng sau này.',
       },
       {
+        target: 'import-confirm-button',
+        title: 'Xác nhận nhập hàng',
+        description:
+          'Lưu nháp chưa làm tăng tồn kho. Sau khi kiểm tra kỹ sản phẩm, số lượng, đơn giá và hạn sử dụng, bấm "Xác nhận nhập hàng" để ghi nhận toàn bộ phiếu vào kho — lúc này phiếu chuyển sang "Đã xác nhận" và không thể sửa lại.',
+      },
+      {
         target: 'import-batches',
         title: 'Lô hàng được tạo ra',
         description:
-          'Khi phiếu nhập chuyển sang trạng thái "Đã xác nhận", hệ thống sẽ tự động tạo lô hàng tương ứng và ghi nhận vào tồn kho — đây là thời điểm số lượng tồn kho thực sự tăng lên, không phải khi vừa tạo phiếu.',
+          'Ngay khi bấm "Xác nhận nhập hàng", hệ thống tự động tạo lô hàng tương ứng cho từng dòng và ghi nhận vào tồn kho — đây là thời điểm số lượng tồn kho thực sự tăng lên, không phải khi vừa tạo hoặc lưu nháp phiếu.',
       },
       {
         target: 'import-invoices',
@@ -340,9 +346,9 @@ export const QUICK_START_TOUR: Tour = {
       description: 'Với mỗi dòng hàng trong phiếu nhập, có thể khai báo số lô và hạn sử dụng để theo dõi chính xác từng lô hàng.',
     },
     {
-      title: '6. Tồn kho được cập nhật khi phiếu được xác nhận',
+      title: '6. Bấm "Xác nhận nhập hàng" để cập nhật tồn kho',
       description:
-        'Số lượng tồn kho thực tế chỉ tăng lên khi phiếu nhập chuyển sang trạng thái "Đã xác nhận" — lúc đó hệ thống tự động tạo các lô hàng tương ứng.',
+        'Lưu nháp chưa làm tăng tồn kho. Mở lại phiếu nhập và bấm "Xác nhận nhập hàng" — lúc đó tồn kho mới thực sự tăng lên và hệ thống tự động tạo các lô hàng tương ứng.',
     },
     {
       title: '7. Theo dõi tồn kho',

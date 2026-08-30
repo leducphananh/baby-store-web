@@ -145,6 +145,7 @@ export type Database = {
       import_receipts: {
         Row: {
           confirmed_at: string | null
+          confirmed_by: string | null
           created_at: string | null
           created_by: string | null
           id: string
@@ -158,6 +159,7 @@ export type Database = {
         }
         Insert: {
           confirmed_at?: string | null
+          confirmed_by?: string | null
           created_at?: string | null
           created_by?: string | null
           id?: string
@@ -171,6 +173,7 @@ export type Database = {
         }
         Update: {
           confirmed_at?: string | null
+          confirmed_by?: string | null
           created_at?: string | null
           created_by?: string | null
           id?: string
@@ -183,6 +186,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "import_receipts_confirmed_by_fkey"
+            columns: ["confirmed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "import_receipts_created_by_fkey"
             columns: ["created_by"]
@@ -1015,9 +1025,3 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
-
-export const Constants = {
-  public: {
-    Enums: {},
-  },
-} as const

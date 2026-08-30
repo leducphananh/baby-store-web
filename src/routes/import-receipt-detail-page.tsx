@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router'
-import { ArrowLeft, Ban, Pencil } from 'lucide-react'
+import { ArrowLeft, Ban, PackageCheck, Pencil } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { ConfirmDialog } from '@/components/common/confirm-dialog'
@@ -15,6 +15,7 @@ import { ImportReceiptFormDialog } from '@/features/import-receipts/components/i
 import { ImportReceiptLinesCard } from '@/features/import-receipts/components/import-receipt-lines-card'
 import { ImportReceiptStatusBadge } from '@/features/import-receipts/components/import-receipt-status-badge'
 import { useCancelImportReceipt } from '@/features/import-receipts/hooks/use-cancel-import-receipt'
+import { useConfirmImportReceipt } from '@/features/import-receipts/hooks/use-confirm-import-receipt'
 import { useImportReceipt } from '@/features/import-receipts/hooks/use-import-receipt'
 import { ReceiptBatchesCard } from '@/features/batches/components/receipt-batches-card'
 import { PurchaseInvoicesCard } from '@/features/purchase-invoices/components/purchase-invoices-card'
@@ -35,9 +36,11 @@ function ImportReceiptDetailPage() {
   const { id } = useParams<{ id: string }>()
   const receiptQuery = useImportReceipt(id)
   const cancelReceipt = useCancelImportReceipt()
+  const confirmReceipt = useConfirmImportReceipt(id ?? '')
 
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isCancelOpen, setIsCancelOpen] = useState(false)
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false)
 
   if (receiptQuery.isLoading) {
     return <PageLoading />
@@ -102,6 +105,19 @@ function ImportReceiptDetailPage() {
                 <Ban />
                 Hủy phiếu
               </Button>
+              <Button
+                data-tour="import-confirm-button"
+                disabled={confirmReceipt.isPending || receipt.itemCount === 0}
+                title={
+                  receipt.itemCount === 0
+                    ? 'Cần có ít nhất một dòng hàng để xác nhận'
+                    : undefined
+                }
+                onClick={() => setIsConfirmOpen(true)}
+              >
+                <PackageCheck />
+                Xác nhận nhập hàng
+              </Button>
             </div>
           ) : undefined
         }
@@ -144,6 +160,18 @@ function ImportReceiptDetailPage() {
         isConfirming={cancelReceipt.isPending}
         onConfirm={() =>
           cancelReceipt.mutate(receipt.id, { onSettled: () => setIsCancelOpen(false) })
+        }
+      />
+
+      <ConfirmDialog
+        open={isConfirmOpen}
+        onOpenChange={setIsConfirmOpen}
+        title="Xác nhận nhập hàng?"
+        description="Sau khi xác nhận, số lượng hàng trong phiếu sẽ được ghi nhận vào tồn kho. Các thông tin quan trọng của phiếu có thể không còn chỉnh sửa được."
+        confirmLabel="Xác nhận nhập hàng"
+        isConfirming={confirmReceipt.isPending}
+        onConfirm={() =>
+          confirmReceipt.mutate(undefined, { onSettled: () => setIsConfirmOpen(false) })
         }
       />
     </PageContent>

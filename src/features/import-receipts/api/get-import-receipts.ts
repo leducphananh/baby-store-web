@@ -25,13 +25,20 @@ export type ImportReceiptListRow = {
   confirmed_at: string | null
   suppliers: { name: string } | null
   profiles: { full_name: string | null } | null
+  confirmed_by_profile: { full_name: string | null } | null
   import_receipt_items: { count: number }[]
 }
 
 const LIST_COLUMNS =
   'id, receipt_number, supplier_id, import_date, notes, status, total_cost, created_by, ' +
   'created_at, updated_at, confirmed_at, suppliers(name), ' +
-  'profiles!import_receipts_created_by_fkey(full_name), import_receipt_items(count)'
+  'profiles!import_receipts_created_by_fkey(full_name), ' +
+  // Second FK to the same `profiles` table needs both the `!constraint`
+  // hint (to disambiguate from the `created_by` relation above) and an
+  // alias (`confirmed_by_profile:`) so PostgREST doesn't collide both
+  // relations under the same `profiles` response key.
+  'confirmed_by_profile:profiles!import_receipts_confirmed_by_fkey(full_name), ' +
+  'import_receipt_items(count)'
 
 function toStatus(value: string): ImportReceiptStatus {
   // Guaranteed by the DB CHECK constraint; fall back rather than widening.
@@ -56,6 +63,7 @@ export function rowToImportReceipt(row: ImportReceiptListRow): ImportReceipt {
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     confirmedAt: row.confirmed_at,
+    confirmedByName: row.confirmed_by_profile?.full_name ?? null,
   }
 }
 

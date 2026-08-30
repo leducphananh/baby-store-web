@@ -32,10 +32,13 @@ export function ImportReceiptDetailHeader({ receipt }: { receipt: ImportReceipt 
             value={receipt.createdAt ? formatDateTime(receipt.createdAt) : null}
           />
           {receipt.status === 'confirmed' && (
-            <DetailRow
-              label="Xác nhận lúc"
-              value={receipt.confirmedAt ? formatDateTime(receipt.confirmedAt) : null}
-            />
+            <>
+              <DetailRow
+                label="Xác nhận lúc"
+                value={receipt.confirmedAt ? formatDateTime(receipt.confirmedAt) : null}
+              />
+              <DetailRow label="Xác nhận bởi" value={receipt.confirmedByName} />
+            </>
           )}
         </dl>
       </CardContent>

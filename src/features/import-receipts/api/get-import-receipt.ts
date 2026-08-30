@@ -8,7 +8,9 @@ import type { ImportReceipt } from '@/features/import-receipts/types/import-rece
 const DETAIL_COLUMNS =
   'id, receipt_number, supplier_id, import_date, notes, status, total_cost, created_by, ' +
   'created_at, updated_at, confirmed_at, suppliers(name), ' +
-  'profiles!import_receipts_created_by_fkey(full_name), import_receipt_items(count)'
+  'profiles!import_receipts_created_by_fkey(full_name), ' +
+  'confirmed_by_profile:profiles!import_receipts_confirmed_by_fkey(full_name), ' +
+  'import_receipt_items(count)'
 
 /**
  * A single import receipt for the detail page. Returns `null` when the id

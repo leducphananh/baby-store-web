@@ -4,14 +4,12 @@
  * `supabase-database`).
  *
  * Lifecycle (real DB `status` CHECK — do not invent values):
- *   draft      → editable header, not yet in stock, can be cancelled
+ *   draft      → editable header/items, not yet in stock, can be cancelled
  *   confirmed  → posted to inventory by `confirm_import_receipt()` (creates
  *                `product_batches` + `inventory_transactions`); immutable
- *                historical stock document
+ *                historical stock document — see "Xác nhận nhập hàng" on
+ *                `import-receipt-detail-page.tsx` (Phase 4.7)
  *   cancelled  → a voided draft; read-only
- *
- * Stock posting (`confirmed`) is a separate step handled by a dedicated RPC
- * and is out of scope for this phase (see the Phase 4.1 report).
  */
 export type ImportReceiptStatus = 'draft' | 'confirmed' | 'cancelled'
 
@@ -32,6 +30,7 @@ export type ImportReceipt = {
   createdAt: string | null
   updatedAt: string | null
   confirmedAt: string | null
+  confirmedByName: string | null
 }
 
 /** A read-only line of an import receipt (`public.import_receipt_items`). */
