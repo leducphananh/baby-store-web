@@ -32,6 +32,7 @@ const TOUR_ROUTES: Record<string, string> = {
   'import-receipt-detail': ROUTES.imports,
   inventory: ROUTES.inventory,
   'inventory-transactions': ROUTES.inventoryTransactions,
+  reports: ROUTES.reports,
 }
 
 function Section({

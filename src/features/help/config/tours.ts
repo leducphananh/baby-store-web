@@ -302,6 +302,35 @@ export const TOUR_REGISTRY: Record<string, Tour> = {
       },
     ],
   },
+
+  reports: {
+    id: 'reports',
+    title: 'Báo cáo',
+    steps: [
+      {
+        title: 'Báo cáo',
+        description:
+          'Đây là nơi tập trung các báo cáo kinh doanh: doanh thu, lợi nhuận, hiệu quả sản phẩm, tồn kho và hạn sử dụng. Các báo cáo sẽ lần lượt được triển khai ở các giai đoạn tiếp theo.',
+      },
+      {
+        target: 'report-date-range-preset',
+        title: 'Chọn khoảng thời gian',
+        description:
+          'Chọn nhanh một khoảng thời gian có sẵn (Hôm nay, 7 ngày gần đây, 30 ngày gần đây, Tháng này, Tháng trước) hoặc "Tùy chọn" để tự nhập ngày bắt đầu/kết thúc.',
+      },
+      {
+        target: 'report-date-range-custom',
+        title: 'Khoảng thời gian tùy chọn',
+        description: 'Khi chọn "Tùy chọn", nhập ngày bắt đầu và ngày kết thúc — ngày bắt đầu phải trước hoặc bằng ngày kết thúc.',
+      },
+      {
+        target: 'reports-catalog',
+        title: 'Các báo cáo sắp ra mắt',
+        description:
+          'Mỗi thẻ tương ứng với một báo cáo sẽ được triển khai. Khoảng thời gian bạn chọn ở trên sẽ được áp dụng khi mở báo cáo đó.',
+      },
+    ],
+  },
 }
 
 /**

@@ -867,6 +867,19 @@ export type Database = {
           },
         ]
       }
+      reportable_orders: {
+        Row: {
+          customer_id: string | null
+          discount: number | null
+          id: string | null
+          order_number: string | null
+          payment_status: string | null
+          report_date: string | null
+          subtotal: number | null
+          total: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       add_import_receipt_item: {

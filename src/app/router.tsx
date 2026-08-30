@@ -21,6 +21,7 @@ import { ProductDetailPage } from '@/routes/product-detail-page'
 import { ProductsPage } from '@/routes/products-page'
 import { PublicOnlyRoute } from '@/routes/public-only-route'
 import { RequireAuth } from '@/routes/require-auth'
+import { ReportsPage } from '@/routes/reports-page'
 import { ROUTES } from '@/routes/route-paths'
 import { RouteErrorBoundary } from '@/routes/route-error-boundary'
 import { SuppliersPage } from '@/routes/suppliers-page'
@@ -73,7 +74,7 @@ export const router = createBrowserRouter([
           { path: 'orders/new', element: <CreateOrderPage /> },
           { path: 'orders/:id', element: <OrderDetailPage /> },
           { path: 'orders/:id/edit', element: <EditOrderPage /> },
-          { path: 'reports', element: <ComingSoonPage title="Báo cáo" /> },
+          { path: 'reports', element: <ReportsPage /> },
           { path: 'alerts', element: <ComingSoonPage title="Cảnh báo" /> },
           { path: 'settings', element: <ComingSoonPage title="Cài đặt" /> },
           { path: 'help', element: <HelpCenterPage /> },

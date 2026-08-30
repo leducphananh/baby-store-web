@@ -26,6 +26,7 @@ export function resolveActiveTourId(pathname: string): string | null {
   if (IMPORT_DETAIL_PATTERN.test(pathname)) return 'import-receipt-detail'
   if (pathname === ROUTES.inventoryTransactions) return 'inventory-transactions'
   if (pathname === ROUTES.inventory) return 'inventory'
+  if (pathname === ROUTES.reports) return 'reports'
   return null
 }
 

@@ -62,12 +62,40 @@ export function daysBetweenYmd(fromYmd: string, toYmd: string): number {
 }
 
 /**
+ * Add (or, for a negative `days`, subtract) whole calendar days to `ymd`,
+ * e.g. `addDaysYmd('2026-08-28', 3)` → `'2026-08-31'`,
+ * `addDaysYmd('2026-08-05', -7)` → `'2026-07-29'`. UTC-midnight-anchored —
+ * a pure calendar-date shift, not a timezone-sensitive instant (same
+ * reasoning as `daysBetweenYmd`).
+ */
+export function addDaysYmd(ymd: string, days: number): string {
+  const date = new Date(`${ymd}T00:00:00Z`)
+  date.setUTCDate(date.getUTCDate() + days)
+  return date.toISOString().slice(0, 10)
+}
+
+/**
  * The day after `ymd` as `YYYY-MM-DD`, e.g. `nextDayYmd('2026-08-28')` →
  * `'2026-08-29'`. Used as an exclusive upper bound so an inclusive
  * `toDate` range still covers the whole of that last day.
  */
 export function nextDayYmd(ymd: string): string {
-  const date = new Date(`${ymd}T00:00:00Z`)
-  date.setUTCDate(date.getUTCDate() + 1)
+  return addDaysYmd(ymd, 1)
+}
+
+/** First day of `ymd`'s calendar month, e.g. `startOfMonthYmd('2026-08-17')` → `'2026-08-01'`. */
+export function startOfMonthYmd(ymd: string): string {
+  return `${ymd.slice(0, 7)}-01`
+}
+
+/**
+ * Last day of `ymd`'s calendar month, e.g. `endOfMonthYmd('2026-08-17')` →
+ * `'2026-08-31'`, `endOfMonthYmd('2026-02-03')` → `'2026-02-28'`. Day 0 of
+ * the next month is the last day of this one — same UTC-anchored calendar
+ * math as `addDaysYmd`.
+ */
+export function endOfMonthYmd(ymd: string): string {
+  const [year, month] = ymd.split('-').map(Number)
+  const date = new Date(Date.UTC(year, month, 0))
   return date.toISOString().slice(0, 10)
 }
