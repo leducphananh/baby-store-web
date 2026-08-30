@@ -10,6 +10,7 @@ import { PageContent } from '@/components/common/page-content'
 import { PageHeader } from '@/components/common/page-header'
 import { PageLoading } from '@/components/common/page-loading'
 import { ROUTES } from '@/routes/route-paths'
+import { ExportOrderPdfButton } from '@/features/orders/components/export-order-pdf-button'
 import { OrderDetailHeader } from '@/features/orders/components/order-detail-header'
 import { OrderLinesCard } from '@/features/orders/components/order-lines-card'
 import { OrderPaymentsCard } from '@/features/orders/components/order-payments-card'
@@ -32,10 +33,10 @@ function BackLink() {
 }
 
 /**
- * Order Detail (Phase 6.3) + Edit/Cancel actions (Phase 6.4). All money
- * values shown here come straight from `orders`/`order_items`, the
- * historical rows written at sale time — never from a product's current
- * price (see `get-order-lines.ts`'s doc comment).
+ * Order Detail (Phase 6.3) + Edit/Cancel actions (Phase 6.4) + PDF export
+ * (Phase 6.6). All money values shown here come straight from
+ * `orders`/`order_items`, the historical rows written at sale time — never
+ * from a product's current price (see `get-order-lines.ts`'s doc comment).
  *
  * Allowed operations are gated strictly by real `status`, never guessed:
  *  - `draft`/`confirmed` — editable (→ Edit Order); "Hủy đơn nháp" just
@@ -45,6 +46,10 @@ function BackLink() {
  *    the real inventory deduction through traceable transactions (see
  *    `cancel-order.ts`), not a silent stock patch.
  *  - `cancelled` — fully read-only, no actions offered at all.
+ *
+ * "Xuất PDF" is available regardless of status — it's a read-only document
+ * export, not a state-changing action, so it isn't gated the way Edit/Cancel
+ * are (see `export-order-pdf-button.tsx`).
  */
 function OrderDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -101,33 +106,36 @@ function OrderDetailPage() {
         title={`Đơn hàng ${order.orderNumber}`}
         description={order.customerName ? `Khách hàng: ${order.customerName}` : 'Khách lẻ'}
         actions={
-          isDraft ? (
-            <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
+            <ExportOrderPdfButton order={order} />
+            {isDraft ? (
+              <>
+                <Button
+                  variant="outline"
+                  className="text-destructive hover:text-destructive"
+                  disabled={cancelDraftOrder.isPending}
+                  onClick={() => setIsCancelDraftOpen(true)}
+                >
+                  <Ban />
+                  Hủy đơn nháp
+                </Button>
+                <Button onClick={() => navigate(ROUTES.editOrder(order.id))}>
+                  <Pencil />
+                  Sửa đơn hàng
+                </Button>
+              </>
+            ) : isCompleted ? (
               <Button
                 variant="outline"
                 className="text-destructive hover:text-destructive"
-                disabled={cancelDraftOrder.isPending}
-                onClick={() => setIsCancelDraftOpen(true)}
+                disabled={cancelOrder.isPending}
+                onClick={() => setIsCancelCompletedOpen(true)}
               >
                 <Ban />
-                Hủy đơn nháp
+                Hủy đơn hàng
               </Button>
-              <Button onClick={() => navigate(ROUTES.editOrder(order.id))}>
-                <Pencil />
-                Sửa đơn hàng
-              </Button>
-            </div>
-          ) : isCompleted ? (
-            <Button
-              variant="outline"
-              className="text-destructive hover:text-destructive"
-              disabled={cancelOrder.isPending}
-              onClick={() => setIsCancelCompletedOpen(true)}
-            >
-              <Ban />
-              Hủy đơn hàng
-            </Button>
-          ) : undefined
+            ) : null}
+          </div>
         }
       />
 
