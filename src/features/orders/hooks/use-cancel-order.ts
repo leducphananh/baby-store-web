@@ -6,6 +6,7 @@ import { orderKeys } from '@/features/orders/api/query-keys'
 import { getCancelOrderErrorMessage } from '@/features/orders/utils/get-cancel-order-error-message'
 import { inventoryOverviewKeys, inventoryTransactionKeys } from '@/features/inventory/api/query-keys'
 import { productKeys } from '@/features/products/api/query-keys'
+import { reportsKeys } from '@/features/reports/api/query-keys'
 
 /**
  * Cancels a **completed** order and reverses its real inventory deduction
@@ -33,6 +34,10 @@ export function useCancelOrder() {
       void queryClient.invalidateQueries({ queryKey: productKeys.all })
       void queryClient.invalidateQueries({ queryKey: inventoryOverviewKeys.all })
       void queryClient.invalidateQueries({ queryKey: inventoryTransactionKeys.lists() })
+      // This order was `completed` (only a completed order can be
+      // cancelled) and just stopped being reportable revenue — every
+      // Revenue Report query may now be stale.
+      void queryClient.invalidateQueries({ queryKey: reportsKeys.revenue() })
       toast.success('Đã hủy đơn hàng và hoàn trả tồn kho.')
     },
     onError: (error) => {

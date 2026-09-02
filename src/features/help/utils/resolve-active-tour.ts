@@ -27,6 +27,7 @@ export function resolveActiveTourId(pathname: string): string | null {
   if (pathname === ROUTES.inventoryTransactions) return 'inventory-transactions'
   if (pathname === ROUTES.inventory) return 'inventory'
   if (pathname === ROUTES.reports) return 'reports'
+  if (pathname === ROUTES.revenueReport) return 'revenue-report'
   return null
 }
 

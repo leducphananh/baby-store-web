@@ -1,6 +1,8 @@
+import { lazy, Suspense } from 'react'
 import { createBrowserRouter } from 'react-router'
 
 import { AppShell } from '@/components/layout/app-shell'
+import { PageLoading } from '@/components/common/page-loading'
 import { CategoriesPage } from '@/routes/categories-page'
 import { ComingSoonPage } from '@/routes/coming-soon-page'
 import { CreateOrderPage } from '@/routes/create-order-page'
@@ -25,6 +27,20 @@ import { ReportsPage } from '@/routes/reports-page'
 import { ROUTES } from '@/routes/route-paths'
 import { RouteErrorBoundary } from '@/routes/route-error-boundary'
 import { SuppliersPage } from '@/routes/suppliers-page'
+
+/**
+ * `React.lazy`, not a static import — this page pulls in `recharts`, which
+ * added ~370kB (110kB gzipped) directly to the main bundle when statically
+ * imported (measured while building this route). Revenue Report is exactly
+ * the case `frontend-performance` skill rule 5 names ("code-split rarely-
+ * visited, heavy routes... yearly reports"): every other route in this
+ * file is a static import (this app doesn't lazy-load routes by default),
+ * but a chart-heavy report page that most staff won't open every session
+ * shouldn't cost every page load its bundle weight.
+ */
+const RevenueReportPage = lazy(() =>
+  import('@/routes/revenue-report-page').then((module) => ({ default: module.RevenueReportPage })),
+)
 
 /**
  * App-wide router definition. `/login` is public (guarded the other way,
@@ -75,6 +91,14 @@ export const router = createBrowserRouter([
           { path: 'orders/:id', element: <OrderDetailPage /> },
           { path: 'orders/:id/edit', element: <EditOrderPage /> },
           { path: 'reports', element: <ReportsPage /> },
+          {
+            path: 'reports/revenue',
+            element: (
+              <Suspense fallback={<PageLoading />}>
+                <RevenueReportPage />
+              </Suspense>
+            ),
+          },
           { path: 'alerts', element: <ComingSoonPage title="Cảnh báo" /> },
           { path: 'settings', element: <ComingSoonPage title="Cài đặt" /> },
           { path: 'help', element: <HelpCenterPage /> },

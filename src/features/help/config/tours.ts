@@ -325,9 +325,36 @@ export const TOUR_REGISTRY: Record<string, Tour> = {
       },
       {
         target: 'reports-catalog',
-        title: 'Các báo cáo sắp ra mắt',
+        title: 'Danh mục báo cáo',
         description:
-          'Mỗi thẻ tương ứng với một báo cáo sẽ được triển khai. Khoảng thời gian bạn chọn ở trên sẽ được áp dụng khi mở báo cáo đó.',
+          'Mỗi thẻ tương ứng với một báo cáo. "Doanh thu" đã sẵn sàng sử dụng — các báo cáo còn lại sẽ lần lượt ra mắt. Khoảng thời gian bạn chọn ở trên sẽ được áp dụng khi mở báo cáo đó.',
+      },
+    ],
+  },
+
+  'revenue-report': {
+    id: 'revenue-report',
+    title: 'Báo cáo Doanh thu',
+    steps: [
+      {
+        title: 'Báo cáo Doanh thu',
+        description: 'Doanh thu chỉ tính các đơn hàng đã hoàn tất — đơn nháp và đơn đã hủy không được tính vào đây.',
+      },
+      {
+        target: 'revenue-date-range',
+        title: 'Chọn khoảng thời gian',
+        description: 'Toàn bộ số liệu, biểu đồ và bảng bên dưới đều áp dụng theo khoảng thời gian bạn chọn ở đây.',
+      },
+      {
+        target: 'revenue-kpis',
+        title: 'Chỉ số tổng quan',
+        description:
+          'Tổng doanh thu, số đơn hàng, giá trị đơn trung bình, số tiền đã thu và còn phải thu trong khoảng thời gian đã chọn.',
+      },
+      {
+        target: 'revenue-chart',
+        title: 'Biểu đồ và bảng chi tiết theo ngày',
+        description: 'Biểu đồ thể hiện xu hướng doanh thu theo ngày; bảng bên dưới liệt kê chi tiết từng ngày để dễ đối chiếu.',
       },
     ],
   },

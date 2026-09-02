@@ -33,6 +33,8 @@ export const ROUTES = {
    *  for a `draft`/`confirmed` order (see `edit-order-page.tsx`). */
   editOrder: (id: string) => `/orders/${id}/edit`,
   reports: '/reports',
+  /** Revenue Report (Phase 7.2) — completed-orders-only sales revenue over a selected period. */
+  revenueReport: '/reports/revenue',
   alerts: '/alerts',
   settings: '/settings',
   help: '/help',

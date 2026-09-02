@@ -4,6 +4,7 @@ import { createOrder } from '@/features/orders/api/create-order'
 import { orderKeys } from '@/features/orders/api/query-keys'
 import { inventoryOverviewKeys, inventoryTransactionKeys } from '@/features/inventory/api/query-keys'
 import { productKeys } from '@/features/products/api/query-keys'
+import { reportsKeys } from '@/features/reports/api/query-keys'
 
 /**
  * Creates and immediately completes an order (see `create-order.ts`). On
@@ -35,6 +36,10 @@ export function useCreateOrder() {
       void queryClient.invalidateQueries({ queryKey: productKeys.all })
       void queryClient.invalidateQueries({ queryKey: inventoryOverviewKeys.all })
       void queryClient.invalidateQueries({ queryKey: inventoryTransactionKeys.lists() })
+      // This RPC creates AND immediately completes the order (see
+      // `create-order.ts`) — a brand new completed order, so every Revenue
+      // Report query (any date range) may now be stale.
+      void queryClient.invalidateQueries({ queryKey: reportsKeys.revenue() })
     },
   })
 }

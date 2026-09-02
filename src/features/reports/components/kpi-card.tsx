@@ -39,7 +39,12 @@ export function KpiCard({
           {isLoading ? (
             <Skeleton className="h-8 w-28" />
           ) : (
-            <p className="truncate text-2xl font-bold text-foreground">{value}</p>
+            // Not `truncate`: a silently-cut-off number is a real problem
+            // for a financial KPI (looks broken, and could hide digits) —
+            // wrapping to a second line at narrow widths is the safe
+            // behavior instead (found while verifying Phase 7.2's 5-wide
+            // KPI row at some viewport widths).
+            <p className="text-xl leading-tight font-bold wrap-break-word text-foreground">{value}</p>
           )}
           {subtitle && !isLoading && <p className="text-xs text-muted-foreground">{subtitle}</p>}
         </div>

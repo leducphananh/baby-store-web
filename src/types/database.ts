@@ -918,6 +918,24 @@ export type Database = {
         Args: { p_item_id: string }
         Returns: undefined
       }
+      get_revenue_summary: {
+        Args: { p_from: string; p_to_exclusive: string }
+        Returns: {
+          total_revenue: number
+          completed_order_count: number
+          average_order_value: number
+          paid_amount: number
+          outstanding_amount: number
+        }[]
+      }
+      get_revenue_timeseries: {
+        Args: { p_from: string; p_to_exclusive: string }
+        Returns: {
+          report_date: string
+          order_count: number
+          revenue: number
+        }[]
+      }
       recalc_import_receipt_total: {
         Args: { p_receipt_id: string }
         Returns: undefined
