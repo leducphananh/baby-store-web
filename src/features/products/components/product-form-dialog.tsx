@@ -256,7 +256,7 @@ export function ProductFormDialog({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
-        className="max-h-[90vh] gap-0 overflow-hidden p-0 sm:max-w-2xl"
+        className="flex max-h-[90vh] flex-col gap-0 overflow-hidden p-0 sm:max-w-2xl"
         onCloseAutoFocus={(event) => event.preventDefault()}
         onInteractOutside={(event) => {
           // The `product-form` tour's card is portaled to `document.body`
@@ -278,25 +278,30 @@ export function ProductFormDialog({
           }
         }}
       >
-        <DialogHeader className="border-b px-6 py-4">
-          <div className="flex items-center justify-between gap-2">
+        <DialogHeader className="shrink-0 border-b px-6 py-4">
+          <div className="flex items-center gap-1.5 pr-8">
             <DialogTitle>
               {isEditMode ? 'Sửa sản phẩm' : isCopyMode ? 'Tạo sản phẩm từ bản sao' : 'Thêm sản phẩm'}
             </DialogTitle>
-            {/* Launched directly (not via the floating Help button): Radix
-                marks everything outside a Dialog's own portal `aria-hidden`
-                while it's open, so the floating button can't actually be
-                reached from here — see `resolve-active-tour.ts`. */}
+            {/* Right next to the title, not pushed toward the header's far
+                right edge — that previously tried to line up with the
+                Dialog's own absolutely-positioned close (X) button, which
+                never actually aligned (different element, different sizing
+                box) and just looked misplaced. Launched directly (not via
+                the floating Help button): Radix marks everything outside a
+                Dialog's own portal `aria-hidden` while it's open, so the
+                floating button can't actually be reached from here — see
+                `resolve-active-tour.ts`. */}
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              className="mr-6 shrink-0"
+              className="size-6 shrink-0 text-muted-foreground"
               aria-label="Hướng dẫn biểu mẫu sản phẩm"
               title="Hướng dẫn"
               onClick={() => startTour(TOUR_REGISTRY['product-form'])}
             >
-              <CircleHelp className="size-4" />
+              <CircleHelp className="size-3.5" />
             </Button>
           </div>
           <DialogDescription>
@@ -308,7 +313,7 @@ export function ProductFormDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="max-h-[calc(90vh-9rem)] overflow-y-auto px-6 py-4">
+        <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4">
           <ProductForm
             key={product?.id ?? (copyFrom ? `copy-${copyFrom.id}` : 'create')}
             formId={FORM_ID}
@@ -319,7 +324,7 @@ export function ProductFormDialog({
           />
         </div>
 
-        <DialogFooter className="border-t px-6 py-4">
+        <DialogFooter className="shrink-0 border-t px-6 py-4">
           <Button
             type="button"
             variant="outline"
