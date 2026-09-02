@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router'
 import { X } from 'lucide-react'
@@ -37,6 +37,18 @@ export function TourOverlay() {
   const [measuredRect, setMeasuredRect] = useState<DOMRect | null>(null)
   const cardRef = useRef<HTMLDivElement>(null)
 
+  // The card's real height varies with each step's description length (one
+  // line vs. four) — a fixed guess here previously caused the card to
+  // overlap the very target it was pointing at whenever a step's text ran
+  // longer than the guess (see `cardPosition` below). Measured after each
+  // step's card actually renders, before the browser paints, so
+  // `cardPosition` always positions against the real box, not an estimate.
+  const [cardHeight, setCardHeight] = useState(220)
+  useLayoutEffect(() => {
+    const height = cardRef.current?.offsetHeight
+    if (height) setCardHeight(height)
+  }, [step])
+
   const targetId = step?.target
   // Derived, not stored: a stale `measuredRect` from a previous (targeted)
   // step can never leak into a no-target (Quick Start) step's render this
@@ -53,7 +65,16 @@ export function TourOverlay() {
       return
     }
 
-    el.scrollIntoView({ block: 'center', behavior: 'smooth' })
+    // `'nearest'`, not `'center'`: a target that's already fully visible
+    // (e.g. a dialog's sticky footer button, which sits outside any
+    // scrollable ancestor — only the dialog's own middle section scrolls,
+    // see `product-form-dialog.tsx`) has no scrollable container able to
+    // "center" it, so a browser can fall back to scrolling the outer
+    // page/window itself trying to satisfy that request — visibly breaking
+    // the still-open dialog's layout once the tour closes. `'nearest'` is a
+    // no-op for anything already on-screen and still scrolls a genuinely
+    // offscreen target (e.g. a lower form section) the minimum needed.
+    el.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
     // Let the smooth scroll settle before measuring, so the ring/card land
     // on the target's final position instead of a mid-scroll one.
     const timer = window.setTimeout(() => setMeasuredRect(el.getBoundingClientRect()), 260)
@@ -112,18 +133,30 @@ export function TourOverlay() {
     const vh = window.innerHeight
 
     if (!rect) {
-      return { top: vh / 2 - 90, left: vw / 2 - CARD_WIDTH / 2 }
+      return { top: vh / 2 - cardHeight / 2, left: vw / 2 - CARD_WIDTH / 2 }
     }
 
-    const estimatedCardHeight = 190
+    const margin = 12
     const spaceBelow = vh - rect.bottom
-    const placeBelow = spaceBelow >= estimatedCardHeight + 20 || spaceBelow >= rect.top
-    const top = placeBelow
-      ? rect.bottom + 12
-      : Math.max(VIEWPORT_MARGIN, rect.top - estimatedCardHeight - 12)
+    const spaceAbove = rect.top
+
+    let top: number
+    if (spaceBelow >= cardHeight + margin) {
+      top = rect.bottom + margin
+    } else if (spaceAbove >= cardHeight + margin) {
+      top = rect.top - cardHeight - margin
+    } else {
+      // Neither side has room for the card without overlapping the
+      // highlighted target (e.g. a tall form section filling most of the
+      // dialog) — anchor to whichever edge has more room instead of a
+      // guess that risks sitting on top of what's being highlighted.
+      top = spaceBelow >= spaceAbove ? vh - cardHeight - VIEWPORT_MARGIN : VIEWPORT_MARGIN
+    }
+    top = Math.min(Math.max(top, VIEWPORT_MARGIN), Math.max(VIEWPORT_MARGIN, vh - cardHeight - VIEWPORT_MARGIN))
+
     const left = Math.min(Math.max(rect.left, VIEWPORT_MARGIN), vw - CARD_WIDTH - VIEWPORT_MARGIN)
     return { top, left }
-  }, [rect])
+  }, [rect, cardHeight])
 
   const handleFinish = useCallback(() => {
     if (activeTour) markCompleted(activeTour.id)
