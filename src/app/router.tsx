@@ -42,6 +42,11 @@ const RevenueReportPage = lazy(() =>
   import('@/routes/revenue-report-page').then((module) => ({ default: module.RevenueReportPage })),
 )
 
+/** Same reasoning as `RevenueReportPage` above — this route pulls in `recharts` too. */
+const ProfitReportPage = lazy(() =>
+  import('@/routes/profit-report-page').then((module) => ({ default: module.ProfitReportPage })),
+)
+
 /**
  * App-wide router definition. `/login` is public (guarded the other way,
  * by `PublicOnlyRoute`); everything else sits under `RequireAuth` ->
@@ -96,6 +101,14 @@ export const router = createBrowserRouter([
             element: (
               <Suspense fallback={<PageLoading />}>
                 <RevenueReportPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: 'reports/profit',
+            element: (
+              <Suspense fallback={<PageLoading />}>
+                <ProfitReportPage />
               </Suspense>
             ),
           },

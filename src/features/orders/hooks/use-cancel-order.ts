@@ -35,9 +35,11 @@ export function useCancelOrder() {
       void queryClient.invalidateQueries({ queryKey: inventoryOverviewKeys.all })
       void queryClient.invalidateQueries({ queryKey: inventoryTransactionKeys.lists() })
       // This order was `completed` (only a completed order can be
-      // cancelled) and just stopped being reportable revenue — every
-      // Revenue Report query may now be stale.
-      void queryClient.invalidateQueries({ queryKey: reportsKeys.revenue() })
+      // cancelled) and just stopped being reportable revenue/COGS — every
+      // report query may now be stale (see `use-create-order.ts` for why
+      // this invalidates the whole `reportsKeys.all` space, not just
+      // `.revenue()`).
+      void queryClient.invalidateQueries({ queryKey: reportsKeys.all })
       toast.success('Đã hủy đơn hàng và hoàn trả tồn kho.')
     },
     onError: (error) => {

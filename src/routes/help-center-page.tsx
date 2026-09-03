@@ -34,6 +34,7 @@ const TOUR_ROUTES: Record<string, string> = {
   'inventory-transactions': ROUTES.inventoryTransactions,
   reports: ROUTES.reports,
   'revenue-report': ROUTES.revenueReport,
+  'profit-report': ROUTES.profitReport,
 }
 
 function Section({

@@ -37,9 +37,12 @@ export function useCreateOrder() {
       void queryClient.invalidateQueries({ queryKey: inventoryOverviewKeys.all })
       void queryClient.invalidateQueries({ queryKey: inventoryTransactionKeys.lists() })
       // This RPC creates AND immediately completes the order (see
-      // `create-order.ts`) — a brand new completed order, so every Revenue
-      // Report query (any date range) may now be stale.
-      void queryClient.invalidateQueries({ queryKey: reportsKeys.revenue() })
+      // `create-order.ts`) — a brand new completed order, so every report
+      // query (any date range, Revenue or Profit — Phase 7.3 reuses this
+      // same invalidation) may now be stale. The whole `reportsKeys.all`
+      // space, not just `.revenue()`, so a future report added under
+      // `reportsKeys` is covered here automatically too.
+      void queryClient.invalidateQueries({ queryKey: reportsKeys.all })
     },
   })
 }

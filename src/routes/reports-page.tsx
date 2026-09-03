@@ -19,8 +19,9 @@ type ReportCatalogEntry = {
 }
 
 /**
- * Report modules. Only "Doanh thu" is implemented (Phase 7.2) — the rest
- * stay exactly as Phase 7.1 left them: shown as "Sắp ra mắt" with no link,
+ * Report modules. "Doanh thu" (Phase 7.2) and "Lợi nhuận" (Phase 7.3) are
+ * implemented — the rest stay exactly as Phase 7.1 left them: shown as
+ * "Sắp ra mắt" with no link,
  * since a nonfunctional route/click target would be worse than an honest
  * roadmap. Add `path` and the card activates itself automatically, the
  * same one-line-at-a-time pattern `nav-items.ts` uses for the sidebar —
@@ -33,7 +34,12 @@ const REPORT_CATALOG: ReportCatalogEntry[] = [
     icon: LineChart,
     path: ROUTES.revenueReport,
   },
-  { title: 'Lợi nhuận', description: 'Lợi nhuận gộp dựa trên giá vốn thực tế của từng lô hàng đã bán.', icon: PiggyBank },
+  {
+    title: 'Lợi nhuận',
+    description: 'Lợi nhuận gộp dựa trên giá vốn thực tế của từng lô hàng đã bán.',
+    icon: PiggyBank,
+    path: ROUTES.profitReport,
+  },
   { title: 'Hiệu quả sản phẩm', description: 'Sản phẩm bán chạy, doanh thu và lợi nhuận theo từng sản phẩm.', icon: Star },
   { title: 'Tồn kho', description: 'Số lượng và giá trị tồn kho hiện tại theo từng sản phẩm/lô hàng.', icon: Boxes },
   { title: 'Hạn sử dụng', description: 'Thống kê lô hàng đã hết hạn hoặc sắp hết hạn theo thời gian.', icon: CalendarClock },

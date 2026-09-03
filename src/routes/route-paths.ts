@@ -35,6 +35,8 @@ export const ROUTES = {
   reports: '/reports',
   /** Revenue Report (Phase 7.2) — completed-orders-only sales revenue over a selected period. */
   revenueReport: '/reports/revenue',
+  /** Profit Report (Phase 7.3) — Gross Profit (Revenue - historical COGS) over a selected period. */
+  profitReport: '/reports/profit',
   alerts: '/alerts',
   settings: '/settings',
   help: '/help',

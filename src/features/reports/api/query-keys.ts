@@ -22,4 +22,9 @@ export const reportsKeys = {
     [...reportsKeys.revenue(), 'summary', ...boundsKeyPart(range)] as const,
   revenueTimeseries: (range: ReportDateRange) =>
     [...reportsKeys.revenue(), 'timeseries', ...boundsKeyPart(range)] as const,
+  profit: () => [...reportsKeys.all, 'profit'] as const,
+  profitSummary: (range: ReportDateRange) =>
+    [...reportsKeys.profit(), 'summary', ...boundsKeyPart(range)] as const,
+  profitTimeseries: (range: ReportDateRange) =>
+    [...reportsKeys.profit(), 'timeseries', ...boundsKeyPart(range)] as const,
 }

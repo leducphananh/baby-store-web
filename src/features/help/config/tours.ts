@@ -358,6 +358,50 @@ export const TOUR_REGISTRY: Record<string, Tour> = {
       },
     ],
   },
+
+  'profit-report': {
+    id: 'profit-report',
+    title: 'Báo cáo Lợi nhuận',
+    steps: [
+      {
+        title: 'Báo cáo Lợi nhuận',
+        description:
+          'Đây là lợi nhuận gộp (doanh thu trừ giá vốn hàng bán) — chưa trừ các chi phí vận hành khác như lương, mặt bằng. Chỉ tính các đơn hàng đã hoàn tất, giống Báo cáo Doanh thu.',
+      },
+      {
+        target: 'profit-date-range',
+        title: 'Chọn khoảng thời gian',
+        description: 'Toàn bộ số liệu, biểu đồ và bảng bên dưới đều áp dụng theo khoảng thời gian bạn chọn ở đây.',
+      },
+      {
+        target: 'profit-kpis',
+        title: 'Doanh thu',
+        description: 'Tổng giá trị các đơn hàng đã hoàn tất trong khoảng thời gian đã chọn — giống hệt số liệu ở Báo cáo Doanh thu.',
+      },
+      {
+        target: 'profit-kpis',
+        title: 'Giá vốn',
+        description:
+          'Giá vốn được lấy theo chi phí thực tế của lô hàng tại thời điểm bán, không phải giá nhập hiện tại của sản phẩm — nên nếu sau này bạn đổi giá nhập, số liệu lợi nhuận của các đơn hàng cũ vẫn giữ nguyên, không bị tính lại.',
+      },
+      {
+        target: 'profit-kpis',
+        title: 'Lợi nhuận gộp',
+        description: 'Doanh thu trừ giá vốn. Nếu một khoảng thời gian bị lỗ, số liệu sẽ hiển thị âm rõ ràng, không bị ẩn đi.',
+      },
+      {
+        target: 'profit-kpis',
+        title: 'Biên lợi nhuận',
+        description: 'Tỷ lệ lợi nhuận gộp trên doanh thu — càng cao nghĩa là mỗi đồng doanh thu giữ lại được càng nhiều lợi nhuận.',
+      },
+      {
+        target: 'profit-chart',
+        title: 'Biểu đồ và bảng chi tiết theo ngày',
+        description:
+          'Biểu đồ so sánh doanh thu, giá vốn và lợi nhuận gộp theo từng ngày; bảng bên dưới liệt kê chi tiết từng ngày kèm biên lợi nhuận để dễ đối chiếu.',
+      },
+    ],
+  },
 }
 
 /**
