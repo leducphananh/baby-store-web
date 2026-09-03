@@ -1,5 +1,6 @@
 import { toReportQueryBounds } from '@/features/reports/utils/report-date-range'
 import type { ReportDateRange } from '@/features/reports/types/report'
+import type { ProductPerformanceFilters } from '@/features/reports/types/product-performance'
 
 /**
  * Normalized-bounds cache key, not the raw `ReportDateRange` object — two
@@ -27,4 +28,21 @@ export const reportsKeys = {
     [...reportsKeys.profit(), 'summary', ...boundsKeyPart(range)] as const,
   profitTimeseries: (range: ReportDateRange) =>
     [...reportsKeys.profit(), 'timeseries', ...boundsKeyPart(range)] as const,
+  productPerformance: () => [...reportsKeys.all, 'product-performance'] as const,
+  productPerformanceSummary: (range: ReportDateRange) =>
+    [...reportsKeys.productPerformance(), 'summary', ...boundsKeyPart(range)] as const,
+  productPerformanceList: (range: ReportDateRange, filters: ProductPerformanceFilters) =>
+    [
+      ...reportsKeys.productPerformance(),
+      'list',
+      ...boundsKeyPart(range),
+      filters.search,
+      filters.categoryId ?? 'all',
+      filters.sortField,
+      filters.sortDesc,
+      filters.page,
+      filters.pageSize,
+    ] as const,
+  categoryPerformance: (range: ReportDateRange) =>
+    [...reportsKeys.productPerformance(), 'category', ...boundsKeyPart(range)] as const,
 }

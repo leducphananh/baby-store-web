@@ -967,6 +967,59 @@ export type Database = {
         Args: { p_item_id: string }
         Returns: undefined
       }
+      get_category_performance: {
+        Args: { p_from: string; p_to_exclusive: string }
+        Returns: {
+          category_id: string
+          category_name: string
+          cogs: number
+          gross_profit: number
+          order_count: number
+          product_count_sold: number
+          revenue: number
+          sold_quantity: number
+        }[]
+      }
+      get_product_performance_list: {
+        Args: {
+          p_category_id?: string
+          p_from: string
+          p_limit?: number
+          p_offset?: number
+          p_search?: string
+          p_sort_by?: string
+          p_sort_desc?: boolean
+          p_to_exclusive: string
+        }
+        Returns: {
+          category_id: string
+          category_name: string
+          cogs: number
+          gross_profit: number
+          order_count: number
+          product_id: string
+          product_name: string
+          product_status: string
+          revenue: number
+          sku: string
+          sold_quantity: number
+          total_count: number
+          unit: string
+        }[]
+      }
+      get_product_performance_summary: {
+        Args: { p_from: string; p_to_exclusive: string }
+        Returns: {
+          products_sold_count: number
+          top_profit_amount: number
+          top_profit_product_id: string
+          top_profit_product_name: string
+          top_revenue_amount: number
+          top_revenue_product_id: string
+          top_revenue_product_name: string
+          total_units_sold: number
+        }[]
+      }
       get_profit_summary: {
         Args: { p_from: string; p_to_exclusive: string }
         Returns: {

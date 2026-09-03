@@ -402,6 +402,45 @@ export const TOUR_REGISTRY: Record<string, Tour> = {
       },
     ],
   },
+
+  'product-performance-report': {
+    id: 'product-performance-report',
+    title: 'Báo cáo Hiệu quả sản phẩm',
+    steps: [
+      {
+        title: 'Báo cáo Hiệu quả sản phẩm',
+        description:
+          'Bán chạy, doanh thu cao và lợi nhuận cao là ba tiêu chí khác nhau — một sản phẩm bán được nhiều chưa chắc mang lại doanh thu hoặc lợi nhuận cao nhất. Báo cáo này tách riêng từng tiêu chí để bạn xem đúng góc độ mình cần.',
+      },
+      {
+        target: 'product-performance-date-range',
+        title: 'Chọn khoảng thời gian',
+        description: 'Toàn bộ số liệu, biểu đồ và bảng bên dưới đều áp dụng theo khoảng thời gian bạn chọn ở đây.',
+      },
+      {
+        target: 'product-performance-kpis',
+        title: 'Chỉ số tổng quan',
+        description:
+          'Số sản phẩm có phát sinh bán, tổng số đơn vị bán, sản phẩm doanh thu cao nhất và sản phẩm lợi nhuận cao nhất trong khoảng thời gian đã chọn.',
+      },
+      {
+        target: 'product-performance-chart',
+        title: 'Top 10 sản phẩm theo doanh thu',
+        description: 'Biểu đồ luôn xếp theo doanh thu để có một góc nhìn nhất quán — muốn xem theo tiêu chí khác, dùng bảng chi tiết bên dưới.',
+      },
+      {
+        target: 'product-performance-table',
+        title: 'Bảng chi tiết theo sản phẩm',
+        description:
+          'Tìm kiếm và lọc theo danh mục, bấm vào tiêu đề cột (Số lượng bán, Doanh thu, Giá vốn, Lợi nhuận gộp, Biên lợi nhuận) để sắp xếp theo đúng tiêu chí bạn cần. Giá vốn sử dụng chi phí thực tế của lô hàng tại thời điểm bán, không phải giá nhập hiện tại của sản phẩm.',
+      },
+      {
+        target: 'product-performance-category',
+        title: 'Hiệu quả theo danh mục',
+        description: 'Tổng hợp doanh thu, giá vốn và lợi nhuận theo từng danh mục sản phẩm — sản phẩm chưa gán danh mục được gộp vào "Chưa phân loại".',
+      },
+    ],
+  },
 }
 
 /**
