@@ -7,6 +7,7 @@ import { importReceiptKeys } from '@/features/import-receipts/api/query-keys'
 import { getConfirmImportReceiptErrorMessage } from '@/features/import-receipts/utils/get-confirm-import-receipt-error-message'
 import { inventoryOverviewKeys, inventoryTransactionKeys } from '@/features/inventory/api/query-keys'
 import { productKeys } from '@/features/products/api/query-keys'
+import { reportsKeys } from '@/features/reports/api/query-keys'
 
 /**
  * Posts a draft receipt's stock into inventory (see
@@ -34,6 +35,10 @@ export function useConfirmImportReceipt(receiptId: string) {
       void queryClient.invalidateQueries({ queryKey: productKeys.details() })
       void queryClient.invalidateQueries({ queryKey: inventoryOverviewKeys.all })
       void queryClient.invalidateQueries({ queryKey: inventoryTransactionKeys.lists() })
+      // Confirming posts new batches into stock (see `confirm-import-receipt.ts`)
+      // — the Inventory Report's quantity/valuation queries (Phase 7.5) may
+      // now be stale too.
+      void queryClient.invalidateQueries({ queryKey: reportsKeys.inventory() })
       toast.success('Xác nhận nhập hàng thành công.')
     },
     onError: (error) => {

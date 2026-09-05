@@ -19,9 +19,10 @@ type ReportCatalogEntry = {
 }
 
 /**
- * Report modules. "Doanh thu" (Phase 7.2), "Lợi nhuận" (Phase 7.3) and
- * "Hiệu quả sản phẩm" (Phase 7.4) are implemented — the rest stay exactly
- * as Phase 7.1 left them: shown as "Sắp ra mắt" with no link,
+ * Report modules. "Doanh thu" (Phase 7.2), "Lợi nhuận" (Phase 7.3),
+ * "Hiệu quả sản phẩm" (Phase 7.4) and "Tồn kho" (Phase 7.5) are
+ * implemented — the rest stay exactly as Phase 7.1 left them: shown as
+ * "Sắp ra mắt" with no link,
  * since a nonfunctional route/click target would be worse than an honest
  * roadmap. Add `path` and the card activates itself automatically, the
  * same one-line-at-a-time pattern `nav-items.ts` uses for the sidebar —
@@ -46,7 +47,12 @@ const REPORT_CATALOG: ReportCatalogEntry[] = [
     icon: Star,
     path: ROUTES.productPerformanceReport,
   },
-  { title: 'Tồn kho', description: 'Số lượng và giá trị tồn kho hiện tại theo từng sản phẩm/lô hàng.', icon: Boxes },
+  {
+    title: 'Tồn kho',
+    description: 'Số lượng và giá trị tồn kho hiện tại theo từng sản phẩm/lô hàng.',
+    icon: Boxes,
+    path: ROUTES.inventoryReport,
+  },
   { title: 'Hạn sử dụng', description: 'Thống kê lô hàng đã hết hạn hoặc sắp hết hạn theo thời gian.', icon: CalendarClock },
 ]
 
@@ -111,7 +117,8 @@ function ReportsPage() {
           }
         />
         <p className="text-xs text-muted-foreground">
-          Lựa chọn này sẽ được áp dụng khi mở một báo cáo bên dưới.
+          Lựa chọn này sẽ được áp dụng cho các báo cáo theo khoảng thời gian bán hàng bên dưới. Riêng
+          báo cáo "Tồn kho" luôn hiển thị số liệu hiện tại, không phụ thuộc khoảng thời gian này.
         </p>
       </div>
 

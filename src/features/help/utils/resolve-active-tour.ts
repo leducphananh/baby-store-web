@@ -30,6 +30,7 @@ export function resolveActiveTourId(pathname: string): string | null {
   if (pathname === ROUTES.revenueReport) return 'revenue-report'
   if (pathname === ROUTES.profitReport) return 'profit-report'
   if (pathname === ROUTES.productPerformanceReport) return 'product-performance-report'
+  if (pathname === ROUTES.inventoryReport) return 'inventory-report'
   return null
 }
 

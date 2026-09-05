@@ -980,6 +980,56 @@ export type Database = {
           sold_quantity: number
         }[]
       }
+      get_inventory_category_summary: {
+        Args: never
+        Returns: {
+          category_id: string
+          category_name: string
+          inventory_value: number
+          product_count: number
+          total_quantity: number
+        }[]
+      }
+      get_inventory_product_list: {
+        Args: {
+          p_category_id?: string
+          p_limit?: number
+          p_offset?: number
+          p_search?: string
+          p_sort_by?: string
+          p_sort_desc?: boolean
+          p_stock_status?: string
+        }
+        Returns: {
+          average_cost: number
+          batch_count: number
+          category_id: string
+          category_name: string
+          current_quantity: number
+          inventory_value: number
+          minimum_stock: number
+          nearest_expiration: string
+          product_id: string
+          product_name: string
+          product_status: string
+          sku: string
+          stock_status: string
+          total_count: number
+          unit: string
+        }[]
+      }
+      get_inventory_value_summary: {
+        Args: never
+        Returns: {
+          low_stock_count: number
+          orphan_batch_count: number
+          orphan_batch_value: number
+          out_of_stock_count: number
+          products_in_stock_count: number
+          total_inventory_value: number
+          total_units: number
+        }[]
+      }
       get_product_performance_list: {
         Args: {
           p_category_id?: string

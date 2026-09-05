@@ -441,6 +441,35 @@ export const TOUR_REGISTRY: Record<string, Tour> = {
       },
     ],
   },
+
+  'inventory-report': {
+    id: 'inventory-report',
+    title: 'Báo cáo Tồn kho',
+    steps: [
+      {
+        title: 'Báo cáo Tồn kho',
+        description:
+          'Báo cáo này thể hiện tồn kho hiện tại, không phụ thuộc khoảng thời gian bán hàng — khác với các báo cáo Doanh thu, Lợi nhuận và Hiệu quả sản phẩm. Bấm "Làm mới" để cập nhật số liệu mới nhất bất cứ lúc nào.',
+      },
+      {
+        target: 'inventory-report-kpis',
+        title: 'Chỉ số tổng quan',
+        description:
+          'Số sản phẩm còn hàng, tổng số đơn vị tồn, giá trị tồn kho, số sản phẩm sắp hết và đã hết hàng — tính trên toàn bộ tồn kho hiện có. Giá trị tồn kho được tính theo giá nhập thực tế của từng lô hàng còn lại, không phải giá nhập hiện tại của sản phẩm.',
+      },
+      {
+        target: 'inventory-report-category',
+        title: 'Giá trị tồn kho theo danh mục',
+        description: 'Xem nhóm sản phẩm nào đang chiếm nhiều vốn tồn kho nhất — sản phẩm chưa gán danh mục được gộp vào "Chưa phân loại".',
+      },
+      {
+        target: 'inventory-report-table',
+        title: 'Chi tiết theo sản phẩm',
+        description:
+          'Tìm kiếm, lọc theo danh mục hoặc tình trạng tồn kho, và bấm vào tiêu đề cột để sắp xếp theo tồn kho, giá trị tồn hoặc giá vốn trung bình. Sản phẩm đã ngừng kinh doanh vẫn hiển thị nếu còn tồn kho thực tế.',
+      },
+    ],
+  },
 }
 
 /**
