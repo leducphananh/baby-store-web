@@ -150,3 +150,34 @@ export type SlowMovingSummary = {
   noSaleInLookbackCount: number
   noSaleInLookbackValue: number
 }
+
+/**
+ * The three expiry alert types `get_expiry_alert_conditions()` (Phase 8.3)
+ * reports on — a subset of `AlertType`, deliberately not the report's own
+ * `ExpiryStatus` union (`'expired' | 'near_expiry' | 'missing_expiry'`):
+ * these are the Alert Foundation's `AlertType` string literals
+ * (`inventory_expired`/`inventory_expiring_soon`/`inventory_missing_expiry`),
+ * used as the RPC's own row discriminator and as `alert_condition_states`
+ * keys.
+ */
+export type ExpiryAlertType = 'inventory_expired' | 'inventory_expiring_soon' | 'inventory_missing_expiry'
+
+/**
+ * One expiry alert type's current occurrence data (Phase 8.3) — the
+ * lightweight, batch-identity-aware replacement for reading
+ * `expiredBatchCount`/`nearExpiryBatchCount`/`missingExpiryBatchCount` off
+ * `ExpirySummary` for alert purposes. `fingerprint` already encodes both
+ * the affected BATCH-id set (`product_batches.id`, never `product_id` —
+ * one product can have both an expired batch and a fresh one) and the
+ * store-wide occurrence lifecycle (same mechanism as
+ * `InventoryAlertCondition.fingerprint`) — never rebuild it client-side.
+ * `samplePreviews` is display-only, already-formatted text (product name
+ * + lot number where available), truncated to at most 3 — never a batch
+ * identifier fabricated client-side.
+ */
+export type ExpiryAlertCondition = {
+  alertType: ExpiryAlertType
+  affectedCount: number
+  fingerprint: string
+  samplePreviews: string[]
+}

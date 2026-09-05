@@ -85,6 +85,16 @@ export const reportsKeys = {
   expiryBucketSummary: () => [...reportsKeys.expiry(), 'buckets'] as const,
   expirySummary: (horizonDays: ExpiryHorizonDays) =>
     [...reportsKeys.expiry(), 'summary', horizonDays] as const,
+  // Phase 8.3 — the header Bell/Alert Center/Dashboard-Attention's
+  // batch-identity-aware source for expired/expiring-soon/missing-expiry,
+  // nested under the same `reportsKeys.expiryReport()` umbrella as
+  // `expirySummary`/`expiryBatchList` so it's covered by
+  // `confirm_import_receipt`/`create_order`/`cancel_order`'s existing
+  // `reportsKeys.all`/`reportsKeys.expiryReport()` invalidations with no
+  // new invalidation call needed at those sites (same precedent as
+  // `inventoryAlertConditions`, Phase 8.2).
+  expiryAlertConditions: (horizonDays: ExpiryHorizonDays) =>
+    [...reportsKeys.expiryReport(), 'alert-conditions', horizonDays] as const,
   expiryBatchList: (filters: ExpiryBatchFilters) =>
     [
       ...reportsKeys.expiry(),

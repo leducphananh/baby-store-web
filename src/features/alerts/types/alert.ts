@@ -54,23 +54,27 @@ export type OperationalAlert = {
    * an old fingerprint is simply stale and the alert becomes unread again
    * with no cleanup job (see `alert_read_states` migration comment).
    *
-   * `inventory_out_of_stock`/`inventory_low_stock` (Phase 8.2) use a richer
-   * fingerprint built from `get_inventory_alert_conditions()`:
-   * `` `${occurrenceVersion}:${sortedAffectedProductIds.join(',')}` `` — see
-   * that RPC's migration comment. This detects BOTH a changed affected-
-   * product set at the same count (the id list differs) AND a condition
-   * that fully resolved and later reoccurred with the exact same product
-   * set (`occurrenceVersion` incremented by the store-wide
-   * `alert_condition_states` lifecycle table on the inactive→active
-   * transition) — both cases Phase 8.1's coarse fingerprint could not
-   * distinguish.
+   * `inventory_out_of_stock`/`inventory_low_stock` (Phase 8.2, entity =
+   * `product_id`) and `inventory_expired`/`inventory_expiring_soon`/
+   * `inventory_missing_expiry` (Phase 8.3, entity = `product_batches.id`
+   * — never `product_id`, since one product can have both an expired and
+   * a fresh batch) all use the same richer fingerprint shape, built from
+   * `get_inventory_alert_conditions()`/`get_expiry_alert_conditions()`:
+   * `` `${occurrenceVersion}:${sortedAffectedEntityIds.join(',')}` `` —
+   * both RPCs share one lifecycle helper (`_advance_alert_occurrence()`
+   * SQL function) so the semantics are identical. This detects BOTH a
+   * changed affected-entity set at the same count (the id list differs)
+   * AND a condition that fully resolved and later reoccurred with the
+   * exact same entity set (`occurrenceVersion` incremented by the
+   * store-wide `alert_condition_states` lifecycle table on the
+   * inactive→active transition) — both cases Phase 8.1's coarse
+   * fingerprint could not distinguish.
    *
-   * The other five alert types (`inventory_expired`, `inventory_expiring_soon`,
-   * `inventory_missing_expiry`, `inventory_never_sold`,
+   * The remaining two alert types (`inventory_never_sold`,
    * `inventory_no_recent_sale`) still use Phase 8.1's coarser `"<count>"` /
-   * `"<count>:<value>"` fingerprint (`buildCountFingerprint`) — out of scope
-   * for Phase 8.2, deferred to a future phase once those alerts have their
-   * own entity-set/lifecycle treatment.
+   * `"<count>:<value>"` fingerprint (`buildCountFingerprint`) — out of
+   * scope for Phase 8.3 (product-performance/slow-moving alerts are a
+   * different phase's concern), deferred to a future phase.
    */
   fingerprint: string
 }

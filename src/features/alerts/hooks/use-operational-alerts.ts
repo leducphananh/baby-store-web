@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { useExpirySummary } from '@/features/reports/hooks/use-expiry-summary'
+import { useExpiryAlertConditions } from '@/features/reports/hooks/use-expiry-alert-conditions'
 import { useInventoryAlertConditions } from '@/features/reports/hooks/use-inventory-alert-conditions'
 import { useSlowMovingSummary } from '@/features/reports/hooks/use-slow-moving-summary'
 import type { ExpiryHorizonDays, SalesLookbackDays } from '@/features/reports/types/expiry'
@@ -34,31 +34,50 @@ export const ALERT_SALES_LOOKBACK_DAYS: SalesLookbackDays = 30
  * strict reduction of what the Bell/Alert Center/Dashboard-Attention query
  * (the Inventory Report page's own KPI cards keep using the full summary
  * directly, unaffected).
+ *
+ * Expiry conditions (expired/expiring-soon/missing-expiry) come from
+ * `useExpiryAlertConditions()` (Phase 8.3), not `useExpirySummary()` —
+ * same reasoning, plus a batch-identity fingerprint instead of a bare
+ * count. This does mean these three alerts no longer show an inventory
+ * VALUE in their description (`useExpiryAlertConditions` doesn't compute
+ * one, deliberately, to stay lightweight) — count + navigation is the
+ * accepted trade-off (no consumer of this hook needed the value; the
+ * Expiry Report itself still shows it via `useExpirySummary` directly,
+ * unaffected).
  */
 export function useOperationalAlerts({ includeSlowMoving }: { includeSlowMoving: boolean }) {
   const inventoryConditionsQuery = useInventoryAlertConditions()
-  const expiryQuery = useExpirySummary(ALERT_EXPIRY_HORIZON_DAYS)
+  const expiryConditionsQuery = useExpiryAlertConditions(ALERT_EXPIRY_HORIZON_DAYS)
   const slowMovingQuery = useSlowMovingSummary(ALERT_SALES_LOOKBACK_DAYS, { enabled: includeSlowMoving })
 
   const isLoading =
-    inventoryConditionsQuery.isLoading || expiryQuery.isLoading || (includeSlowMoving && slowMovingQuery.isLoading)
+    inventoryConditionsQuery.isLoading ||
+    expiryConditionsQuery.isLoading ||
+    (includeSlowMoving && slowMovingQuery.isLoading)
   const isError =
-    inventoryConditionsQuery.isError || expiryQuery.isError || (includeSlowMoving && slowMovingQuery.isError)
+    inventoryConditionsQuery.isError || expiryConditionsQuery.isError || (includeSlowMoving && slowMovingQuery.isError)
 
   const alerts = useMemo<OperationalAlert[]>(() => {
     if (isLoading || isError) return []
     return buildOperationalAlerts({
       inventoryConditions: inventoryConditionsQuery.data,
-      expiry: expiryQuery.data,
+      expiryConditions: expiryConditionsQuery.data,
       slowMoving: includeSlowMoving ? slowMovingQuery.data : undefined,
       horizonDays: ALERT_EXPIRY_HORIZON_DAYS,
       lookbackDays: ALERT_SALES_LOOKBACK_DAYS,
     })
-  }, [isLoading, isError, includeSlowMoving, inventoryConditionsQuery.data, expiryQuery.data, slowMovingQuery.data])
+  }, [
+    isLoading,
+    isError,
+    includeSlowMoving,
+    inventoryConditionsQuery.data,
+    expiryConditionsQuery.data,
+    slowMovingQuery.data,
+  ])
 
   function refetch() {
     void inventoryConditionsQuery.refetch()
-    void expiryQuery.refetch()
+    void expiryConditionsQuery.refetch()
     if (includeSlowMoving) void slowMovingQuery.refetch()
   }
 

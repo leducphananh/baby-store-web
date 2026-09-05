@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { AlertTriangle, ArrowLeft, Clock, HelpCircle, PackageX, RefreshCw, Wallet } from 'lucide-react'
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -43,6 +43,30 @@ const PAGE_SIZE_OPTIONS = [10, 20, 50, 100]
 const DEFAULT_PAGE_SIZE = 10
 const EXPIRY_PAGE_SIZE_STORAGE_KEY = 'baby-wale.reports.expiry.page-size'
 const SLOW_MOVING_PAGE_SIZE_STORAGE_KEY = 'baby-wale.reports.slow-moving.page-size'
+const VALID_EXPIRY_STATUS_FILTERS: ExpiryStatusFilter[] = ['all', 'expired', 'near_expiry', 'missing_expiry']
+
+/**
+ * One-way deep link from the alert Bell/Alert Center/Dashboard
+ * (`?expiryStatus=expired|near_expiry|missing_expiry`, Phase 8.3) — read
+ * once as the batch table's initial filter, never synced back to the URL
+ * (same pattern as the Inventory Report's `?stockStatus=`, Phase 8.2).
+ */
+function readExpiryStatusFromUrl(searchParams: URLSearchParams): ExpiryStatusFilter {
+  const value = searchParams.get('expiryStatus')
+  return VALID_EXPIRY_STATUS_FILTERS.includes(value as ExpiryStatusFilter) ? (value as ExpiryStatusFilter) : 'all'
+}
+
+/**
+ * `?horizon=30` (only sent alongside the `expiring_soon` alert link) —
+ * initializes the report's own user-selectable horizon to the same
+ * operational default the alert used, so the batches shown match what the
+ * alert counted. Falls back to the report's own default (30) for any
+ * missing/invalid value, never a silently-different horizon.
+ */
+function readHorizonFromUrl(searchParams: URLSearchParams): ExpiryHorizonDays {
+  const value = Number(searchParams.get('horizon'))
+  return (EXPIRY_HORIZON_OPTIONS as readonly number[]).includes(value) ? (value as ExpiryHorizonDays) : 30
+}
 
 function BackLink() {
   return (
@@ -76,10 +100,13 @@ function BackLink() {
  * decides what counts as worth checking (requirement §22/§67/§73).
  */
 function ExpiryReportPage() {
-  const [horizonDays, setHorizonDays] = useState<ExpiryHorizonDays>(30)
+  const [searchParams] = useSearchParams()
+  const [horizonDays, setHorizonDays] = useState<ExpiryHorizonDays>(() => readHorizonFromUrl(searchParams))
   const [expirySearch, setExpirySearch] = useState('')
   const [expiryCategoryId, setExpiryCategoryId] = useState<string | null>(null)
-  const [expiryStatusFilter, setExpiryStatusFilter] = useState<ExpiryStatusFilter>('all')
+  const [expiryStatusFilter, setExpiryStatusFilter] = useState<ExpiryStatusFilter>(() =>
+    readExpiryStatusFromUrl(searchParams),
+  )
   const [expiryPage, setExpiryPage] = useState(1)
   const [expiryPageSize, setExpiryPageSize] = usePersistedPageSize(
     EXPIRY_PAGE_SIZE_STORAGE_KEY,

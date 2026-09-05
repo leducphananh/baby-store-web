@@ -978,6 +978,14 @@ export type Database = {
       }
     }
     Functions: {
+      _advance_alert_occurrence: {
+        Args: {
+          p_alert_key: string
+          p_ids_joined: string
+          p_now_active: boolean
+        }
+        Returns: string
+      }
       add_import_receipt_item: {
         Args: {
           p_expiration_date?: string
@@ -1025,6 +1033,15 @@ export type Database = {
           product_count_sold: number
           revenue: number
           sold_quantity: number
+        }[]
+      }
+      get_expiry_alert_conditions: {
+        Args: { p_horizon_days?: number }
+        Returns: {
+          affected_count: number
+          alert_type: string
+          fingerprint: string
+          sample_previews: string[]
         }[]
       }
       get_expiry_batch_list: {
