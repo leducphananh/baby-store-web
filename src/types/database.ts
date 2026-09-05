@@ -27,6 +27,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      alert_read_states: {
+        Row: {
+          alert_key: string
+          created_at: string
+          fingerprint: string
+          id: string
+          read_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          alert_key: string
+          created_at?: string
+          fingerprint: string
+          id?: string
+          read_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          alert_key?: string
+          created_at?: string
+          fingerprint?: string
+          id?: string
+          read_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           created_at: string | null

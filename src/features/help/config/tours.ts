@@ -563,6 +563,33 @@ export const TOUR_REGISTRY: Record<string, Tour> = {
       },
     ],
   },
+
+  'alert-center': {
+    id: 'alert-center',
+    title: 'Trung tâm cảnh báo',
+    steps: [
+      {
+        title: 'Cảnh báo là gì',
+        description:
+          'Biểu tượng chuông ở đầu trang hiển thị các vấn đề vận hành đang xảy ra hiện tại — hết hàng, sắp/đã hết hạn sử dụng, hoặc hàng tồn lâu chưa bán. Mở một cảnh báo sẽ đánh dấu đã đọc và đưa bạn đến báo cáo chi tiết để xem và xử lý.',
+      },
+      {
+        title: 'Đã đọc không có nghĩa là đã xử lý',
+        description:
+          'Đánh dấu đã đọc chỉ ghi nhận rằng bạn đã xem cảnh báo đó — vấn đề thực tế (ví dụ lô hàng đã hết hạn) vẫn còn cho đến khi được xử lý. Cảnh báo sẽ tự động xuất hiện lại nếu vấn đề tái diễn.',
+      },
+      {
+        target: 'alert-center-filters',
+        title: 'Lọc theo trạng thái',
+        description: 'Xem tất cả cảnh báo hiện tại, hoặc chỉ những cảnh báo bạn chưa đọc.',
+      },
+      {
+        target: 'alert-center-list',
+        title: 'Danh sách cảnh báo',
+        description: 'Mỗi cảnh báo phản ánh một tình trạng thực tế đang diễn ra — không phải lịch sử thông báo cũ. Bấm vào một cảnh báo để xem chi tiết ở báo cáo tương ứng.',
+      },
+    ],
+  },
 }
 
 /**

@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Bell, LogOut, Menu, UserCircle } from 'lucide-react'
-import { Link, useLocation } from 'react-router'
+import { LogOut, Menu, UserCircle } from 'lucide-react'
+import { useLocation } from 'react-router'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -14,10 +14,10 @@ import {
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { NavList } from '@/components/layout/nav-list'
 import { NAV_ITEMS } from '@/components/layout/nav-items'
+import { AlertBell } from '@/features/alerts/components/alert-bell'
 import { useProfile } from '@/features/auth/hooks/use-profile'
 import { useSignOut } from '@/features/auth/hooks/use-sign-out'
 import { useAuth } from '@/providers/auth-provider'
-import { ROUTES } from '@/routes/route-paths'
 
 const PROFILE_ROLE_LABEL: Record<'owner' | 'staff', string> = {
   owner: 'Chủ cửa hàng',
@@ -37,10 +37,9 @@ function usePageTitle(): string {
  * don't reach for global state to avoid one level of prop drilling that
  * doesn't even exist here).
  *
- * The bell links to the real "Cảnh báo" route rather than being decorative —
- * there's no notification/badge-count backend yet, so it's just navigation,
- * not a fake feature (see CLAUDE.md: presentation changes only, no invented
- * functionality).
+ * The bell (`AlertBell`, Phase 8.1) shows real operational alert conditions
+ * and an unread-count badge — reused as-is from `features/alerts`, not
+ * reimplemented here.
  */
 function Header() {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false)
@@ -78,11 +77,7 @@ function Header() {
       <h1 className="truncate text-sm font-bold text-foreground">{pageTitle}</h1>
 
       <div className="ml-auto flex items-center gap-1">
-        <Button variant="ghost" size="icon" asChild aria-label="Xem cảnh báo">
-          <Link to={ROUTES.alerts}>
-            <Bell className="size-5" />
-          </Link>
-        </Button>
+        <AlertBell />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

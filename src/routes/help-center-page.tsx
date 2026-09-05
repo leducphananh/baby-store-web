@@ -39,6 +39,7 @@ const TOUR_ROUTES: Record<string, string> = {
   'product-performance-report': ROUTES.productPerformanceReport,
   'inventory-report': ROUTES.inventoryReport,
   'expiry-report': ROUTES.expiryReport,
+  'alert-center': ROUTES.alerts,
 }
 
 function Section({

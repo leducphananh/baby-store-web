@@ -3,6 +3,7 @@ import { createBrowserRouter } from 'react-router'
 
 import { AppShell } from '@/components/layout/app-shell'
 import { PageLoading } from '@/components/common/page-loading'
+import { AlertCenterPage } from '@/routes/alert-center-page'
 import { CategoriesPage } from '@/routes/categories-page'
 import { ComingSoonPage } from '@/routes/coming-soon-page'
 import { CreateOrderPage } from '@/routes/create-order-page'
@@ -153,7 +154,7 @@ export const router = createBrowserRouter([
               </Suspense>
             ),
           },
-          { path: 'alerts', element: <ComingSoonPage title="Cảnh báo" /> },
+          { path: 'alerts', element: <AlertCenterPage /> },
           { path: 'settings', element: <ComingSoonPage title="Cài đặt" /> },
           { path: 'help', element: <HelpCenterPage /> },
           { path: '*', element: <NotFoundPage /> },
