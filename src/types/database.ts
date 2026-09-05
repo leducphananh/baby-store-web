@@ -1,16 +1,3 @@
-// Auto-generated Supabase database types.
-//
-// Generated from the `baby-store-management` Supabase project schema
-// (project ref: jtkmycvkthciiskwptqv) via the Supabase MCP
-// `generate_typescript_types` tool.
-//
-// Do NOT hand-edit this file. Regenerate it whenever the database schema
-// changes (new tables/columns/functions), and re-run `yarn typecheck` /
-// `yarn build` afterwards to catch any code that needs updating.
-//
-// Regeneration (once the Supabase CLI is set up locally):
-//   supabase gen types typescript --project-id jtkmycvkthciiskwptqv > src/types/database.ts
-
 export type Json =
   | string
   | number
@@ -27,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      alert_condition_states: {
+        Row: {
+          activated_at: string | null
+          alert_key: string
+          fingerprint: string
+          is_active: boolean
+          occurrence_version: number
+          resolved_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          activated_at?: string | null
+          alert_key: string
+          fingerprint: string
+          is_active?: boolean
+          occurrence_version?: number
+          resolved_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          activated_at?: string | null
+          alert_key?: string
+          fingerprint?: string
+          is_active?: boolean
+          occurrence_version?: number
+          resolved_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       alert_read_states: {
         Row: {
           alert_key: string
@@ -1063,6 +1080,15 @@ export type Database = {
           near_expiry_quantity: number
         }[]
       }
+      get_inventory_alert_conditions: {
+        Args: never
+        Returns: {
+          affected_count: number
+          alert_type: string
+          fingerprint: string
+          sample_product_names: string[]
+        }[]
+      }
       get_inventory_category_summary: {
         Args: never
         Returns: {
@@ -1191,15 +1217,6 @@ export type Database = {
           revenue: number
         }[]
       }
-      get_slow_moving_summary: {
-        Args: { p_lookback_days?: number }
-        Returns: {
-          never_sold_count: number
-          never_sold_value: number
-          no_sale_in_lookback_count: number
-          no_sale_in_lookback_value: number
-        }[]
-      }
       get_slow_moving_products: {
         Args: {
           p_category_id?: string
@@ -1226,6 +1243,15 @@ export type Database = {
           sold_quantity_lookback: number
           total_count: number
           unit: string
+        }[]
+      }
+      get_slow_moving_summary: {
+        Args: { p_lookback_days?: number }
+        Returns: {
+          never_sold_count: number
+          never_sold_value: number
+          no_sale_in_lookback_count: number
+          no_sale_in_lookback_value: number
         }[]
       }
       recalc_import_receipt_total: {

@@ -68,6 +68,13 @@ export const reportsKeys = {
       filters.pageSize,
     ] as const,
   inventoryCategorySummary: () => [...reportsKeys.inventory(), 'category'] as const,
+  // Phase 8.2 — the header Bell/Alert Center's entity-aware source for
+  // out_of_stock/low_stock specifically, nested under the same
+  // `reportsKeys.inventory()` umbrella so it's covered by the existing
+  // `confirm_import_receipt`/`create_order`/`cancel_order` invalidations
+  // (`reportsKeys.all`/`reportsKeys.inventory()`) with no new invalidation
+  // call needed at those sites.
+  inventoryAlertConditions: () => [...reportsKeys.inventory(), 'alert-conditions'] as const,
   // Umbrella for the whole Expiry & Slow-moving Report page — two
   // independent sub-namespaces below, neither keyed by a sales
   // ReportDateRange (requirement §20/§54): expiry is a current-inventory

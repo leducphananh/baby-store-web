@@ -54,13 +54,23 @@ export type OperationalAlert = {
    * an old fingerprint is simply stale and the alert becomes unread again
    * with no cleanup job (see `alert_read_states` migration comment).
    *
-   * Phase 8.1's fingerprint is intentionally coarse: `"<count>"` or
-   * `"<count>:<value>"` for these aggregate, count-based alerts. This
-   * cannot distinguish "the same N entities are still affected" from "a
-   * different N entities are now affected" — documented limitation
-   * (requirement §22 explicitly allows deferring exact entity-level
-   * fingerprinting to Phase 8.2/8.3, once those phases have concrete
-   * per-entity data to hash).
+   * `inventory_out_of_stock`/`inventory_low_stock` (Phase 8.2) use a richer
+   * fingerprint built from `get_inventory_alert_conditions()`:
+   * `` `${occurrenceVersion}:${sortedAffectedProductIds.join(',')}` `` — see
+   * that RPC's migration comment. This detects BOTH a changed affected-
+   * product set at the same count (the id list differs) AND a condition
+   * that fully resolved and later reoccurred with the exact same product
+   * set (`occurrenceVersion` incremented by the store-wide
+   * `alert_condition_states` lifecycle table on the inactive→active
+   * transition) — both cases Phase 8.1's coarse fingerprint could not
+   * distinguish.
+   *
+   * The other five alert types (`inventory_expired`, `inventory_expiring_soon`,
+   * `inventory_missing_expiry`, `inventory_never_sold`,
+   * `inventory_no_recent_sale`) still use Phase 8.1's coarser `"<count>"` /
+   * `"<count>:<value>"` fingerprint (`buildCountFingerprint`) — out of scope
+   * for Phase 8.2, deferred to a future phase once those alerts have their
+   * own entity-set/lifecycle treatment.
    */
   fingerprint: string
 }

@@ -83,3 +83,28 @@ export type InventoryCategoryRow = {
   totalQuantity: number
   inventoryValue: number
 }
+
+/**
+ * The two inventory alert types `get_inventory_alert_conditions()` (Phase
+ * 8.2) reports on — deliberately not the full `AlertType` union: this RPC
+ * only ever groups `product_inventory_overview.stock_status`, so it can
+ * never produce an expiry/slow-moving condition.
+ */
+export type InventoryAlertType = 'inventory_out_of_stock' | 'inventory_low_stock'
+
+/**
+ * One inventory alert type's current occurrence data (Phase 8.2) — the
+ * lightweight entity-aware replacement for reading `outOfStockCount`/
+ * `lowStockCount` off `InventoryValueSummary` for alert purposes
+ * specifically. `fingerprint` already encodes both the affected product-id
+ * set AND the store-wide occurrence lifecycle (see
+ * `OperationalAlert.fingerprint`'s doc comment) — never rebuild it
+ * client-side from `sampleProductNames`, which is display-only and
+ * truncated to at most 3 names.
+ */
+export type InventoryAlertCondition = {
+  alertType: InventoryAlertType
+  affectedCount: number
+  fingerprint: string
+  sampleProductNames: string[]
+}

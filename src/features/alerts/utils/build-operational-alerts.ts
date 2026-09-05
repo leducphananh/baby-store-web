@@ -5,8 +5,32 @@ import { formatNumber } from '@/utils/number'
 import { ROUTES } from '@/routes/route-paths'
 import { buildCountFingerprint } from '@/features/alerts/utils/alert-fingerprint'
 import type { OperationalAlert } from '@/features/alerts/types/alert'
-import type { InventoryValueSummary } from '@/features/reports/types/inventory'
+import type { InventoryAlertCondition, InventoryAlertType } from '@/features/reports/types/inventory'
 import type { ExpiryHorizonDays, ExpirySummary, SalesLookbackDays, SlowMovingSummary } from '@/features/reports/types/expiry'
+
+/**
+ * Looks up one inventory alert type's current occurrence row out of
+ * `get_inventory_alert_conditions()`'s result — never assumes array order,
+ * since the RPC's own row order isn't a contract.
+ */
+function findInventoryCondition(
+  conditions: InventoryAlertCondition[] | undefined,
+  alertType: InventoryAlertType,
+): InventoryAlertCondition | undefined {
+  return conditions?.find((condition) => condition.alertType === alertType)
+}
+
+/**
+ * Up to 3 affected product names as a short Vietnamese preview
+ * (requirement §79, optional) — never the full affected list (that's what
+ * the Inventory Report deep link is for), and never a re-derivation of the
+ * fingerprint (which is entity-*id*-based, not name-based).
+ */
+function describeAffectedProducts(condition: InventoryAlertCondition): string | undefined {
+  if (condition.sampleProductNames.length === 0) return undefined
+  const suffix = condition.affectedCount > condition.sampleProductNames.length ? '...' : ''
+  return `Ví dụ: ${condition.sampleProductNames.join(', ')}${suffix}`
+}
 
 /**
  * THE single place that turns authoritative Phase 7.5/7.6 business facts
@@ -15,7 +39,9 @@ import type { ExpiryHorizonDays, ExpirySummary, SalesLookbackDays, SlowMovingSum
  * Center all call this same function rather than each re-deriving alert
  * conditions themselves. No inventory/expiry/slow-moving math happens
  * here — every count/value is read verbatim off the summaries already
- * computed by `get_inventory_value_summary()`/`get_expiry_summary()`/
+ * computed by `get_inventory_alert_conditions()` (out_of_stock/low_stock,
+ * Phase 8.2 — itself grouped from `product_inventory_overview.stock_status`,
+ * Phase 7.5's authoritative classification)/`get_expiry_summary()`/
  * `get_slow_moving_summary()`.
  *
  * Priority order (requirement §25, fixed, not a score): expired → missing
@@ -28,13 +54,13 @@ import type { ExpiryHorizonDays, ExpirySummary, SalesLookbackDays, SlowMovingSum
  * of how each one fetches its data.
  */
 export function buildOperationalAlerts({
-  inventory,
+  inventoryConditions,
   expiry,
   slowMoving,
   horizonDays,
   lookbackDays,
 }: {
-  inventory: InventoryValueSummary | undefined
+  inventoryConditions: InventoryAlertCondition[] | undefined
   expiry: ExpirySummary | undefined
   slowMoving?: SlowMovingSummary | undefined
   horizonDays: ExpiryHorizonDays
@@ -67,15 +93,17 @@ export function buildOperationalAlerts({
     })
   }
 
-  if ((inventory?.outOfStockCount ?? 0) > 0) {
+  const outOfStockCondition = findInventoryCondition(inventoryConditions, 'inventory_out_of_stock')
+  if (outOfStockCondition && outOfStockCondition.affectedCount > 0) {
     alerts.push({
       key: 'inventory_out_of_stock',
       type: 'inventory_out_of_stock',
       severity: 'critical',
       icon: PackageX,
-      title: `${formatNumber(inventory!.outOfStockCount)} sản phẩm đã hết hàng`,
-      href: ROUTES.inventoryReport,
-      fingerprint: buildCountFingerprint(inventory!.outOfStockCount),
+      title: `${formatNumber(outOfStockCondition.affectedCount)} sản phẩm đã hết hàng`,
+      description: describeAffectedProducts(outOfStockCondition),
+      href: `${ROUTES.inventoryReport}?stockStatus=out_of_stock`,
+      fingerprint: outOfStockCondition.fingerprint,
     })
   }
 
@@ -92,15 +120,17 @@ export function buildOperationalAlerts({
     })
   }
 
-  if ((inventory?.lowStockCount ?? 0) > 0) {
+  const lowStockCondition = findInventoryCondition(inventoryConditions, 'inventory_low_stock')
+  if (lowStockCondition && lowStockCondition.affectedCount > 0) {
     alerts.push({
       key: 'inventory_low_stock',
       type: 'inventory_low_stock',
       severity: 'warning',
       icon: TrendingDown,
-      title: `${formatNumber(inventory!.lowStockCount)} sản phẩm sắp hết hàng`,
-      href: ROUTES.inventoryReport,
-      fingerprint: buildCountFingerprint(inventory!.lowStockCount),
+      title: `${formatNumber(lowStockCondition.affectedCount)} sản phẩm sắp hết hàng`,
+      description: describeAffectedProducts(lowStockCondition),
+      href: `${ROUTES.inventoryReport}?stockStatus=low_stock`,
+      fingerprint: lowStockCondition.fingerprint,
     })
   }
 

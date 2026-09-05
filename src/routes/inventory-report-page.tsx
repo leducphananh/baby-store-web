@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { AlertTriangle, ArrowLeft, Boxes, PackageX, RefreshCw, TrendingDown, Wallet } from 'lucide-react'
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -30,6 +30,21 @@ import type { InventoryReportSortField, StockStatusFilter } from '@/features/rep
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100]
 const DEFAULT_PAGE_SIZE = 20
 const PAGE_SIZE_STORAGE_KEY = 'baby-wale.reports.inventory.page-size'
+const VALID_STOCK_STATUS_FILTERS: StockStatusFilter[] = ['all', 'out_of_stock', 'low_stock', 'normal']
+
+/**
+ * One-way deep link from the alert Bell/Alert Center/Dashboard
+ * (`?stockStatus=out_of_stock`/`low_stock`, Phase 8.2) — read once as the
+ * filter's initial value, never synced back to the URL on further filter
+ * changes. This is deliberately not a full URL-synced-filter feature (that
+ * would need bidirectional state + guard against feedback loops with the
+ * `stockStatus` `useState` below); a one-time initial read has no such
+ * risk and is all an alert link needs.
+ */
+function readStockStatusFromUrl(searchParams: URLSearchParams): StockStatusFilter {
+  const value = searchParams.get('stockStatus')
+  return VALID_STOCK_STATUS_FILTERS.includes(value as StockStatusFilter) ? (value as StockStatusFilter) : 'all'
+}
 
 function BackLink() {
   return (
@@ -62,9 +77,10 @@ function BackLink() {
  * an estimated sales value (requirement §35/§36).
  */
 function InventoryReportPage() {
+  const [searchParams] = useSearchParams()
   const [search, setSearch] = useState('')
   const [categoryId, setCategoryId] = useState<string | null>(null)
-  const [stockStatus, setStockStatus] = useState<StockStatusFilter>('all')
+  const [stockStatus, setStockStatus] = useState<StockStatusFilter>(() => readStockStatusFromUrl(searchParams))
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = usePersistedPageSize(PAGE_SIZE_STORAGE_KEY, PAGE_SIZE_OPTIONS, DEFAULT_PAGE_SIZE)
   const [sorting, setSorting] = useState<{ id: InventoryReportSortField; desc: boolean }>({
