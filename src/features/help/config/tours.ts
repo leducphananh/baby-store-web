@@ -470,6 +470,52 @@ export const TOUR_REGISTRY: Record<string, Tour> = {
       },
     ],
   },
+
+  'expiry-report': {
+    id: 'expiry-report',
+    title: 'Báo cáo Hạn sử dụng & hàng chậm bán',
+    steps: [
+      {
+        title: 'Hai phần phân tích khác nhau',
+        description:
+          'Trang này gồm hai phần độc lập: "Rủi ro hết hạn" (dựa trên hạn sử dụng của từng lô hàng còn tồn) và "Hàng ít luân chuyển" (dựa trên lịch sử bán hàng gần đây). Một sản phẩm có thể bán nhanh nhưng có một lô sắp hết hạn, hoặc bán chậm nhưng còn hạn sử dụng lâu — đây là hai vấn đề kinh doanh khác nhau.',
+      },
+      {
+        target: 'expiry-section',
+        title: 'Hạn sử dụng trong bao nhiêu ngày?',
+        description:
+          'Chọn khoảng thời gian để xem trước — 7, 30, 60 hoặc 90 ngày. Đây chỉ là bộ lọc xem báo cáo, không phải quy tắc "sắp hết hạn = nguy hiểm" cố định của hệ thống.',
+      },
+      {
+        target: 'expiry-kpis',
+        title: 'Chỉ số hết hạn',
+        description:
+          'Số lô và giá trị hàng đã hết hạn, số lô và giá trị sắp hết hạn trong khoảng đã chọn — tính theo giá nhập thực tế của từng lô hàng còn tồn, không phải giá nhập hiện tại của sản phẩm.',
+      },
+      {
+        target: 'expiry-chart',
+        title: 'Biểu đồ và bảng chi tiết theo lô',
+        description:
+          'Biểu đồ luôn thể hiện toàn bộ hàng tồn theo thời gian đến hạn sử dụng. Bảng bên dưới liệt kê từng lô hàng — hàng sắp hết hạn được xác định theo hạn sử dụng của từng lô còn tồn, không phải theo sản phẩm nói chung.',
+      },
+      {
+        target: 'slow-moving-section',
+        title: 'Phân tích hàng ít luân chuyển',
+        description:
+          'Phần hàng ít luân chuyển dựa trên lịch sử bán hàng trong khoảng thời gian bạn chọn; hệ thống không tự đặt một ngưỡng "chậm bán" nếu chưa có quy tắc nghiệp vụ — hãy dùng các chỉ số thực tế (lần bán gần nhất, số ngày chưa bán, số lượng bán) để tự đánh giá.',
+      },
+      {
+        target: 'slow-moving-kpis',
+        title: 'Chỉ số thực tế',
+        description: 'Sản phẩm còn tồn nhưng chưa từng bán, và sản phẩm không phát sinh bán trong khoảng thời gian đã chọn — đây là dữ kiện khách quan, không phải phân loại "chậm bán".',
+      },
+      {
+        target: 'slow-moving-table',
+        title: 'Bảng chi tiết theo sản phẩm',
+        description: 'Sắp xếp theo lần bán gần nhất, số ngày chưa bán, tồn kho hoặc giá trị tồn để tự xác định sản phẩm nào cần ưu tiên kiểm tra.',
+      },
+    ],
+  },
 }
 
 /**

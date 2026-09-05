@@ -980,6 +980,59 @@ export type Database = {
           sold_quantity: number
         }[]
       }
+      get_expiry_batch_list: {
+        Args: {
+          p_category_id?: string
+          p_horizon_days?: number
+          p_limit?: number
+          p_offset?: number
+          p_search?: string
+          p_sort_by?: string
+          p_sort_desc?: boolean
+          p_status_filter?: string
+        }
+        Returns: {
+          batch_id: string
+          category_id: string
+          category_name: string
+          days_remaining: number
+          expiration_date: string
+          expiry_status: string
+          inventory_value: number
+          lot_number: string
+          product_id: string
+          product_name: string
+          product_status: string
+          purchase_price: number
+          remaining_quantity: number
+          sku: string
+          total_count: number
+        }[]
+      }
+      get_expiry_bucket_summary: {
+        Args: never
+        Returns: {
+          batch_count: number
+          bucket: string
+          bucket_order: number
+          inventory_value: number
+          quantity: number
+        }[]
+      }
+      get_expiry_summary: {
+        Args: { p_horizon_days?: number }
+        Returns: {
+          expired_batch_count: number
+          expired_inventory_value: number
+          expired_quantity: number
+          missing_expiry_batch_count: number
+          missing_expiry_quantity: number
+          missing_expiry_value: number
+          near_expiry_batch_count: number
+          near_expiry_inventory_value: number
+          near_expiry_quantity: number
+        }[]
+      }
       get_inventory_category_summary: {
         Args: never
         Returns: {
@@ -1106,6 +1159,43 @@ export type Database = {
           order_count: number
           report_date: string
           revenue: number
+        }[]
+      }
+      get_slow_moving_summary: {
+        Args: { p_lookback_days?: number }
+        Returns: {
+          never_sold_count: number
+          never_sold_value: number
+          no_sale_in_lookback_count: number
+          no_sale_in_lookback_value: number
+        }[]
+      }
+      get_slow_moving_products: {
+        Args: {
+          p_category_id?: string
+          p_limit?: number
+          p_lookback_days?: number
+          p_offset?: number
+          p_search?: string
+          p_sort_by?: string
+          p_sort_desc?: boolean
+        }
+        Returns: {
+          category_id: string
+          category_name: string
+          current_quantity: number
+          days_since_last_sale: number
+          inventory_value: number
+          last_sold_at: string
+          order_count_lookback: number
+          product_id: string
+          product_name: string
+          product_status: string
+          revenue_lookback: number
+          sku: string
+          sold_quantity_lookback: number
+          total_count: number
+          unit: string
         }[]
       }
       recalc_import_receipt_total: {

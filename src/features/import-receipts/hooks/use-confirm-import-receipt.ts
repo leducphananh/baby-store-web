@@ -39,6 +39,11 @@ export function useConfirmImportReceipt(receiptId: string) {
       // — the Inventory Report's quantity/valuation queries (Phase 7.5) may
       // now be stale too.
       void queryClient.invalidateQueries({ queryKey: reportsKeys.inventory() })
+      // New batches can carry their own expiration_date — the Expiry
+      // Report's bucket/summary/batch-list queries (Phase 7.6) may now be
+      // stale too (slow-moving is sales-driven, unaffected by an import,
+      // but it shares this same umbrella key — see `reportsKeys.expiryReport`).
+      void queryClient.invalidateQueries({ queryKey: reportsKeys.expiryReport() })
       toast.success('Xác nhận nhập hàng thành công.')
     },
     onError: (error) => {

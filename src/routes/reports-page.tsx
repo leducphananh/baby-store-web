@@ -19,14 +19,13 @@ type ReportCatalogEntry = {
 }
 
 /**
- * Report modules. "Doanh thu" (Phase 7.2), "Lợi nhuận" (Phase 7.3),
- * "Hiệu quả sản phẩm" (Phase 7.4) and "Tồn kho" (Phase 7.5) are
- * implemented — the rest stay exactly as Phase 7.1 left them: shown as
- * "Sắp ra mắt" with no link,
- * since a nonfunctional route/click target would be worse than an honest
- * roadmap. Add `path` and the card activates itself automatically, the
- * same one-line-at-a-time pattern `nav-items.ts` uses for the sidebar —
- * turn on one report per phase, never all at once.
+ * Report modules. All five are now implemented: "Doanh thu" (Phase 7.2),
+ * "Lợi nhuận" (Phase 7.3), "Hiệu quả sản phẩm" (Phase 7.4), "Tồn kho"
+ * (Phase 7.5), and "Hạn sử dụng" (Phase 7.6, which also covers slow-moving
+ * analysis on the same page). A future Executive Dashboard concept
+ * (Phase 7.7+) is not part of this catalog yet — add `path` and a card
+ * activates itself automatically, the same one-line-at-a-time pattern
+ * `nav-items.ts` uses for the sidebar, turning on one report per phase.
  */
 const REPORT_CATALOG: ReportCatalogEntry[] = [
   {
@@ -53,7 +52,12 @@ const REPORT_CATALOG: ReportCatalogEntry[] = [
     icon: Boxes,
     path: ROUTES.inventoryReport,
   },
-  { title: 'Hạn sử dụng', description: 'Thống kê lô hàng đã hết hạn hoặc sắp hết hạn theo thời gian.', icon: CalendarClock },
+  {
+    title: 'Hạn sử dụng',
+    description: 'Theo dõi hàng sắp hết hạn và các sản phẩm ít phát sinh bán.',
+    icon: CalendarClock,
+    path: ROUTES.expiryReport,
+  },
 ]
 
 function ReportCard({ title, description, icon: Icon, path }: ReportCatalogEntry) {

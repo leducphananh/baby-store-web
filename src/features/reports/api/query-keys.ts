@@ -2,6 +2,11 @@ import { toReportQueryBounds } from '@/features/reports/utils/report-date-range'
 import type { ReportDateRange } from '@/features/reports/types/report'
 import type { ProductPerformanceFilters } from '@/features/reports/types/product-performance'
 import type { InventoryReportFilters } from '@/features/reports/types/inventory'
+import type {
+  ExpiryBatchFilters,
+  ExpiryHorizonDays,
+  SlowMovingFilters,
+} from '@/features/reports/types/expiry'
 
 /**
  * Normalized-bounds cache key, not the raw `ReportDateRange` object — two
@@ -63,4 +68,40 @@ export const reportsKeys = {
       filters.pageSize,
     ] as const,
   inventoryCategorySummary: () => [...reportsKeys.inventory(), 'category'] as const,
+  // Umbrella for the whole Expiry & Slow-moving Report page — two
+  // independent sub-namespaces below, neither keyed by a sales
+  // ReportDateRange (requirement §20/§54): expiry is a current-inventory
+  // snapshot keyed only by horizon/filters; slow-moving a current-
+  // inventory + recent-sales snapshot keyed only by lookback/filters.
+  expiryReport: () => [...reportsKeys.all, 'expiry-report'] as const,
+  expiry: () => [...reportsKeys.expiryReport(), 'expiry'] as const,
+  expiryBucketSummary: () => [...reportsKeys.expiry(), 'buckets'] as const,
+  expirySummary: (horizonDays: ExpiryHorizonDays) =>
+    [...reportsKeys.expiry(), 'summary', horizonDays] as const,
+  expiryBatchList: (filters: ExpiryBatchFilters) =>
+    [
+      ...reportsKeys.expiry(),
+      'batches',
+      filters.horizonDays,
+      filters.search,
+      filters.categoryId ?? 'all',
+      filters.statusFilter,
+      filters.sortField,
+      filters.sortDesc,
+      filters.page,
+      filters.pageSize,
+    ] as const,
+  slowMoving: () => [...reportsKeys.expiryReport(), 'slow-moving'] as const,
+  slowMovingSummary: (lookbackDays: number) => [...reportsKeys.slowMoving(), 'summary', lookbackDays] as const,
+  slowMovingProducts: (filters: SlowMovingFilters) =>
+    [
+      ...reportsKeys.slowMoving(),
+      filters.lookbackDays,
+      filters.search,
+      filters.categoryId ?? 'all',
+      filters.sortField,
+      filters.sortDesc,
+      filters.page,
+      filters.pageSize,
+    ] as const,
 }

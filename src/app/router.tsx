@@ -59,6 +59,11 @@ const InventoryReportPage = lazy(() =>
   import('@/routes/inventory-report-page').then((module) => ({ default: module.InventoryReportPage })),
 )
 
+/** Same reasoning as `RevenueReportPage` above — this route pulls in `recharts` too. */
+const ExpiryReportPage = lazy(() =>
+  import('@/routes/expiry-report-page').then((module) => ({ default: module.ExpiryReportPage })),
+)
+
 /**
  * App-wide router definition. `/login` is public (guarded the other way,
  * by `PublicOnlyRoute`); everything else sits under `RequireAuth` ->
@@ -137,6 +142,14 @@ export const router = createBrowserRouter([
             element: (
               <Suspense fallback={<PageLoading />}>
                 <InventoryReportPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: 'reports/expiry',
+            element: (
+              <Suspense fallback={<PageLoading />}>
+                <ExpiryReportPage />
               </Suspense>
             ),
           },

@@ -41,6 +41,8 @@ export const ROUTES = {
   productPerformanceReport: '/reports/products',
   /** Inventory Report (Phase 7.5) — current inventory quantity/valuation snapshot, not a sales-date-range report. */
   inventoryReport: '/reports/inventory',
+  /** Expiry & Slow-moving Report (Phase 7.6) — current expiry-risk snapshot + factual recent-sales analysis, not a sales-date-range report. */
+  expiryReport: '/reports/expiry',
   alerts: '/alerts',
   settings: '/settings',
   help: '/help',
