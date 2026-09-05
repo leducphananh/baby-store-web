@@ -24,6 +24,7 @@ import type { Tour } from '@/features/help/types/tour'
 
 /** Where a tour's "Mở màn hình" link should go — the same routes the tour itself describes. */
 const TOUR_ROUTES: Record<string, string> = {
+  dashboard: ROUTES.home,
   'products-list': ROUTES.products,
   'product-detail': ROUTES.products,
   categories: ROUTES.categories,

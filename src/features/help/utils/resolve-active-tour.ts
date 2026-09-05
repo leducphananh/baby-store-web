@@ -18,6 +18,7 @@ const IMPORT_DETAIL_PATTERN = /^\/imports\/[^/]+$/
  * `product-form-dialog.tsx`), never from here.
  */
 export function resolveActiveTourId(pathname: string): string | null {
+  if (pathname === ROUTES.home) return 'dashboard'
   if (pathname === ROUTES.products) return 'products-list'
   if (PRODUCT_DETAIL_PATTERN.test(pathname)) return 'product-detail'
   if (pathname === ROUTES.categories) return 'categories'

@@ -16,6 +16,53 @@ import type { Tour } from '@/features/help/types/tour'
  * Phase 4.6 — see the completion report for the audit this was built from.
  */
 export const TOUR_REGISTRY: Record<string, Tour> = {
+  dashboard: {
+    id: 'dashboard',
+    title: 'Tổng quan',
+    steps: [
+      {
+        title: 'Hai loại số liệu khác nhau',
+        description:
+          'Khoảng thời gian chỉ áp dụng cho kết quả bán hàng. Tồn kho và hạn sử dụng luôn phản ánh trạng thái hiện tại, không thay đổi theo khoảng thời gian bạn chọn.',
+      },
+      {
+        target: 'dashboard-period',
+        title: 'Chọn khoảng thời gian',
+        description: 'Chọn khoảng thời gian để xem kết quả kinh doanh và sản phẩm bán chạy theo đúng kỳ bạn cần.',
+      },
+      {
+        target: 'dashboard-kpis',
+        title: 'Kết quả kinh doanh',
+        description: 'Doanh thu, lợi nhuận gộp, biên lợi nhuận và số đơn đã hoàn tất trong khoảng thời gian đã chọn — giống hệt số liệu ở các báo cáo chi tiết.',
+      },
+      {
+        target: 'dashboard-chart',
+        title: 'Biểu đồ doanh thu & lợi nhuận',
+        description: 'Xu hướng doanh thu, giá vốn và lợi nhuận gộp theo ngày trong khoảng thời gian đã chọn.',
+      },
+      {
+        target: 'dashboard-top-products',
+        title: 'Top sản phẩm theo doanh thu',
+        description: 'Đây là xếp hạng theo doanh thu — khác với "bán chạy nhất" (xếp theo số lượng bán). Xem đầy đủ các tiêu chí khác ở báo cáo Hiệu quả sản phẩm.',
+      },
+      {
+        target: 'dashboard-inventory',
+        title: 'Tồn kho hiện tại',
+        description: 'Phần này luôn hiển thị số liệu hiện tại — không đổi dù bạn chọn khoảng thời gian nào ở trên.',
+      },
+      {
+        target: 'dashboard-attention',
+        title: 'Cần chú ý',
+        description: 'Danh sách các vấn đề khách quan cần kiểm tra: hàng hết hạn, sắp hết hạn, hết hàng, sắp hết hàng, hoặc còn tồn nhưng chưa từng bán. Bấm vào từng mục để xem chi tiết ở báo cáo tương ứng.',
+      },
+      {
+        target: 'dashboard-quick-actions',
+        title: 'Thao tác nhanh',
+        description: 'Lối tắt đến các màn hình bạn dùng thường xuyên nhất.',
+      },
+    ],
+  },
+
   'products-list': {
     id: 'products-list',
     title: 'Danh sách sản phẩm',
