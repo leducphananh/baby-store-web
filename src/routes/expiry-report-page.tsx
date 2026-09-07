@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link, useSearchParams } from 'react-router'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useSearchParams } from 'react-router'
 import { AlertTriangle, ArrowLeft, Clock, HelpCircle, PackageX, RefreshCw, Wallet } from 'lucide-react'
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -103,6 +103,7 @@ function BackLink() {
  */
 function ExpiryReportPage() {
   const [searchParams] = useSearchParams()
+  const location = useLocation()
   const [horizonDays, setHorizonDays] = useState<ExpiryHorizonDays>(() => readHorizonFromUrl(searchParams))
   const [expirySearch, setExpirySearch] = useState('')
   const [expiryCategoryId, setExpiryCategoryId] = useState<string | null>(null)
@@ -136,6 +137,17 @@ function ExpiryReportPage() {
     desc: false,
   })
   const debouncedSmSearch = useDebouncedValue(smSearch, 300)
+
+  // Deep link from an alert's "Xem hàng chưa từng bán"/"Xem hàng chậm bán"
+  // action (Phase 8.5, `build-operational-alerts.ts`) — same
+  // hash-scroll-into-view pattern Product Detail already uses for
+  // `#batches`; no declarative equivalent exists for syncing scroll
+  // position to the URL hash, so a `useEffect` is the justified exception
+  // here.
+  useEffect(() => {
+    if (location.hash !== '#slow-moving') return
+    document.getElementById('slow-moving')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [location.hash])
 
   function resetExpiryPage() {
     setExpiryPage(1)
@@ -370,7 +382,7 @@ function ExpiryReportPage() {
       </div>
 
       {/* ================= SLOW-MOVING SECTION ================= */}
-      <div className="space-y-4 rounded-xl border bg-card p-4" data-tour="slow-moving-section">
+      <div id="slow-moving" className="scroll-mt-20 space-y-4 rounded-xl border bg-card p-4" data-tour="slow-moving-section">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
             <h2 className="text-lg font-semibold text-foreground">Phân tích hàng ít luân chuyển</h2>

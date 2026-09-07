@@ -13,10 +13,13 @@ export function AlertList({
   items,
   onOpen,
   emptyMessage,
+  variant = 'compact',
 }: {
   items: AlertWithReadState[]
   onOpen: (alert: OperationalAlert) => void
   emptyMessage: string
+  /** Passed straight through to `AlertListItem` — see its own doc comment. */
+  variant?: 'compact' | 'detailed'
 }) {
   if (items.length === 0) {
     return <p className="py-6 text-center text-sm text-muted-foreground">{emptyMessage}</p>
@@ -25,7 +28,7 @@ export function AlertList({
   return (
     <div className="space-y-2">
       {items.map(({ alert, isRead }) => (
-        <AlertListItem key={alert.key} alert={alert} isRead={isRead} onOpen={() => onOpen(alert)} />
+        <AlertListItem key={alert.key} alert={alert} isRead={isRead} onOpen={() => onOpen(alert)} variant={variant} />
       ))}
     </div>
   )

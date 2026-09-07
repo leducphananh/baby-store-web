@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import {
+  Bell,
   BookOpen,
   CircleHelp,
   FolderTree,
@@ -208,6 +209,42 @@ function HelpCenterPage() {
         </Alert>
         <Button variant="outline" size="sm" onClick={() => navigate(ROUTES.inventory)}>
           Đi tới Kho hàng
+        </Button>
+      </Section>
+
+      <Section id="alerts" icon={Bell} title="Cảnh báo & xử lý">
+        <p>
+          Cảnh báo (biểu tượng chuông, hoặc trang "Cảnh báo") phản ánh tình trạng vận hành đang
+          xảy ra hiện tại — không phải nhật ký thông báo cũ. Một cảnh báo tự biến mất khi nguyên
+          nhân nghiệp vụ thực sự không còn (ví dụ: đã nhập đủ hàng, đã hủy hết lô hết hạn), không
+          phải vì có ai đó bấm vào nó.
+        </p>
+        <p>
+          Đánh dấu "đã đọc" chỉ ghi nhận bạn đã xem — không thay đổi tồn kho và không làm vấn đề
+          biến mất. Cảnh báo có thể tái xuất hiện (ở trạng thái chưa đọc) nếu vấn đề tái diễn, kể
+          cả khi số lượng bị ảnh hưởng giống lần trước.
+        </p>
+        <ul className="list-disc space-y-1 pl-5">
+          <li>
+            <strong>Hết hàng / sắp hết hàng:</strong> xử lý bằng cách nhập thêm hàng qua phiếu
+            nhập — điều chỉnh tồn kho thủ công không thay thế cho việc nhập hàng.
+          </li>
+          <li>
+            <strong>Hàng đã hết hạn:</strong> phải chủ động hủy từng lô ở báo cáo Hạn sử dụng —
+            hệ thống không tự động xóa hàng hết hạn khỏi tồn kho.
+          </li>
+          <li>
+            <strong>Chưa có hạn sử dụng:</strong> cảnh báo giúp bạn nhận biết lô hàng còn thiếu
+            thông tin hạn dùng để kiểm tra lại nguồn gốc — hệ thống hiện chưa có màn sửa hạn sử
+            dụng sau khi phiếu nhập đã xác nhận.
+          </li>
+          <li>
+            <strong>Sản phẩm ít luân chuyển:</strong> mang tính tham khảo để cân nhắc kế hoạch bán
+            hàng — không tự động giảm giá hay thay đổi dữ liệu sản phẩm.
+          </li>
+        </ul>
+        <Button variant="outline" size="sm" onClick={() => navigate(ROUTES.alerts)}>
+          Đi tới Cảnh báo
         </Button>
       </Section>
 

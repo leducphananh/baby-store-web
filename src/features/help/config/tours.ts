@@ -579,14 +579,27 @@ export const TOUR_REGISTRY: Record<string, Tour> = {
           'Đánh dấu đã đọc chỉ ghi nhận rằng bạn đã xem cảnh báo đó — vấn đề thực tế (ví dụ lô hàng đã hết hạn) vẫn còn cho đến khi được xử lý. Cảnh báo sẽ tự động xuất hiện lại nếu vấn đề tái diễn.',
       },
       {
+        target: 'alert-center-summary',
+        title: 'Mức độ nghiêm trọng',
+        description:
+          'Các thẻ tổng hợp cho biết có bao nhiêu cảnh báo đang ở mỗi mức: nghiêm trọng, cảnh báo, thông tin — theo số loại vấn đề, không phải số sản phẩm/lô hàng bị ảnh hưởng.',
+      },
+      {
         target: 'alert-center-filters',
         title: 'Lọc theo trạng thái',
         description: 'Xem tất cả cảnh báo hiện tại, hoặc chỉ những cảnh báo bạn chưa đọc.',
       },
       {
         target: 'alert-center-list',
-        title: 'Danh sách cảnh báo',
-        description: 'Mỗi cảnh báo phản ánh một tình trạng thực tế đang diễn ra — không phải lịch sử thông báo cũ. Bấm vào một cảnh báo để xem chi tiết ở báo cáo tương ứng.',
+        title: 'Danh sách cảnh báo và hành động đề xuất',
+        description:
+          'Mỗi cảnh báo phản ánh một tình trạng thực tế đang diễn ra — không phải lịch sử thông báo cũ. Nút chính (ví dụ "Nhập thêm hàng", "Xử lý hàng hết hạn") đưa bạn đến đúng quy trình để giải quyết vấn đề đó.',
+      },
+      {
+        target: 'alert-center-actions',
+        title: 'Đánh dấu đã đọc và làm mới',
+        description:
+          '"Đánh dấu tất cả đã đọc" chỉ ghi nhận bạn đã xem — không thay đổi tồn kho hay đóng vấn đề. "Làm mới" tải lại dữ liệu mới nhất từ hệ thống.',
       },
     ],
   },

@@ -29,6 +29,19 @@ export type AlertType =
 export type AlertSeverity = 'info' | 'warning' | 'critical'
 
 /**
+ * One operational CTA: a label (the ONE place its text lives, requirement
+ * §70 — no UI component re-derives or duplicates it) plus an existing
+ * route. Always navigation, never a mutation callback (requirement §29/§68)
+ * — every alert action reuses a safe, already-existing workflow (the
+ * Expiry Report's write-off, the Inventory Report, the Imports list),
+ * never a shortcut that mutates inventory directly from the alert itself.
+ */
+export type AlertAction = {
+  label: string
+  href: string
+}
+
+/**
  * One current operational condition. Phase 8.1 treats every alert as
  * AGGREGATE-level (requirement §10) — one `OperationalAlert` per `type`,
  * e.g. "84 sản phẩm đã hết hàng", never one row per affected product. This
@@ -46,8 +59,26 @@ export type OperationalAlert = {
   /** Vietnamese, store-operator-facing — never a DB column/RPC name. */
   title: string
   description?: string
-  /** An existing route (`ROUTES.*`) — alerts only navigate, never mutate (requirement §35/§75/§39). */
+  /**
+   * An existing route (`ROUTES.*`) — alerts only navigate, never mutate
+   * (requirement §35/§75/§39). Always equal to `action.href`; kept as its
+   * own field (Phase 8.1) so the compact Bell/Dashboard consumers
+   * (`AlertListItem`'s default variant) that only ever read `href` keep
+   * working unchanged (requirement §72) — they never need to know a
+   * richer `action`/`secondaryAction` exists.
+   */
   href: string
+  /**
+   * The recommended remediation for this condition (Phase 8.5,
+   * requirement §13/§73) — every alert has one, so the Alert Center's
+   * detailed item always has a useful button to show, never a dead end.
+   */
+  action: AlertAction
+  /**
+   * An optional second, less prominent navigation target (requirement
+   * §30) — at most one; an alert never gets three or more actions.
+   */
+  secondaryAction?: AlertAction
   /**
    * Recurrence fingerprint (requirement §20/§21) — changes whenever the
    * underlying occurrence meaningfully changes, so a stored "read" against
