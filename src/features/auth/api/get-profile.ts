@@ -20,14 +20,17 @@ function toProfile(row: ProfileRow): Profile {
  * Fetch the current user's own profile row, scoped to `auth.uid()` via the
  * `.eq('id', userId)` filter.
  *
- * Note: the `profiles` table's current RLS policy (`profiles_all`, `USING
- * (true)` for the `authenticated` role) does not itself restrict reads to
- * the caller's own row — it allows any signed-in user to read any profile.
- * This query still filters client-side to the caller's own id, but that is
- * NOT a substitute for row-level authorization (see CLAUDE.md §9 /
- * `supabase-auth`) — flagged in the Phase 2 completion report as a
- * pre-existing backend condition to review, not something this frontend
- * change silently "fixes".
+ * SELECT on `profiles` is intentionally readable by any signed-in user
+ * (`profiles_select`, `USING (true)`) — this single-store admin app
+ * resolves OTHER users' `full_name` for display all over the place (who
+ * confirmed an import, who adjusted a batch, who created an order), which
+ * needs exactly this. What Phase 2 flagged and Phase 9.1's security audit
+ * fixed is UPDATE: it used to be equally unrestricted (any signed-in user
+ * could edit ANY OTHER user's profile row, including `role`); it is now
+ * `profiles_update_self`, restricted to `id = auth.uid()` — see that
+ * migration's comment for the residual, explicitly-accepted limitation
+ * (a user can still edit their OWN `role`, which has no functional
+ * authorization consequence anywhere in this app today).
  */
 export async function getProfile(userId: string): Promise<Profile | null> {
   const { data, error } = await supabase
