@@ -36,6 +36,8 @@ import type {
   SalesLookbackDays,
   SlowMovingSortField,
 } from '@/features/reports/types/expiry'
+import { InventoryAdjustmentDialog } from '@/features/inventory/components/inventory-adjustment-dialog'
+import type { AdjustableBatch } from '@/features/inventory/types/inventory-adjustment'
 
 const EXPIRY_HORIZON_OPTIONS: readonly ExpiryHorizonDays[] = [7, 30, 60, 90]
 const LOOKBACK_OPTIONS: readonly SalesLookbackDays[] = [30, 60, 90]
@@ -118,6 +120,7 @@ function ExpiryReportPage() {
     desc: false,
   })
   const debouncedExpirySearch = useDebouncedValue(expirySearch, 300)
+  const [writeOffBatch, setWriteOffBatch] = useState<AdjustableBatch | null>(null)
 
   const [lookbackDays, setLookbackDays] = useState<SalesLookbackDays>(30)
   const [smSearch, setSmSearch] = useState('')
@@ -343,6 +346,22 @@ function ExpiryReportPage() {
                       resetExpiryPage()
                     },
                   }}
+                  onWriteOffExpired={(row) =>
+                    setWriteOffBatch({
+                      batchId: row.batchId,
+                      productId: row.productId,
+                      productName: row.productName,
+                      // `ExpiryBatchRow` doesn't carry the product's unit
+                      // (Phase 7.6 never needed it) — `null` falls back to
+                      // a generic "đơn vị" label in the dialog, a cosmetic
+                      // difference only; the write-off math never depends
+                      // on it. Not worth a Phase 7.6 RPC change for this.
+                      unit: null,
+                      lotNumber: row.lotNumber,
+                      remainingQuantity: row.remainingQuantity,
+                      expirationDate: row.expirationDate,
+                    })
+                  }
                 />
               </div>
             )}
@@ -460,6 +479,13 @@ function ExpiryReportPage() {
           </CardContent>
         </Card>
       </div>
+
+      <InventoryAdjustmentDialog
+        open={writeOffBatch !== null}
+        onOpenChange={(open) => !open && setWriteOffBatch(null)}
+        batch={writeOffBatch}
+        defaultOperationType="EXPIRED"
+      />
     </PageContent>
   )
 }

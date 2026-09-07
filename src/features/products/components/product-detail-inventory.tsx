@@ -1,5 +1,8 @@
+import { useState } from 'react'
 import { Link } from 'react-router'
+import { SlidersHorizontal } from 'lucide-react'
 
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DataTable, type DataTableColumn } from '@/components/common/data-table'
 import { EmptyState } from '@/components/common/empty-state'
@@ -9,6 +12,8 @@ import { formatDate } from '@/utils/date'
 import { formatQuantityWithUnit } from '@/utils/unit'
 import { ROUTES } from '@/routes/route-paths'
 import { BatchExpiryBadge } from '@/features/batches/components/batch-expiry-badge'
+import { InventoryAdjustmentDialog } from '@/features/inventory/components/inventory-adjustment-dialog'
+import type { AdjustableBatch } from '@/features/inventory/types/inventory-adjustment'
 import { useProductBatches } from '@/features/products/hooks/use-product-batches'
 import type { Product, ProductBatch } from '@/features/products/types/product'
 
@@ -25,7 +30,13 @@ function Stat({ label, value, tone }: { label: string; value: string; tone?: 'wa
   )
 }
 
-function getBatchColumns(unit: string | null): DataTableColumn<ProductBatch>[] {
+function getBatchColumns({
+  unit,
+  onAdjust,
+}: {
+  unit: string | null
+  onAdjust: (batch: ProductBatch) => void
+}): DataTableColumn<ProductBatch>[] {
   return [
     {
       id: 'lot',
@@ -83,6 +94,22 @@ function getBatchColumns(unit: string | null): DataTableColumn<ProductBatch>[] {
       align: 'right',
       cell: (batch) => formatCurrencyVND(batch.purchasePrice),
     },
+    {
+      id: 'actions',
+      header: 'Thao tác',
+      align: 'right',
+      cell: (batch) => (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onAdjust(batch)}
+          aria-label={`Điều chỉnh tồn kho lô ${batch.lotNumber || batch.id}`}
+        >
+          <SlidersHorizontal className="size-4" />
+          Điều chỉnh
+        </Button>
+      ),
+    },
   ]
 }
 
@@ -95,7 +122,21 @@ function getBatchColumns(unit: string | null): DataTableColumn<ProductBatch>[] {
  */
 export function ProductDetailInventory({ product }: { product: Product }) {
   const batchesQuery = useProductBatches(product.id)
-  const batchColumns = getBatchColumns(product.unit)
+  const [adjustingBatch, setAdjustingBatch] = useState<AdjustableBatch | null>(null)
+
+  const batchColumns = getBatchColumns({
+    unit: product.unit,
+    onAdjust: (batch) =>
+      setAdjustingBatch({
+        batchId: batch.id,
+        productId: product.id,
+        productName: product.name,
+        unit: product.unit,
+        lotNumber: batch.lotNumber,
+        remainingQuantity: batch.remainingQuantity,
+        expirationDate: batch.expirationDate,
+      }),
+  })
 
   return (
     <Card>
@@ -165,6 +206,12 @@ export function ProductDetailInventory({ product }: { product: Product }) {
           </>
         )}
       </CardContent>
+
+      <InventoryAdjustmentDialog
+        open={adjustingBatch !== null}
+        onOpenChange={(open) => !open && setAdjustingBatch(null)}
+        batch={adjustingBatch}
+      />
     </Card>
   )
 }

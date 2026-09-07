@@ -191,6 +191,14 @@ function HelpCenterPage() {
           đơn, điều chỉnh...), chỉ ghi thêm — không sửa, không xóa, để đảm bảo có thể truy vết
           chính xác.
         </p>
+        <p>
+          Nút "Điều chỉnh" trên từng lô hàng (ở trang chi tiết sản phẩm, hoặc "Hủy hàng" trên báo
+          cáo hạn sử dụng) dùng cho các trường hợp: lệch số lượng sau kiểm kê thực tế, hàng hỏng,
+          thất thoát/thiếu hàng, hoặc hủy hàng đã hết hạn. Mỗi lần điều chỉnh đều ghi rõ ai thực
+          hiện, khi nào và lý do. Hàng nhập từ nhà cung cấp vẫn luôn đi qua phiếu nhập hàng — không
+          dùng điều chỉnh thủ công để ghi nhận hàng nhập mới. Hàng hết hạn không tự động biến mất
+          khỏi tồn kho khi đến ngày hết hạn; phải chủ động hủy thì tồn kho mới giảm.
+        </p>
         <Alert variant="info">
           <AlertTitle>Ưu tiên hạn sử dụng gần nhất (FEFO)</AlertTitle>
           <AlertDescription>

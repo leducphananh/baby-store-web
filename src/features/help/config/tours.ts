@@ -171,7 +171,7 @@ export const TOUR_REGISTRY: Record<string, Tour> = {
         target: 'product-detail-inventory',
         title: 'Tồn kho & lô hàng',
         description:
-          'Xem tổng tồn kho hiện tại và danh sách từng lô hàng (số lô, hạn sử dụng, số lượng còn lại), sắp xếp theo hạn sử dụng gần nhất trước — để ưu tiên xuất lô sắp hết hạn trước.',
+          'Xem tổng tồn kho hiện tại và danh sách từng lô hàng (số lô, hạn sử dụng, số lượng còn lại), sắp xếp theo hạn sử dụng gần nhất trước — để ưu tiên xuất lô sắp hết hạn trước. Nút "Điều chỉnh" ở mỗi lô dùng khi kiểm kê phát hiện lệch số lượng, hoặc cần ghi nhận hàng hỏng/thất thoát — không dùng để nhập thêm hàng từ nhà cung cấp (việc đó vẫn qua phiếu nhập hàng).',
       },
       {
         target: 'product-detail-images',
@@ -543,7 +543,7 @@ export const TOUR_REGISTRY: Record<string, Tour> = {
         target: 'expiry-chart',
         title: 'Biểu đồ và bảng chi tiết theo lô',
         description:
-          'Biểu đồ luôn thể hiện toàn bộ hàng tồn theo thời gian đến hạn sử dụng. Bảng bên dưới liệt kê từng lô hàng — hàng sắp hết hạn được xác định theo hạn sử dụng của từng lô còn tồn, không phải theo sản phẩm nói chung.',
+          'Biểu đồ luôn thể hiện toàn bộ hàng tồn theo thời gian đến hạn sử dụng. Bảng bên dưới liệt kê từng lô hàng — hàng sắp hết hạn được xác định theo hạn sử dụng của từng lô còn tồn, không phải theo sản phẩm nói chung. Lô đã hết hạn có thêm nút "Hủy hàng" để ghi nhận việc hủy — hệ thống không tự động xóa hàng hết hạn khỏi tồn kho, phải thao tác thủ công.',
       },
       {
         target: 'slow-moving-section',

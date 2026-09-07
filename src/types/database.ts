@@ -1000,13 +1000,18 @@ export type Database = {
       }
       adjust_inventory: {
         Args: {
-          p_adj_quantity: number
-          p_adj_type: string
+          p_actual_quantity?: number
           p_batch_id: string
-          p_note: string
-          p_ref_id: string
+          p_note?: string
+          p_operation_type: string
+          p_write_off_quantity?: number
         }
-        Returns: undefined
+        Returns: {
+          batch_id: string
+          delta: number
+          new_quantity: number
+          previous_quantity: number
+        }[]
       }
       cancel_order: { Args: { p_order_id: string }; Returns: undefined }
       complete_order: { Args: { p_order_id: string }; Returns: undefined }

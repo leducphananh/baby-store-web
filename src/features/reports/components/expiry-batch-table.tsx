@@ -1,5 +1,7 @@
 import { Link } from 'react-router'
+import { Trash2 } from 'lucide-react'
 
+import { Button } from '@/components/ui/button'
 import {
   DataTable,
   type DataTableColumn,
@@ -13,50 +15,74 @@ import { ROUTES } from '@/routes/route-paths'
 import { ExpiryStatusBadge } from '@/features/reports/components/expiry-status-badge'
 import type { ExpiryBatchRow, ExpiryBatchSortField } from '@/features/reports/types/expiry'
 
-const columns: DataTableColumn<ExpiryBatchRow>[] = [
-  {
-    id: 'product_name',
-    header: 'Sản phẩm',
-    sortable: true,
-    cell: (row) => (
-      <div className="min-w-0 max-w-56">
-        <Link to={ROUTES.productDetail(row.productId)} className="truncate font-medium text-foreground hover:underline">
-          {row.productName}
-        </Link>
-        <p className="truncate text-xs text-muted-foreground">{row.sku}</p>
-      </div>
-    ),
-  },
-  { id: 'lot_number', header: 'Mã lô', cell: (row) => row.lotNumber ?? '—' },
-  { id: 'category', header: 'Danh mục', cell: (row) => row.categoryName ?? 'Chưa phân loại' },
-  {
-    id: 'remaining_quantity',
-    header: 'Tồn lô',
-    align: 'right',
-    sortable: true,
-    cell: (row) => formatNumber(row.remainingQuantity),
-  },
-  { id: 'purchase_price', header: 'Giá nhập', align: 'right', cell: (row) => formatCurrencyVND(row.purchasePrice) },
-  {
-    id: 'inventory_value',
-    header: 'Giá trị tồn',
-    align: 'right',
-    sortable: true,
-    cell: (row) => <span className="font-medium text-foreground">{formatCurrencyVND(row.inventoryValue)}</span>,
-  },
-  {
-    id: 'expiration_date',
-    header: 'Hạn sử dụng',
-    align: 'right',
-    sortable: true,
-    cell: (row) => (row.expirationDate ? formatDate(row.expirationDate) : <span className="text-muted-foreground">—</span>),
-  },
-  {
-    id: 'expiry_status',
-    header: 'Trạng thái HSD',
-    cell: (row) => <ExpiryStatusBadge status={row.expiryStatus} daysRemaining={row.daysRemaining} />,
-  },
-]
+function getColumns({
+  onWriteOffExpired,
+}: {
+  onWriteOffExpired: (row: ExpiryBatchRow) => void
+}): DataTableColumn<ExpiryBatchRow>[] {
+  return [
+    {
+      id: 'product_name',
+      header: 'Sản phẩm',
+      sortable: true,
+      cell: (row) => (
+        <div className="min-w-0 max-w-56">
+          <Link to={ROUTES.productDetail(row.productId)} className="truncate font-medium text-foreground hover:underline">
+            {row.productName}
+          </Link>
+          <p className="truncate text-xs text-muted-foreground">{row.sku}</p>
+        </div>
+      ),
+    },
+    { id: 'lot_number', header: 'Mã lô', cell: (row) => row.lotNumber ?? '—' },
+    { id: 'category', header: 'Danh mục', cell: (row) => row.categoryName ?? 'Chưa phân loại' },
+    {
+      id: 'remaining_quantity',
+      header: 'Tồn lô',
+      align: 'right',
+      sortable: true,
+      cell: (row) => formatNumber(row.remainingQuantity),
+    },
+    { id: 'purchase_price', header: 'Giá nhập', align: 'right', cell: (row) => formatCurrencyVND(row.purchasePrice) },
+    {
+      id: 'inventory_value',
+      header: 'Giá trị tồn',
+      align: 'right',
+      sortable: true,
+      cell: (row) => <span className="font-medium text-foreground">{formatCurrencyVND(row.inventoryValue)}</span>,
+    },
+    {
+      id: 'expiration_date',
+      header: 'Hạn sử dụng',
+      align: 'right',
+      sortable: true,
+      cell: (row) =>
+        row.expirationDate ? formatDate(row.expirationDate) : <span className="text-muted-foreground">—</span>,
+    },
+    {
+      id: 'expiry_status',
+      header: 'Trạng thái HSD',
+      cell: (row) => <ExpiryStatusBadge status={row.expiryStatus} daysRemaining={row.daysRemaining} />,
+    },
+    {
+      id: 'actions',
+      header: 'Thao tác',
+      align: 'right',
+      // Only the actually-expired row gets a write-off shortcut here
+      // (requirement §54/§55/§56) — near-expiry stock may still be
+      // sellable, and missing-expiry is a data-quality issue, not a
+      // reason to write anything off. A generic adjustment for those
+      // remains available from Product Detail's own batch table.
+      cell: (row) =>
+        row.expiryStatus === 'expired' ? (
+          <Button variant="ghost" size="sm" onClick={() => onWriteOffExpired(row)}>
+            <Trash2 className="size-4" />
+            Hủy hàng
+          </Button>
+        ) : null,
+    },
+  ]
+}
 
 /**
  * Batch-level expiry-risk table (Phase 7.6, requirement §36) — the
@@ -72,16 +98,19 @@ export function ExpiryBatchTable({
   sorting,
   onSortingChange,
   pagination,
+  onWriteOffExpired,
 }: {
   data: ExpiryBatchRow[]
   isLoading: boolean
   sorting: DataTableSorting
   onSortingChange: (sorting: { id: ExpiryBatchSortField; desc: boolean }) => void
   pagination: DataTablePagination
+  /** Opens the write-off dialog prefilled for this expired batch (Phase 8.4). */
+  onWriteOffExpired: (row: ExpiryBatchRow) => void
 }) {
   return (
     <DataTable
-      columns={columns}
+      columns={getColumns({ onWriteOffExpired })}
       data={data}
       getRowId={(row) => row.batchId}
       isLoading={isLoading}
