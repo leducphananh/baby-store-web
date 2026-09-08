@@ -11,10 +11,7 @@ import type { AdjustInventoryInput } from '@/features/inventory/types/inventory-
 
 /**
  * The one mutation hook for Phase 8.4 manual inventory adjustment/write-off.
- * On success, invalidates every view whose numbers this can change — same
- * scope as `useCancelOrder`'s inventory-reversal invalidation, since a
- * batch quantity change is exactly the kind of thing all of these derive
- * from:
+ * On success, invalidates every view whose numbers this can change:
  *
  * - `productKeys.all` — Product Detail's own batch table
  *   (`productKeys.batches(id)` nests under this) and any product list/stock
@@ -22,14 +19,18 @@ import type { AdjustInventoryInput } from '@/features/inventory/types/inventory-
  * - `inventoryOverviewKeys.all` — the Phase 4.6 Inventory Dashboard.
  * - `inventoryTransactionKeys.lists()` — the transaction ledger view now
  *   has one more row.
- * - `reportsKeys.all` — covers the Inventory Report, Expiry Report, AND
- *   both alert-condition RPCs (`reportsKeys.inventory()`/
- *   `reportsKeys.expiryReport()` nest under it) in one call; the Bell/Alert
- *   Center/Dashboard Attention all read through those same query keys, so
- *   no separate "patch the alert list" step is needed (requirement §119) —
- *   the next fetch re-derives conditions from the new database state, and
- *   `_advance_alert_occurrence()` updates the lifecycle exactly as it does
- *   for any other cause of the condition changing (requirement §117).
+ * - `reportsKeys.inventory()` + `reportsKeys.expiryReport()` — the
+ *   Inventory Report, the Expiry & Slow-moving Report, AND both
+ *   alert-condition RPCs (`reportsKeys.inventoryAlertConditions()` /
+ *   `reportsKeys.expiryAlertConditions()` nest under these), which the
+ *   Bell/Alert Center/Dashboard-Attention read through. A stock adjustment
+ *   changes on-hand quantity and expiry-risk exposure only — it does NOT
+ *   touch historical sales, so Revenue/Profit/Product-Performance/
+ *   Category-Performance (snapshots of completed orders) stay valid and
+ *   are deliberately left cached. This is the same stock-only targeting
+ *   `use-confirm-import-receipt.ts` uses; the earlier `reportsKeys.all`
+ *   here also refetched the sales reports on every write-off, which was
+ *   wasted network work (Phase 9.2, requirement §17).
  *
  * No Realtime/polling — this invalidation is the whole refresh mechanism
  * (requirement §120), same as every other mutation in this app.
@@ -43,7 +44,8 @@ export function useAdjustInventory() {
       void queryClient.invalidateQueries({ queryKey: productKeys.all })
       void queryClient.invalidateQueries({ queryKey: inventoryOverviewKeys.all })
       void queryClient.invalidateQueries({ queryKey: inventoryTransactionKeys.lists() })
-      void queryClient.invalidateQueries({ queryKey: reportsKeys.all })
+      void queryClient.invalidateQueries({ queryKey: reportsKeys.inventory() })
+      void queryClient.invalidateQueries({ queryKey: reportsKeys.expiryReport() })
 
       toast.success(
         result.delta < 0

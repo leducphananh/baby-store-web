@@ -23,6 +23,7 @@ type ProductDetailRow = {
   created_at: string | null
   updated_at: string | null
   categories: { name: string } | null
+  product_batches: { remaining_quantity: number }[]
 }
 
 function toStatus(value: string): ProductStatus {
@@ -32,8 +33,10 @@ function toStatus(value: string): ProductStatus {
 /**
  * Single product for the detail page. Returns `null` when the id doesn't
  * exist (or is hidden by RLS) so the route can render a "not found" state
- * instead of throwing. On-hand stock is aggregated from the batch ledger in
- * one extra query.
+ * instead of throwing. On-hand stock is summed from the batch rows embedded
+ * in the same request — one round trip, not a sequential follow-up query
+ * (Phase 9.2; the detail page's own batch *table* still loads separately
+ * via `useProductBatches`).
  */
 export async function getProduct(id: string): Promise<Product | null> {
   const { data, error } = await supabase
@@ -41,7 +44,8 @@ export async function getProduct(id: string): Promise<Product | null> {
     .select(
       'id, name, sku, barcode, category_id, brand, unit, description, default_purchase_price, ' +
         'selling_price, tiktok_price, shopee_price, minimum_stock, status, origin_country, ' +
-        'manufacturer, distributor, source_description, created_at, updated_at, categories(name)',
+        'manufacturer, distributor, source_description, created_at, updated_at, categories(name), ' +
+        'product_batches(remaining_quantity)',
     )
     .eq('id', id)
     .maybeSingle<ProductDetailRow>()
@@ -49,14 +53,10 @@ export async function getProduct(id: string): Promise<Product | null> {
   if (error) throw error
   if (!data) return null
 
-  const { data: batchRows, error: batchError } = await supabase
-    .from('product_batches')
-    .select('remaining_quantity')
-    .eq('product_id', id)
-
-  if (batchError) throw batchError
-
-  const stockQuantity = (batchRows ?? []).reduce((sum, row) => sum + row.remaining_quantity, 0)
+  const stockQuantity = (data.product_batches ?? []).reduce(
+    (sum, row) => sum + row.remaining_quantity,
+    0,
+  )
 
   return {
     id: data.id,
