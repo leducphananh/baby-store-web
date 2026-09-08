@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Link, useSearchParams } from 'react-router'
-import { AlertTriangle, ArrowLeft, Boxes, PackageX, RefreshCw, TrendingDown, Wallet } from 'lucide-react'
+import { useSearchParams } from 'react-router'
+import { AlertTriangle, Boxes, PackageX, RefreshCw, TrendingDown, Wallet } from 'lucide-react'
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
@@ -17,6 +17,7 @@ import { formatDateTime } from '@/utils/date'
 import { formatNumber } from '@/utils/number'
 import { cn } from '@/lib/utils'
 import { ROUTES } from '@/routes/route-paths'
+import { BackLink } from '@/components/common/back-link'
 import { KpiCard } from '@/features/reports/components/kpi-card'
 import { InventoryCategoryChart } from '@/features/reports/components/inventory-category-chart'
 import { InventoryCategoryTable } from '@/features/reports/components/inventory-category-table'
@@ -44,18 +45,6 @@ const VALID_STOCK_STATUS_FILTERS: StockStatusFilter[] = ['all', 'out_of_stock', 
 function readStockStatusFromUrl(searchParams: URLSearchParams): StockStatusFilter {
   const value = searchParams.get('stockStatus')
   return VALID_STOCK_STATUS_FILTERS.includes(value as StockStatusFilter) ? (value as StockStatusFilter) : 'all'
-}
-
-function BackLink() {
-  return (
-    <Link
-      to={ROUTES.reports}
-      className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-    >
-      <ArrowLeft className="size-4" />
-      Báo cáo
-    </Link>
-  )
 }
 
 /**
@@ -123,7 +112,7 @@ function InventoryReportPage() {
 
   return (
     <PageContent>
-      <BackLink />
+      <BackLink to={ROUTES.reports} label="Báo cáo" />
 
       <PageHeader
         title="Tồn kho"

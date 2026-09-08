@@ -256,7 +256,12 @@ export function ProductFormDialog({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
-        className="flex max-h-[90vh] flex-col gap-0 overflow-hidden p-0 sm:max-w-2xl"
+        // `overflow-x-hidden overflow-y-hidden` (not the shorthand `overflow-hidden`):
+        // this dialog manages its own scroll — a fixed header/footer with a
+        // `flex-1 overflow-y-auto` body between them — so it must beat the
+        // shared `DialogContent`'s default `overflow-y-auto`, which tailwind-merge
+        // only treats as the same group when the axis is named explicitly.
+        className="flex max-h-[90vh] flex-col gap-0 overflow-x-hidden overflow-y-hidden p-0 sm:max-w-2xl"
         onCloseAutoFocus={(event) => event.preventDefault()}
         onInteractOutside={(event) => {
           // The `product-form` tour's card is portaled to `document.body`

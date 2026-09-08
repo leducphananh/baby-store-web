@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router'
-import { ArrowLeft, Ban, PackageCheck, Pencil } from 'lucide-react'
+import { Ban, PackageCheck, Pencil } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { ConfirmDialog } from '@/components/common/confirm-dialog'
@@ -10,6 +10,7 @@ import { PageContent } from '@/components/common/page-content'
 import { PageHeader } from '@/components/common/page-header'
 import { PageLoading } from '@/components/common/page-loading'
 import { ROUTES } from '@/routes/route-paths'
+import { BackLink } from '@/components/common/back-link'
 import { ImportReceiptDetailHeader } from '@/features/import-receipts/components/import-receipt-detail-header'
 import { ImportReceiptFormDialog } from '@/features/import-receipts/components/import-receipt-form-dialog'
 import { ImportReceiptLinesCard } from '@/features/import-receipts/components/import-receipt-lines-card'
@@ -19,18 +20,6 @@ import { useConfirmImportReceipt } from '@/features/import-receipts/hooks/use-co
 import { useImportReceipt } from '@/features/import-receipts/hooks/use-import-receipt'
 import { ReceiptBatchesCard } from '@/features/batches/components/receipt-batches-card'
 import { PurchaseInvoicesCard } from '@/features/purchase-invoices/components/purchase-invoices-card'
-
-function BackLink() {
-  return (
-    <Link
-      to={ROUTES.imports}
-      className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-    >
-      <ArrowLeft className="size-4" />
-      Danh sách phiếu nhập
-    </Link>
-  )
-}
 
 function ImportReceiptDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -49,7 +38,7 @@ function ImportReceiptDetailPage() {
   if (receiptQuery.isError) {
     return (
       <PageContent>
-        <BackLink />
+        <BackLink to={ROUTES.imports} label="Danh sách phiếu nhập" />
         <ErrorState
           message="Không thể tải thông tin phiếu nhập. Vui lòng thử lại."
           onRetry={() => void receiptQuery.refetch()}
@@ -62,7 +51,7 @@ function ImportReceiptDetailPage() {
   if (!receipt) {
     return (
       <PageContent>
-        <BackLink />
+        <BackLink to={ROUTES.imports} label="Danh sách phiếu nhập" />
         <EmptyState
           title="Không tìm thấy phiếu nhập"
           description="Phiếu nhập này có thể không tồn tại hoặc đường dẫn không đúng."
@@ -80,7 +69,7 @@ function ImportReceiptDetailPage() {
 
   return (
     <PageContent>
-      <BackLink />
+      <BackLink to={ROUTES.imports} label="Danh sách phiếu nhập" />
 
       <PageHeader
         title={`Phiếu nhập ${receipt.receiptNumber}`}
@@ -91,7 +80,7 @@ function ImportReceiptDetailPage() {
         }
         actions={
           isDraft ? (
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <Button variant="outline" onClick={() => setIsEditOpen(true)}>
                 <Pencil />
                 Sửa

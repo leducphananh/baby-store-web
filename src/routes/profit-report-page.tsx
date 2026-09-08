@@ -1,5 +1,4 @@
-import { Link } from 'react-router'
-import { AlertTriangle, ArrowLeft, PiggyBank, Receipt, TrendingDown, TrendingUp } from 'lucide-react'
+import { AlertTriangle, PiggyBank, Receipt, TrendingDown, TrendingUp } from 'lucide-react'
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -11,6 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { formatCurrencyVND } from '@/utils/currency'
 import { formatDate } from '@/utils/date'
 import { ROUTES } from '@/routes/route-paths'
+import { BackLink } from '@/components/common/back-link'
 import { KpiCard } from '@/features/reports/components/kpi-card'
 import { ProfitChart } from '@/features/reports/components/profit-chart'
 import { ProfitDailyTable } from '@/features/reports/components/profit-daily-table'
@@ -21,18 +21,6 @@ import { useProfitTimeseries } from '@/features/reports/hooks/use-profit-timeser
 import { findBestProfitDay } from '@/features/reports/utils/best-profit-day'
 import { formatPercent, safeRatio } from '@/features/reports/utils/format-percent'
 import { isValidReportDateRange } from '@/features/reports/utils/report-date-range'
-
-function BackLink() {
-  return (
-    <Link
-      to={ROUTES.reports}
-      className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-    >
-      <ArrowLeft className="size-4" />
-      Báo cáo
-    </Link>
-  )
-}
 
 /**
  * Profit Report (Phase 7.3). Gross Profit only — Revenue minus the
@@ -68,7 +56,7 @@ function ProfitReportPage() {
 
   return (
     <PageContent>
-      <BackLink />
+      <BackLink to={ROUTES.reports} label="Báo cáo" />
 
       <PageHeader
         title="Lợi nhuận"

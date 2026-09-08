@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
-import { ArrowLeft } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
@@ -10,6 +9,7 @@ import { PageContent } from '@/components/common/page-content'
 import { PageHeader } from '@/components/common/page-header'
 import { PageLoading } from '@/components/common/page-loading'
 import { ROUTES } from '@/routes/route-paths'
+import { BackLink } from '@/components/common/back-link'
 import { OrderForm } from '@/features/orders/components/order-form'
 import { useOrder } from '@/features/orders/hooks/use-order'
 import { useOrderLines } from '@/features/orders/hooks/use-order-lines'
@@ -17,18 +17,6 @@ import { useUpdateOrderDraft } from '@/features/orders/hooks/use-update-order-dr
 import { getUpdateOrderDraftErrorMessage } from '@/features/orders/utils/get-update-order-draft-error-message'
 import type { OrderFormValues } from '@/features/orders/schemas/order-form-schema'
 import { useProductStockMap } from '@/features/products/hooks/use-product-stock-map'
-
-function BackLink({ orderId }: { orderId: string }) {
-  return (
-    <Link
-      to={ROUTES.orderDetail(orderId)}
-      className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-    >
-      <ArrowLeft className="size-4" />
-      Chi tiết đơn hàng
-    </Link>
-  )
-}
 
 /**
  * Edit Order (Phase 6.4) — only reachable for a `draft`/`confirmed` order
@@ -68,7 +56,7 @@ function EditOrderPage() {
   if (orderQuery.isError || linesQuery.isError || stockMapQuery.isError) {
     return (
       <PageContent>
-        {id && <BackLink orderId={id} />}
+        {id && <BackLink to={ROUTES.orderDetail(id)} label="Chi tiết đơn hàng" />}
         <ErrorState
           message="Không thể tải thông tin đơn hàng. Vui lòng thử lại."
           onRetry={() => {
@@ -85,7 +73,7 @@ function EditOrderPage() {
   if (!order) {
     return (
       <PageContent>
-        <BackLink orderId={id ?? ''} />
+        <BackLink to={ROUTES.orderDetail(id ?? '')} label="Chi tiết đơn hàng" />
         <EmptyState
           title="Không tìm thấy đơn hàng"
           description="Đơn hàng này có thể không tồn tại hoặc đường dẫn không đúng."
@@ -102,7 +90,7 @@ function EditOrderPage() {
   if (order.status !== 'draft' && order.status !== 'confirmed') {
     return (
       <PageContent>
-        <BackLink orderId={order.id} />
+        <BackLink to={ROUTES.orderDetail(order.id)} label="Chi tiết đơn hàng" />
         <EmptyState
           title="Không thể chỉnh sửa đơn hàng này"
           description={
@@ -166,7 +154,7 @@ function EditOrderPage() {
 
   return (
     <PageContent>
-      <BackLink orderId={order.id} />
+      <BackLink to={ROUTES.orderDetail(order.id)} label="Chi tiết đơn hàng" />
       <PageHeader
         title={`Sửa đơn hàng ${order.orderNumber}`}
         description="Đơn hàng còn ở trạng thái nháp nên có thể chỉnh sửa tự do."

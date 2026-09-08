@@ -76,7 +76,7 @@ function AlertCenterPage() {
         title="Cảnh báo"
         description="Các vấn đề vận hành đang xảy ra hiện tại — mở một cảnh báo để xem chi tiết và xử lý qua quy trình liên quan."
         actions={
-          <div className="flex items-center gap-2" data-tour="alert-center-actions">
+          <div className="flex flex-wrap items-center gap-2" data-tour="alert-center-actions">
             <Button
               variant="outline"
               size="sm"

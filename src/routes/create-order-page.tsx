@@ -1,10 +1,10 @@
-import { Link, useNavigate } from 'react-router'
-import { ArrowLeft } from 'lucide-react'
+import { useNavigate } from 'react-router'
 import { toast } from 'sonner'
 
 import { PageContent } from '@/components/common/page-content'
 import { PageHeader } from '@/components/common/page-header'
 import { ROUTES } from '@/routes/route-paths'
+import { BackLink } from '@/components/common/back-link'
 import { OrderForm } from '@/features/orders/components/order-form'
 import { useCreateOrder } from '@/features/orders/hooks/use-create-order'
 import { getCreateOrderErrorMessage } from '@/features/orders/utils/get-create-order-error-message'
@@ -15,18 +15,6 @@ const DEFAULT_VALUES: OrderFormValues = {
   customerName: null,
   note: '',
   items: [],
-}
-
-function BackLink() {
-  return (
-    <Link
-      to={ROUTES.orders}
-      className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-    >
-      <ArrowLeft className="size-4" />
-      Danh sách đơn hàng
-    </Link>
-  )
 }
 
 /**
@@ -67,7 +55,7 @@ function CreateOrderPage() {
 
   return (
     <PageContent>
-      <BackLink />
+      <BackLink to={ROUTES.orders} label="Danh sách đơn hàng" />
       <PageHeader
         title="Tạo đơn hàng"
         description="Point-of-sale nhanh: chọn khách hàng, thêm sản phẩm và tạo đơn."

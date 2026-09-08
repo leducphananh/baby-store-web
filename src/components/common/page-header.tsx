@@ -25,7 +25,10 @@ function PageHeader({
         <h1 className="text-2xl font-bold tracking-tight text-foreground">{title}</h1>
         {description && <p className="text-sm text-muted-foreground">{description}</p>}
       </div>
-      {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
+      {/* `flex-wrap`: on a narrow screen the header stacks (`flex-col`) and the
+          actions get the full width — multiple buttons then wrap to a second
+          row instead of overflowing horizontally (see `responsive-design`). */}
+      {actions && <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>}
     </div>
   )
 }

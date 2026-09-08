@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Link, useLocation, useSearchParams } from 'react-router'
-import { AlertTriangle, ArrowLeft, Clock, HelpCircle, PackageX, RefreshCw, Wallet } from 'lucide-react'
+import { useLocation, useSearchParams } from 'react-router'
+import { AlertTriangle, Clock, HelpCircle, PackageX, RefreshCw, Wallet } from 'lucide-react'
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
@@ -17,6 +17,7 @@ import { formatDateTime } from '@/utils/date'
 import { formatNumber } from '@/utils/number'
 import { cn } from '@/lib/utils'
 import { ROUTES } from '@/routes/route-paths'
+import { BackLink } from '@/components/common/back-link'
 import { DayCountSelector } from '@/features/reports/components/day-count-selector'
 import { ExpiryBatchFilters } from '@/features/reports/components/expiry-batch-filters'
 import { ExpiryBatchTable } from '@/features/reports/components/expiry-batch-table'
@@ -68,18 +69,6 @@ function readExpiryStatusFromUrl(searchParams: URLSearchParams): ExpiryStatusFil
 function readHorizonFromUrl(searchParams: URLSearchParams): ExpiryHorizonDays {
   const value = Number(searchParams.get('horizon'))
   return (EXPIRY_HORIZON_OPTIONS as readonly number[]).includes(value) ? (value as ExpiryHorizonDays) : 30
-}
-
-function BackLink() {
-  return (
-    <Link
-      to={ROUTES.reports}
-      className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-    >
-      <ArrowLeft className="size-4" />
-      Báo cáo
-    </Link>
-  )
 }
 
 /**
@@ -209,7 +198,7 @@ function ExpiryReportPage() {
 
   return (
     <PageContent>
-      <BackLink />
+      <BackLink to={ROUTES.reports} label="Báo cáo" />
 
       <PageHeader
         title="Hạn sử dụng & hàng chậm bán"

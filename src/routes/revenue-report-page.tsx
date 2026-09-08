@@ -1,5 +1,4 @@
-import { Link } from 'react-router'
-import { ArrowLeft, Receipt, ShoppingCart, TrendingUp, Wallet, Clock } from 'lucide-react'
+import { Receipt, ShoppingCart, TrendingUp, Wallet, Clock } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { EmptyState } from '@/components/common/empty-state'
@@ -11,6 +10,7 @@ import { formatCurrencyVND } from '@/utils/currency'
 import { formatDate } from '@/utils/date'
 import { formatNumber } from '@/utils/number'
 import { ROUTES } from '@/routes/route-paths'
+import { BackLink } from '@/components/common/back-link'
 import { KpiCard } from '@/features/reports/components/kpi-card'
 import { ReportDateRangePicker } from '@/features/reports/components/report-date-range-picker'
 import { RevenueChart } from '@/features/reports/components/revenue-chart'
@@ -20,18 +20,6 @@ import { useRevenueSummary } from '@/features/reports/hooks/use-revenue-summary'
 import { useRevenueTimeseries } from '@/features/reports/hooks/use-revenue-timeseries'
 import { findBestRevenueDay } from '@/features/reports/utils/best-revenue-day'
 import { isValidReportDateRange } from '@/features/reports/utils/report-date-range'
-
-function BackLink() {
-  return (
-    <Link
-      to={ROUTES.reports}
-      className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-    >
-      <ArrowLeft className="size-4" />
-      Báo cáo
-    </Link>
-  )
-}
 
 /**
  * Revenue Report (Phase 7.2). "Doanh thu chỉ tính các đơn đã hoàn tất" —
@@ -60,7 +48,7 @@ function RevenueReportPage() {
 
   return (
     <PageContent>
-      <BackLink />
+      <BackLink to={ROUTES.reports} label="Báo cáo" />
 
       <PageHeader title="Doanh thu" description="Theo dõi doanh thu từ các đơn hàng đã hoàn tất." />
 

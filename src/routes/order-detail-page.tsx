@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
-import { ArrowLeft, Ban, Pencil } from 'lucide-react'
+import { Ban, Pencil } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { ConfirmDialog } from '@/components/common/confirm-dialog'
@@ -10,6 +10,7 @@ import { PageContent } from '@/components/common/page-content'
 import { PageHeader } from '@/components/common/page-header'
 import { PageLoading } from '@/components/common/page-loading'
 import { ROUTES } from '@/routes/route-paths'
+import { BackLink } from '@/components/common/back-link'
 import { ExportOrderPdfButton } from '@/features/orders/components/export-order-pdf-button'
 import { OrderDetailHeader } from '@/features/orders/components/order-detail-header'
 import { OrderLinesCard } from '@/features/orders/components/order-lines-card'
@@ -19,18 +20,6 @@ import { PaymentStatusBadge } from '@/features/orders/components/payment-status-
 import { useCancelDraftOrder } from '@/features/orders/hooks/use-cancel-draft-order'
 import { useCancelOrder } from '@/features/orders/hooks/use-cancel-order'
 import { useOrder } from '@/features/orders/hooks/use-order'
-
-function BackLink() {
-  return (
-    <Link
-      to={ROUTES.orders}
-      className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-    >
-      <ArrowLeft className="size-4" />
-      Danh sách đơn hàng
-    </Link>
-  )
-}
 
 /**
  * Order Detail (Phase 6.3) + Edit/Cancel actions (Phase 6.4) + PDF export
@@ -68,7 +57,7 @@ function OrderDetailPage() {
   if (orderQuery.isError) {
     return (
       <PageContent>
-        <BackLink />
+        <BackLink to={ROUTES.orders} label="Danh sách đơn hàng" />
         <ErrorState
           message="Không thể tải thông tin đơn hàng. Vui lòng thử lại."
           onRetry={() => void orderQuery.refetch()}
@@ -81,7 +70,7 @@ function OrderDetailPage() {
   if (!order) {
     return (
       <PageContent>
-        <BackLink />
+        <BackLink to={ROUTES.orders} label="Danh sách đơn hàng" />
         <EmptyState
           title="Không tìm thấy đơn hàng"
           description="Đơn hàng này có thể không tồn tại hoặc đường dẫn không đúng."
@@ -100,13 +89,13 @@ function OrderDetailPage() {
 
   return (
     <PageContent>
-      <BackLink />
+      <BackLink to={ROUTES.orders} label="Danh sách đơn hàng" />
 
       <PageHeader
         title={`Đơn hàng ${order.orderNumber}`}
         description={order.customerName ? `Khách hàng: ${order.customerName}` : 'Khách lẻ'}
         actions={
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <ExportOrderPdfButton order={order} />
             {isDraft ? (
               <>
@@ -121,7 +110,7 @@ function OrderDetailPage() {
                 </Button>
                 <Button onClick={() => navigate(ROUTES.editOrder(order.id))}>
                   <Pencil />
-                  Sửa đơn hàng
+                  Sửa
                 </Button>
               </>
             ) : isCompleted ? (

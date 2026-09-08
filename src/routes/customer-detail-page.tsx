@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router'
-import { ArrowLeft, Pencil } from 'lucide-react'
+import { Pencil } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -13,22 +13,11 @@ import { PageHeader } from '@/components/common/page-header'
 import { PageLoading } from '@/components/common/page-loading'
 import { formatDate } from '@/utils/date'
 import { ROUTES } from '@/routes/route-paths'
+import { BackLink } from '@/components/common/back-link'
 import { CustomerFormDialog } from '@/features/customers/components/customer-form-dialog'
 import { useCustomer } from '@/features/customers/hooks/use-customer'
 import { CustomerOrderSummaryCards } from '@/features/orders/components/customer-order-summary-cards'
 import { CustomerOrdersCard } from '@/features/orders/components/customer-orders-card'
-
-function BackLink() {
-  return (
-    <Link
-      to={ROUTES.customers}
-      className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-    >
-      <ArrowLeft className="size-4" />
-      Danh sách khách hàng
-    </Link>
-  )
-}
 
 function CustomerDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -42,7 +31,7 @@ function CustomerDetailPage() {
   if (customerQuery.isError) {
     return (
       <PageContent>
-        <BackLink />
+        <BackLink to={ROUTES.customers} label="Danh sách khách hàng" />
         <ErrorState
           message="Không thể tải thông tin khách hàng. Vui lòng thử lại."
           onRetry={() => void customerQuery.refetch()}
@@ -55,7 +44,7 @@ function CustomerDetailPage() {
   if (!customer) {
     return (
       <PageContent>
-        <BackLink />
+        <BackLink to={ROUTES.customers} label="Danh sách khách hàng" />
         <EmptyState
           title="Không tìm thấy khách hàng"
           description="Khách hàng này có thể đã bị xóa hoặc đường dẫn không đúng."
@@ -71,7 +60,7 @@ function CustomerDetailPage() {
 
   return (
     <PageContent>
-      <BackLink />
+      <BackLink to={ROUTES.customers} label="Danh sách khách hàng" />
 
       <PageHeader
         title={customer.name}
