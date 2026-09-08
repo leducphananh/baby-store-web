@@ -29,9 +29,19 @@ function CardHeader({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
-function CardTitle({ className, ...props }: React.ComponentProps<'div'>) {
+/**
+ * Rendered as `<h2>` (not `<div>`): a card is a titled content section, so
+ * screen-reader users can jump between sections with heading navigation
+ * (WCAG 1.3.1 / 2.4.6). `PageHeader` owns the single `<h1>` per page;
+ * Tailwind Preflight normalises `h2` font-size/weight/margin, so the
+ * visual result is identical to the previous `<div>` given the classes
+ * below. Pass `className` to restyle; there is deliberately no level prop —
+ * the two Dashboard/Expiry pages that also use their own `<h2>` section
+ * labels get a flat (still valid, no skipped level) structure.
+ */
+function CardTitle({ className, ...props }: React.ComponentProps<'h2'>) {
   return (
-    <div
+    <h2
       data-slot="card-title"
       className={cn('text-lg leading-none font-semibold', className)}
       {...props}

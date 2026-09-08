@@ -94,37 +94,53 @@ function DataTable<TData>({
       <Table>
         <TableHeader>
           <TableRow>
-            {columns.map((column) => (
-              <TableHead
-                key={column.id}
-                className={cn(
-                  column.align === 'right' && 'text-right',
-                  column.align === 'center' && 'text-center',
-                  column.className,
-                )}
-              >
-                {column.sortable ? (
-                  <button
-                    type="button"
-                    onClick={() => handleSortClick(column.id)}
-                    className="inline-flex items-center gap-1 hover:text-foreground"
-                  >
-                    {column.header}
-                    {sorting?.id === column.id ? (
-                      sorting.desc ? (
+            {columns.map((column) => {
+              // WCAG 1.3.1 / 4.1.2: expose the sortable column's current
+              // sort state to assistive tech, not only via the arrow icon.
+              const sortDirection: 'ascending' | 'descending' | 'none' =
+                column.sortable && sorting?.id === column.id
+                  ? sorting.desc
+                    ? 'descending'
+                    : 'ascending'
+                  : 'none'
+              return (
+                <TableHead
+                  key={column.id}
+                  aria-sort={column.sortable ? sortDirection : undefined}
+                  className={cn(
+                    column.align === 'right' && 'text-right',
+                    column.align === 'center' && 'text-center',
+                    column.className,
+                  )}
+                >
+                  {column.sortable ? (
+                    <button
+                      type="button"
+                      onClick={() => handleSortClick(column.id)}
+                      className="inline-flex items-center gap-1 outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                    >
+                      {column.header}
+                      <span className="sr-only">
+                        {sortDirection === 'descending'
+                          ? '(đang sắp xếp giảm dần, nhấn để đảo chiều)'
+                          : sortDirection === 'ascending'
+                            ? '(đang sắp xếp tăng dần, nhấn để đảo chiều)'
+                            : '(nhấn để sắp xếp)'}
+                      </span>
+                      {sortDirection === 'descending' ? (
                         <ArrowDown className="size-3.5" aria-hidden="true" />
-                      ) : (
+                      ) : sortDirection === 'ascending' ? (
                         <ArrowUp className="size-3.5" aria-hidden="true" />
-                      )
-                    ) : (
-                      <ArrowUpDown className="size-3.5 opacity-40" aria-hidden="true" />
-                    )}
-                  </button>
-                ) : (
-                  column.header
-                )}
-              </TableHead>
-            ))}
+                      ) : (
+                        <ArrowUpDown className="size-3.5 opacity-40" aria-hidden="true" />
+                      )}
+                    </button>
+                  ) : (
+                    column.header
+                  )}
+                </TableHead>
+              )
+            })}
           </TableRow>
         </TableHeader>
         <TableBody>

@@ -30,12 +30,22 @@ import { WelcomeInvitation } from '@/features/help/components/welcome-invitation
 function AppShell() {
   return (
     <div className="flex h-svh overflow-hidden bg-background">
+      {/* Keyboard bypass for the sidebar/header (~15 tab stops) — visually
+          hidden until focused, then the first thing a keyboard user hits
+          on every route (WCAG 2.4.1). */}
+      <a
+        href="#main-content"
+        className="sr-only rounded-md bg-background px-4 py-2 text-sm font-medium text-foreground shadow-md ring-2 ring-ring focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50"
+      >
+        Bỏ qua điều hướng
+      </a>
+
       <Sidebar />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <Header />
 
-        <main className="min-h-0 flex-1 overflow-y-auto">
+        <main id="main-content" tabIndex={-1} className="min-h-0 flex-1 overflow-y-auto outline-none">
           <div className="mx-auto w-full max-w-(--breakpoint-2xl) px-4 py-6 sm:px-6">
             <Outlet />
           </div>
