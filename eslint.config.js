@@ -26,4 +26,15 @@ export default defineConfig([
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     },
   },
+  {
+    // Test files and test infrastructure are never Fast-Refreshed, so the
+    // "only export components" rule (a HMR-DX rule) doesn't apply — a
+    // `render.tsx` helper legitimately exports `renderWithProviders`, not a
+    // component. This scopes that one rule off for test paths only; it is
+    // not disabled anywhere else.
+    files: ['src/test/**/*.{ts,tsx}', '**/*.test.{ts,tsx}'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 ])

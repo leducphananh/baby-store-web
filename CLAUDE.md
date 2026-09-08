@@ -240,13 +240,21 @@ Run at the end of every phase, before considering it complete:
 ```bash
 yarn lint          # eslint .
 yarn typecheck      # tsc -b (type-only check, no bundling)
+yarn test           # vitest run (runs once, non-zero on failure)
 yarn build          # tsc -b && vite build — type errors fail the build
 ```
 
-Add `yarn test` here once a test runner (Vitest + React Testing Library, per
-`testing-react`) is actually installed — do not add a `test` script that points at a
-runner that isn't installed yet. If a script that should exist is missing, add it (as was
-done for `typecheck`), don't work around its absence silently.
+The test runner (Vitest + React Testing Library) was set up in Phase 10.1 — see
+`TESTING.md` and the `testing-react` skill. Run `yarn test` after any behavioural change,
+and add/adjust tests alongside the change. If a script that should exist is missing, add it
+(as was done for `typecheck`), don't work around its absence silently.
+
+**Testing rules [always]:** unit/component tests never contact live Supabase, mutate a
+remote row, upload a Storage object, or create a real auth user — mock at the feature
+`api/`/hook boundary (or `@/lib/supabase` with a small local fake). Select by accessible
+role/label/text, not class names or `data-testid`. Keep tests deterministic — no
+`Math.random()`, no real wall-clock time, no broad JSX snapshots. Do not change production
+architecture, the production `QueryClient`, or store design to make testing easier.
 
 **Never claim a phase is complete if lint/typecheck/build fails because of your own
 changes.** Fix issues you introduced before reporting completion; pre-existing unrelated

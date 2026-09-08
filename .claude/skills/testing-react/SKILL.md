@@ -6,9 +6,10 @@ description: Testing strategy for this project — what to unit test, component 
 # Testing strategy
 
 ## Apply when
-Adding tests for new code, or deciding what level of test a change needs. (Note: no test
-runner is installed yet in this repo — when a phase needs tests, add Vitest + React Testing
-Library, matching the existing Vite setup, rather than a heavier alternative.)
+Adding tests for new code, or deciding what level of test a change needs. The runner is
+Vitest + React Testing Library (set up in Phase 10.1) — see `TESTING.md` at the repo root
+for the config, the `renderWithProviders` / `createTestQueryClient` helpers, the three-layer
+Supabase mocking strategy, and the file convention. Run `yarn test`.
 
 ## Rules
 
