@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ErrorState } from '@/components/common/error-state'
 import { formatCurrencyVND } from '@/utils/currency'
 import { formatDate } from '@/utils/date'
 import { formatQuantityWithUnit } from '@/utils/unit'
@@ -31,20 +32,27 @@ export function CustomerOrderSummaryCards({ customerId }: { customerId: string }
         <CardTitle>Tổng quan mua hàng</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          <Stat
-            label="Tổng số đơn hàng"
-            value={summary ? formatQuantityWithUnit(summary.totalOrders, 'đơn') : '…'}
+        {summaryQuery.isError ? (
+          <ErrorState
+            message="Không thể tải tổng quan mua hàng."
+            onRetry={() => void summaryQuery.refetch()}
           />
-          <Stat
-            label="Tổng chi tiêu (đơn hoàn tất)"
-            value={summary ? formatCurrencyVND(summary.totalSpent) : '…'}
-          />
-          <Stat
-            label="Đơn gần nhất"
-            value={summary?.lastOrderDate ? formatDate(summary.lastOrderDate) : '—'}
-          />
-        </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            <Stat
+              label="Tổng số đơn hàng"
+              value={summary ? formatQuantityWithUnit(summary.totalOrders, 'đơn') : '…'}
+            />
+            <Stat
+              label="Tổng chi tiêu (đơn hoàn tất)"
+              value={summary ? formatCurrencyVND(summary.totalSpent) : '…'}
+            />
+            <Stat
+              label="Đơn gần nhất"
+              value={summary?.lastOrderDate ? formatDate(summary.lastOrderDate) : '—'}
+            />
+          </div>
+        )}
       </CardContent>
     </Card>
   )
