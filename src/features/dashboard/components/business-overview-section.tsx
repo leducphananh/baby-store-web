@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { Receipt, ShoppingCart, TrendingUp } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -7,13 +8,30 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { formatCurrencyVND } from '@/utils/currency'
 import { formatNumber } from '@/utils/number'
 import { KpiCard } from '@/features/reports/components/kpi-card'
-import { ProfitChart } from '@/features/reports/components/profit-chart'
 import { ReportDateRangePicker } from '@/features/reports/components/report-date-range-picker'
 import { useReportDateRangeStore } from '@/features/reports/hooks/use-report-date-range-store'
 import { useProfitSummary } from '@/features/reports/hooks/use-profit-summary'
 import { useProfitTimeseries } from '@/features/reports/hooks/use-profit-timeseries'
 import { formatPercent, safeRatio } from '@/features/reports/utils/format-percent'
 import { isValidReportDateRange } from '@/features/reports/utils/report-date-range'
+
+/**
+ * `recharts` (~800 kB raw / ~236 kB gzip as its own chunk) is loaded on
+ * demand: this is the Dashboard's only chart, and until Phase 9.3 its
+ * static import here dragged `recharts` into the initial authenticated
+ * bundle for *every* route (Products, Orders, Customers... none of which
+ * render a chart) and even the `/login` load (single Vite entry). Lazily
+ * importing just the chart-rendering subcomponent — the data hooks below
+ * stay eager and fire immediately (requirement §13) — keeps `recharts` in
+ * a chunk fetched only when a chart actually renders (here, or a lazy
+ * Report route). Same `<Skeleton className="h-72 w-full" />` frame as the
+ * loading state, so nothing about the UX changes (requirement §14).
+ */
+const ProfitChart = lazy(() =>
+  import('@/features/reports/components/profit-chart').then((module) => ({
+    default: module.ProfitChart,
+  })),
+)
 
 /**
  * "Kết quả kinh doanh" — the Dashboard's PERIOD section (requirement §4/§6).
@@ -103,7 +121,9 @@ export function BusinessOverviewSection() {
               ) : !timeseriesQuery.data || timeseriesQuery.data.every((point) => point.orderCount === 0) ? (
                 <EmptyState title="Chưa có dữ liệu bán hàng trong khoảng thời gian này." />
               ) : (
-                <ProfitChart data={timeseriesQuery.data} />
+                <Suspense fallback={<Skeleton className="h-72 w-full" />}>
+                  <ProfitChart data={timeseriesQuery.data} />
+                </Suspense>
               )}
             </CardContent>
           </Card>
