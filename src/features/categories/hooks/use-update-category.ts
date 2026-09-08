@@ -13,6 +13,9 @@ export function useUpdateCategory() {
     onSuccess: (_data, { id }) => {
       void queryClient.invalidateQueries({ queryKey: categoryKeys.lists() })
       void queryClient.invalidateQueries({ queryKey: categoryKeys.detail(id) })
+      // Phase 9.8 (Debt C): also refresh the lookup list feeding other
+      // features' dropdowns so a renamed category shows its new label there.
+      void queryClient.invalidateQueries({ queryKey: categoryKeys.options() })
       toast.success('Đã cập nhật danh mục')
     },
     onError: (error) => {

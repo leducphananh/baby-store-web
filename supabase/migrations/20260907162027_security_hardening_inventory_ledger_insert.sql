@@ -1,0 +1,17 @@
+-- Phase 9.1 — follow-up finding from live bypass testing (requirement §50).
+--
+-- `inventory_transactions_ins` (`WITH CHECK (true)`) was NOT caught in the
+-- first hardening pass and was confirmed exploitable by an actual
+-- controlled test: a signed-in user could directly INSERT an arbitrary
+-- ledger row (e.g. a fake 'IMPORT' of quantity 999 with no real receipt
+-- behind it), corrupting the append-only inventory ledger's trustworthiness
+-- with no real audit trail (`domain-driven-frontend` rule 4,
+-- `supabase-database` rule 8: "current stock is derived from this ledger").
+--
+-- Audited (again) before fixing: the frontend never inserts this table
+-- directly (`get-inventory-transactions.ts` only ever SELECTs it) — every
+-- real row comes from confirm_import_receipt()/complete_order()/
+-- cancel_order()/adjust_inventory(), all SECURITY DEFINER, all owned by
+-- `postgres`, which bypasses RLS entirely on this non-FORCE-RLS table.
+-- Dropping this policy cannot break any of those four functions.
+drop policy if exists inventory_transactions_ins on public.inventory_transactions;

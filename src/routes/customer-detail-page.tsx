@@ -18,10 +18,19 @@ import { CustomerFormDialog } from '@/features/customers/components/customer-for
 import { useCustomer } from '@/features/customers/hooks/use-customer'
 import { CustomerOrderSummaryCards } from '@/features/orders/components/customer-order-summary-cards'
 import { CustomerOrdersCard } from '@/features/orders/components/customer-orders-card'
+import { useCustomerOrderSummary } from '@/features/orders/hooks/use-customer-order-summary'
 
 function CustomerDetailPage() {
   const { id } = useParams<{ id: string }>()
   const customerQuery = useCustomer(id)
+  // Phase 9.8 (Debt A): start the order-summary request now, from the route
+  // param alone, so it runs concurrently with useCustomer instead of waiting
+  // for it to resolve and CustomerOrderSummaryCards to mount (which still owns
+  // this hook for display; TanStack Query dedupes to one request per key —
+  // count unchanged). CustomerOrdersCard's list query is left in the child on
+  // purpose: its key depends on the child-local page / page-size state, not
+  // just the route param (a legitimate dependency, cf. Edit Order's stockMap).
+  useCustomerOrderSummary(id)
   const [isEditOpen, setIsEditOpen] = useState(false)
 
   if (customerQuery.isLoading) {

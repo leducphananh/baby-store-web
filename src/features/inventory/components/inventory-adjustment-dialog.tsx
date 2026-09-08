@@ -110,7 +110,18 @@ export function InventoryAdjustmentDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      // Phase 9.8 (Debt B): don't let Escape / overlay-click dismiss the
+      // dialog while the adjust_inventory RPC is in flight — the footer
+      // buttons are already disabled, and closing here would wrongly imply
+      // the write-off / stock count was cancelled when the server call is
+      // still running and authoritative.
+      onOpenChange={(next) => {
+        if (adjustInventory.isPending) return
+        onOpenChange(next)
+      }}
+    >
       <DialogContent onCloseAutoFocus={(event) => event.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Điều chỉnh tồn kho</DialogTitle>

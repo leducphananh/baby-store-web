@@ -18,12 +18,25 @@ import { ImportReceiptStatusBadge } from '@/features/import-receipts/components/
 import { useCancelImportReceipt } from '@/features/import-receipts/hooks/use-cancel-import-receipt'
 import { useConfirmImportReceipt } from '@/features/import-receipts/hooks/use-confirm-import-receipt'
 import { useImportReceipt } from '@/features/import-receipts/hooks/use-import-receipt'
+import { useImportReceiptLines } from '@/features/import-receipts/hooks/use-import-receipt-lines'
 import { ReceiptBatchesCard } from '@/features/batches/components/receipt-batches-card'
+import { useReceiptBatches } from '@/features/batches/hooks/use-receipt-batches'
 import { PurchaseInvoicesCard } from '@/features/purchase-invoices/components/purchase-invoices-card'
+import { usePurchaseInvoices } from '@/features/purchase-invoices/hooks/use-purchase-invoices'
 
 function ImportReceiptDetailPage() {
   const { id } = useParams<{ id: string }>()
   const receiptQuery = useImportReceipt(id)
+  // Phase 9.8 (Debt A): start the line / batch / purchase-invoice requests
+  // now, from the route param alone, so they run concurrently with
+  // useImportReceipt instead of waiting for it to resolve and the child cards
+  // to mount. ImportReceiptLinesCard / ReceiptBatchesCard /
+  // PurchaseInvoicesCard still own these hooks for display; TanStack Query
+  // dedupes to one request per key, so the logical/network query count is
+  // unchanged (3 → 3) — only mount timing.
+  useImportReceiptLines(id)
+  useReceiptBatches(id)
+  usePurchaseInvoices(id)
   const cancelReceipt = useCancelImportReceipt()
   const confirmReceipt = useConfirmImportReceipt(id ?? '')
 

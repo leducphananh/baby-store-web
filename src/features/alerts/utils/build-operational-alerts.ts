@@ -299,7 +299,19 @@ export function buildOperationalAlerts({
       title: `${formatNumber(slowMoving.noSaleInLookbackCount)} sản phẩm không phát sinh bán trong ${lookbackDays} ngày`,
       href: SLOW_MOVING_HREF,
       action: { label: 'Xem hàng chậm bán', href: SLOW_MOVING_HREF },
-      fingerprint: buildCountFingerprint(slowMoving.noSaleInLookbackCount),
+      // Phase 9.8 (Debt D): fold the aggregate inventory value into the
+      // fingerprint too, matching `inventory_never_sold` above — a "<count>"
+      // fingerprint alone can't tell {A,B} from {A,C} at the same count, so
+      // a changed slow-moving set could stay marked "read". `count:value`
+      // still changes whenever the set change shifts the total inventory
+      // value. A true entity-set (sorted product-id) fingerprint is DEFERRED
+      // to Phase 10: it needs `get_slow_moving_summary()` to also return the
+      // id list, an RPC-shape change disproportionate for two info-severity
+      // alerts right before the testing phase (audit §30 tradeoff).
+      fingerprint: buildCountFingerprint(
+        slowMoving.noSaleInLookbackCount,
+        slowMoving.noSaleInLookbackValue,
+      ),
     })
   }
 

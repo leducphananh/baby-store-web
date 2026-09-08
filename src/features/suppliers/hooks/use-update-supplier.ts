@@ -13,6 +13,9 @@ export function useUpdateSupplier() {
     onSuccess: (_data, { id }) => {
       void queryClient.invalidateQueries({ queryKey: supplierKeys.lists() })
       void queryClient.invalidateQueries({ queryKey: supplierKeys.detail(id) })
+      // Phase 9.8 (Debt C): also refresh the lookup list feeding other
+      // features' dropdowns so a renamed supplier shows its new label there.
+      void queryClient.invalidateQueries({ queryKey: supplierKeys.options() })
       toast.success('Đã cập nhật nhà cung cấp')
     },
     onError: (error) => {

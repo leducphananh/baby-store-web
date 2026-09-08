@@ -75,7 +75,17 @@ export function RecordPaymentDialog({
   const overpaid = watchedAmount > remainingAmount && remainingAmount > 0
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      // Phase 9.8 (Debt B): don't let Escape / overlay-click dismiss the
+      // dialog while the payment RPC is in flight — the footer buttons are
+      // already disabled, and closing here would wrongly imply the payment
+      // was cancelled when the server call is still running.
+      onOpenChange={(next) => {
+        if (recordPayment.isPending) return
+        onOpenChange(next)
+      }}
+    >
       <DialogContent onCloseAutoFocus={(event) => event.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Ghi nhận thanh toán</DialogTitle>

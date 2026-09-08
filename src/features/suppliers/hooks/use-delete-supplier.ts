@@ -12,6 +12,9 @@ export function useDeleteSupplier() {
     mutationFn: deleteSupplier,
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: supplierKeys.lists() })
+      // Phase 9.8 (Debt C): also refresh the lookup list feeding other
+      // features' dropdowns so a deleted supplier stops appearing there.
+      void queryClient.invalidateQueries({ queryKey: supplierKeys.options() })
       toast.success('Đã xóa nhà cung cấp')
     },
     onError: (error) => {

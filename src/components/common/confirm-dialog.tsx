@@ -43,7 +43,19 @@ function ConfirmDialog({
   variant?: 'default' | 'destructive'
 }) {
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
+    <AlertDialog
+      open={open}
+      // Phase 9.8 (Debt B): while the confirmed action is in flight, ignore
+      // Escape / overlay-click / close requests. The Cancel button is already
+      // disabled and the Action button preventDefaults its own auto-close, so
+      // this is the last dismissal path left — closing here would wrongly
+      // imply the operation (cancel order, confirm import, delete, ...) was
+      // called off, when the server request is still running and authoritative.
+      onOpenChange={(next) => {
+        if (isConfirming) return
+        onOpenChange(next)
+      }}
+    >
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>

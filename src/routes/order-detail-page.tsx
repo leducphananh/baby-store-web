@@ -20,6 +20,8 @@ import { PaymentStatusBadge } from '@/features/orders/components/payment-status-
 import { useCancelDraftOrder } from '@/features/orders/hooks/use-cancel-draft-order'
 import { useCancelOrder } from '@/features/orders/hooks/use-cancel-order'
 import { useOrder } from '@/features/orders/hooks/use-order'
+import { useOrderLines } from '@/features/orders/hooks/use-order-lines'
+import { useOrderPayments } from '@/features/orders/hooks/use-order-payments'
 
 /**
  * Order Detail (Phase 6.3) + Edit/Cancel actions (Phase 6.4) + PDF export
@@ -44,6 +46,14 @@ function OrderDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const orderQuery = useOrder(id)
+  // Phase 9.8 (Debt A): start the line + payment requests now, from the route
+  // param alone, so they run concurrently with useOrder instead of waiting for
+  // it to resolve and the child cards to mount. OrderLinesCard /
+  // OrderPaymentsCard / ExportOrderPdfButton still own these hooks for
+  // display; TanStack Query dedupes to one request per key, so the
+  // logical/network query count is unchanged (2 → 2) — only mount timing.
+  useOrderLines(id ?? '')
+  useOrderPayments(id ?? '')
   const cancelDraftOrder = useCancelDraftOrder()
   const cancelOrder = useCancelOrder()
 

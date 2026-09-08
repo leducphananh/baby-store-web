@@ -12,6 +12,11 @@ export function useCreateSupplier() {
     mutationFn: createSupplier,
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: supplierKeys.lists() })
+      // Phase 9.8 (Debt C): `options()` is a sibling key, not under `lists()`,
+      // so it wasn't being refreshed — a supplier created here stayed missing
+      // from the Import Receipt form's supplier dropdown (`useAllSuppliers`)
+      // for up to its 5-minute staleTime. staleTime is unchanged.
+      void queryClient.invalidateQueries({ queryKey: supplierKeys.options() })
       toast.success('Đã thêm nhà cung cấp mới')
     },
     onError: (error) => {

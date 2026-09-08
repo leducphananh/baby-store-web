@@ -12,6 +12,9 @@ export function useDeleteCategory() {
     mutationFn: deleteCategory,
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: categoryKeys.lists() })
+      // Phase 9.8 (Debt C): also refresh the lookup list feeding other
+      // features' dropdowns so a deleted category stops appearing there.
+      void queryClient.invalidateQueries({ queryKey: categoryKeys.options() })
       toast.success('Đã xóa danh mục')
     },
     onError: (error) => {

@@ -17,12 +17,22 @@ import { ProductFormDialog } from '@/features/products/components/product-form-d
 import { ProductImagesManager } from '@/features/products/components/product-images-manager'
 import { ProductStatusBadge } from '@/features/products/components/product-status-badge'
 import { useProduct } from '@/features/products/hooks/use-product'
+import { useProductBatches } from '@/features/products/hooks/use-product-batches'
+import { useProductImages } from '@/features/products/hooks/use-product-images'
 import { useSetProductStatus } from '@/features/products/hooks/use-set-product-status'
 
 function ProductDetailPage() {
   const { id } = useParams<{ id: string }>()
   const location = useLocation()
   const productQuery = useProduct(id)
+  // Phase 9.8 (Debt A): start the batch + image requests now, from the route
+  // param alone, so they run concurrently with useProduct instead of waiting
+  // for it to resolve and the child cards to mount. ProductDetailInventory /
+  // ProductImagesManager still own these hooks for display; TanStack Query
+  // dedupes to one request per key, so the logical/network query count is
+  // unchanged (2 → 2) — only mount timing.
+  useProductBatches(id)
+  useProductImages(id)
   const setProductStatus = useSetProductStatus()
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isCopyOpen, setIsCopyOpen] = useState(false)
