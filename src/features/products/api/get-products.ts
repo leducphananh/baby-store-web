@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import { PRODUCT_IMAGES_BUCKET } from '@/features/products/api/get-product-images'
+import { getSignedUrlsCached } from '@/features/products/api/signed-image-url-cache'
 import type { Product, ProductFilters, ProductStatus } from '@/features/products/types/product'
 
 /**
@@ -171,6 +172,12 @@ async function getStockByProduct(productIds: string[]): Promise<Map<string, numb
  * absent from the map (the column renders a placeholder). Skips the storage
  * call entirely when the page has no images.
  *
+ * Signed URLs go through `getSignedUrlsCached` — the same signing, but
+ * reused across repeat list loads instead of minting (and forcing the
+ * browser to re-download) a fresh URL for every row on every refetch (see
+ * `signed-image-url-cache.ts`; this was the confirmed dominant source of
+ * this app's Supabase egress).
+ *
  * A thumbnail is cosmetic — this never throws. If the image lookup or the
  * signing call fails, the list still renders (with placeholders) rather than
  * breaking the whole catalog view over a missing picture.
@@ -195,16 +202,13 @@ async function getThumbnailByProduct(productIds: string[]): Promise<Map<string, 
   }
   if (pathByProduct.size === 0) return byProduct
 
-  const paths = [...pathByProduct.values()]
-  const { data: signed, error: signError } = await supabase.storage
-    .from(PRODUCT_IMAGES_BUCKET)
-    .createSignedUrls(paths, 60 * 60)
-  if (signError || !signed) return byProduct
-
-  const urlByPath = new Map<string, string>()
-  for (const item of signed) {
-    if (item.signedUrl && item.path) urlByPath.set(item.path, item.signedUrl)
+  let urlByPath: Map<string, string>
+  try {
+    urlByPath = await getSignedUrlsCached(PRODUCT_IMAGES_BUCKET, [...pathByProduct.values()])
+  } catch {
+    return byProduct
   }
+
   for (const [productId, path] of pathByProduct) {
     const url = urlByPath.get(path)
     if (url) byProduct.set(productId, url)
