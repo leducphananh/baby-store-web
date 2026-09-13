@@ -36,6 +36,16 @@ export type Product = {
   shopeePrice: number | null
   minimumStock: number
   status: ProductStatus
+  /**
+   * Storefront publishing intent — `products.is_web_visible`, the exact
+   * same canonical field the separate Next.js storefront app's public
+   * catalog contract (`list_storefront_products()` etc.) already reads.
+   * Independent of `status`/stock/price (Admin phase — storefront product
+   * publishing): a product can be `active` with stock and still be hidden
+   * from the public site, and vice versa. `false` for every new product —
+   * publishing is always an explicit, later staff decision.
+   */
+  isWebVisible: boolean
   originCountry: string | null
   manufacturer: string | null
   distributor: string | null
@@ -99,11 +109,15 @@ export type ProductSortField =
 /** `'all'` skips the status filter entirely. */
 export type ProductStatusFilter = 'all' | ProductStatus
 
+/** `'all'` skips the storefront-visibility filter entirely — see `Product.isWebVisible`. */
+export type ProductWebVisibilityFilter = 'all' | 'visible' | 'hidden'
+
 export type ProductFilters = {
   search: string
   /** `null` = every category. */
   categoryId: string | null
   status: ProductStatusFilter
+  webVisibility: ProductWebVisibilityFilter
   page: number
   pageSize: number
   sortField: ProductSortField

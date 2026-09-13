@@ -80,6 +80,7 @@ export type Database = {
           description: string | null
           id: string
           name: string
+          slug: string
           updated_at: string | null
         }
         Insert: {
@@ -87,6 +88,7 @@ export type Database = {
           description?: string | null
           id?: string
           name: string
+          slug: string
           updated_at?: string | null
         }
         Update: {
@@ -94,6 +96,7 @@ export type Database = {
           description?: string | null
           id?: string
           name?: string
+          slug?: string
           updated_at?: string | null
         }
         Relationships: []
@@ -666,6 +669,7 @@ export type Database = {
           description: string | null
           distributor: string | null
           id: string
+          is_web_visible: boolean
           manufacturer: string | null
           minimum_stock: number
           name: string
@@ -673,6 +677,7 @@ export type Database = {
           selling_price: number
           shopee_price: number | null
           sku: string
+          slug: string
           source_description: string | null
           status: string
           tiktok_price: number | null
@@ -688,6 +693,7 @@ export type Database = {
           description?: string | null
           distributor?: string | null
           id?: string
+          is_web_visible?: boolean
           manufacturer?: string | null
           minimum_stock?: number
           name: string
@@ -695,6 +701,7 @@ export type Database = {
           selling_price?: number
           shopee_price?: number | null
           sku: string
+          slug: string
           source_description?: string | null
           status?: string
           tiktok_price?: number | null
@@ -710,6 +717,7 @@ export type Database = {
           description?: string | null
           distributor?: string | null
           id?: string
+          is_web_visible?: boolean
           manufacturer?: string | null
           minimum_stock?: number
           name?: string
@@ -717,6 +725,7 @@ export type Database = {
           selling_price?: number
           shopee_price?: number | null
           sku?: string
+          slug?: string
           source_description?: string | null
           status?: string
           tiktok_price?: number | null
@@ -1276,6 +1285,57 @@ export type Database = {
           no_sale_in_lookback_value: number
         }[]
       }
+      get_storefront_product_by_slug: {
+        Args: { p_slug: string }
+        Returns: {
+          brand: string
+          category_id: string
+          category_name: string
+          category_slug: string
+          description: string
+          distributor: string
+          in_stock: boolean
+          manufacturer: string
+          name: string
+          origin_country: string
+          product_id: string
+          selling_price: number
+          slug: string
+          unit: string
+          updated_at: string
+        }[]
+      }
+      list_storefront_categories: {
+        Args: never
+        Returns: {
+          category_id: string
+          description: string
+          name: string
+          product_count: number
+          slug: string
+        }[]
+      }
+      list_storefront_products: {
+        Args: { p_category_slug?: string; p_limit?: number; p_offset?: number }
+        Returns: {
+          brand: string
+          category_id: string
+          category_name: string
+          category_slug: string
+          description: string
+          distributor: string
+          in_stock: boolean
+          manufacturer: string
+          name: string
+          origin_country: string
+          product_id: string
+          selling_price: number
+          slug: string
+          total_count: number
+          unit: string
+          updated_at: string
+        }[]
+      }
       recalc_import_receipt_total: {
         Args: { p_receipt_id: string }
         Returns: undefined
@@ -1289,6 +1349,7 @@ export type Database = {
         }
         Returns: string
       }
+      slugify: { Args: { p_text: string }; Returns: string }
       update_import_receipt_item: {
         Args: {
           p_expiration_date?: string

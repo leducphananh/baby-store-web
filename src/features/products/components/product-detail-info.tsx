@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatDateTime } from '@/utils/date'
 import { formatUnitLabel } from '@/utils/unit'
 import { DetailRow } from '@/components/common/detail-row'
+import { ProductWebVisibilityBadge } from '@/features/products/components/product-web-visibility-badge'
 import type { Product } from '@/features/products/types/product'
 
 /** Basic info + category, and origin/sourcing — the non-pricing product facts. */
@@ -21,6 +22,10 @@ export function ProductDetailInfo({ product }: { product: Product }) {
               value={product.barcode ? <span className="font-mono">{product.barcode}</span> : null}
             />
             <DetailRow label="Danh mục" value={product.categoryName} />
+            <DetailRow
+              label="Hiển thị website"
+              value={<ProductWebVisibilityBadge isWebVisible={product.isWebVisible} />}
+            />
             <DetailRow label="Thương hiệu" value={product.brand} />
             <DetailRow label="Đơn vị bán" value={formatUnitLabel(product.unit)} />
             <DetailRow label="Mô tả" value={product.description} />

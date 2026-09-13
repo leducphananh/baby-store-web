@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { useAllCategories } from '@/features/categories/hooks/use-all-categories'
 import { IntegerField, NullableIntegerField } from '@/components/common/integer-field'
@@ -283,6 +284,36 @@ export function ProductForm({
                   "Ngừng kinh doanh" ẩn sản phẩm khỏi danh sách mặc định nhưng giữ nguyên lịch sử.
                 </FormDescription>
                 <FormMessage />
+              </FormItem>
+            )}
+          />
+        </Section>
+
+        {/* Deliberately its own section, not folded into "Giá & tồn kho" —
+            storefront visibility is independent of business status/stock/
+            price (task §8/§18), and a distinct section makes that clear
+            rather than implying one setting controls the other. */}
+        <Section title="Website" tourId="product-form-web-visibility">
+          <FormField
+            control={form.control}
+            name="isWebVisible"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                <div className="space-y-0.5 pr-4">
+                  <FormLabel>Hiển thị trên website</FormLabel>
+                  <FormDescription>
+                    Cho phép khách hàng nhìn thấy sản phẩm này trên website. Không ảnh hưởng đến
+                    tồn kho, giá bán hay trạng thái kinh doanh.
+                  </FormDescription>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    disabled={isSubmitting}
+                    aria-label="Hiển thị trên website"
+                  />
+                </FormControl>
               </FormItem>
             )}
           />

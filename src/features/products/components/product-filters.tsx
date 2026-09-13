@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useAllCategories } from '@/features/categories/hooks/use-all-categories'
-import type { ProductStatusFilter } from '@/features/products/types/product'
+import type { ProductStatusFilter, ProductWebVisibilityFilter } from '@/features/products/types/product'
 
 const ALL = '__all__'
 
@@ -25,6 +25,8 @@ export function ProductFilters({
   onCategoryChange,
   status,
   onStatusChange,
+  webVisibility,
+  onWebVisibilityChange,
 }: {
   search: string
   onSearchChange: (value: string) => void
@@ -32,6 +34,8 @@ export function ProductFilters({
   onCategoryChange: (value: string | null) => void
   status: ProductStatusFilter
   onStatusChange: (value: ProductStatusFilter) => void
+  webVisibility: ProductWebVisibilityFilter
+  onWebVisibilityChange: (value: ProductWebVisibilityFilter) => void
 }) {
   const categoriesQuery = useAllCategories()
   const categories = categoriesQuery.data ?? []
@@ -85,6 +89,20 @@ export function ProductFilters({
           <SelectItem value="all">Tất cả trạng thái</SelectItem>
           <SelectItem value="active">Đang kinh doanh</SelectItem>
           <SelectItem value="archived">Ngừng kinh doanh</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Select
+        value={webVisibility}
+        onValueChange={(value) => onWebVisibilityChange(value as ProductWebVisibilityFilter)}
+      >
+        <SelectTrigger className="w-44" aria-label="Lọc theo hiển thị website">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">Website: Tất cả</SelectItem>
+          <SelectItem value="visible">Đang hiển thị</SelectItem>
+          <SelectItem value="hidden">Đang ẩn</SelectItem>
         </SelectContent>
       </Select>
     </>

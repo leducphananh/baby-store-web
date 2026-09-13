@@ -51,6 +51,11 @@ function toDefaultValues(product?: Product): ProductFormValues {
     shopeePrice: product?.shopeePrice ?? null,
     minimumStock: product?.minimumStock ?? 0,
     status: product?.status ?? 'active',
+    // A brand-new product always starts hidden from the storefront —
+    // publishing is an explicit, later staff decision, never automatic
+    // (task §1/§8). Editing an existing product still reflects its real
+    // current value.
+    isWebVisible: product?.isWebVisible ?? false,
   }
 }
 
@@ -59,7 +64,10 @@ function toDefaultValues(product?: Product): ProductFormValues {
  * "Nhân bản sản phẩm" action): reuses `toDefaultValues` for every reusable
  * field, then clears/resets exactly the fields a copy must never inherit —
  * `sku`/`barcode` are UNIQUE in the database, and a fresh copy starts
- * `active` regardless of the source product's status. Deliberately does NOT
+ * `active` regardless of the source product's status — and, just like any
+ * other new product, `isWebVisible: false` regardless of whether the
+ * source product is currently published (task §1/§8: a duplicated product
+ * is still a brand-new, unreviewed catalog entry). Deliberately does NOT
  * touch images, inventory, batches, or historical relationships — those
  * aren't part of the form at all, and the copy's pending-images list always
  * starts empty (see `PendingProductImages`) regardless of what the source
@@ -71,6 +79,7 @@ function toCopyDefaultValues(source: Product): ProductFormValues {
     sku: '',
     barcode: '',
     status: 'active',
+    isWebVisible: false,
   }
 }
 

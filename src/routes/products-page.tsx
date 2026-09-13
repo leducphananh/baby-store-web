@@ -21,11 +21,13 @@ import { ProductFormDialog } from '@/features/products/components/product-form-d
 import { useProducts } from '@/features/products/hooks/use-products'
 import { useDeleteProduct } from '@/features/products/hooks/use-delete-product'
 import { useSetProductStatus } from '@/features/products/hooks/use-set-product-status'
+import { useSetProductWebVisibility } from '@/features/products/hooks/use-set-product-web-visibility'
 import type {
   Product,
   ProductFilters as ProductFiltersState,
   ProductSortField,
   ProductStatusFilter,
+  ProductWebVisibilityFilter,
 } from '@/features/products/types/product'
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100]
@@ -65,6 +67,7 @@ const PRODUCT_COLUMNS_META = [
   { id: 'shopee_price', label: 'Giá Shopee', defaultVisible: true },
   { id: 'stock', label: 'Tồn kho', defaultVisible: true },
   { id: 'status', label: 'Trạng thái', defaultVisible: true },
+  { id: 'web_visibility', label: 'Website', defaultVisible: true },
   { id: 'actions', label: 'Thao tác', defaultVisible: true, alwaysVisible: true },
 ]
 
@@ -74,6 +77,7 @@ function ProductsPage() {
   const [search, setSearch] = useState('')
   const [categoryId, setCategoryId] = useState<string | null>(null)
   const [status, setStatus] = useState<ProductStatusFilter>('all')
+  const [webVisibility, setWebVisibility] = useState<ProductWebVisibilityFilter>('all')
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = usePersistedPageSize(
     PAGE_SIZE_STORAGE_KEY,
@@ -100,6 +104,7 @@ function ProductsPage() {
     search: debouncedSearch,
     categoryId,
     status,
+    webVisibility,
     page,
     pageSize,
     sortField: sorting.id,
@@ -109,6 +114,7 @@ function ProductsPage() {
   const productsQuery = useProducts(filters)
   const deleteProduct = useDeleteProduct()
   const setProductStatus = useSetProductStatus()
+  const setProductWebVisibility = useSetProductWebVisibility()
 
   const [formDialog, setFormDialog] = useState<{ product?: Product; copyFrom?: Product } | null>(
     null,
@@ -130,6 +136,8 @@ function ProductsPage() {
         id: product.id,
         status: product.status === 'active' ? 'archived' : 'active',
       }),
+    onToggleWebVisibility: (product) =>
+      setProductWebVisibility.mutate({ id: product.id, isWebVisible: !product.isWebVisible }),
     onDelete: (product) => setDeleteTarget(product),
   })
   const columns = allColumns.filter((column) => visibility[column.id] ?? true)
@@ -150,13 +158,14 @@ function ProductsPage() {
   const products = productsQuery.data?.data ?? []
   const total = productsQuery.data?.total ?? 0
   const isFilterActive =
-    debouncedSearch.trim().length > 0 || categoryId !== null || status !== 'all'
+    debouncedSearch.trim().length > 0 || categoryId !== null || status !== 'all' || webVisibility !== 'all'
   const isEmpty = products.length === 0
 
   function clearFilters() {
     setSearch('')
     setCategoryId(null)
     setStatus('all')
+    setWebVisibility('all')
     resetToFirstPage()
   }
 
@@ -178,6 +187,11 @@ function ProductsPage() {
             status={status}
             onStatusChange={(value) => {
               setStatus(value)
+              resetToFirstPage()
+            }}
+            webVisibility={webVisibility}
+            onWebVisibilityChange={(value) => {
+              setWebVisibility(value)
               resetToFirstPage()
             }}
           />

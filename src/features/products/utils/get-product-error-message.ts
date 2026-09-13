@@ -1,6 +1,6 @@
 import type { ProductFormValues } from '@/features/products/schemas/product-schema'
 
-type ProductMutationAction = 'create' | 'update' | 'delete' | 'status'
+type ProductMutationAction = 'create' | 'update' | 'delete' | 'status' | 'webVisibility'
 
 type PostgrestLike = { code?: unknown; message?: unknown; details?: unknown }
 
@@ -63,5 +63,7 @@ export function getProductErrorMessage(error: unknown, action: ProductMutationAc
       return 'Không thể xóa sản phẩm. Vui lòng thử lại.'
     case 'status':
       return 'Không thể cập nhật trạng thái sản phẩm. Vui lòng thử lại.'
+    case 'webVisibility':
+      return 'Không thể cập nhật hiển thị trên website. Vui lòng thử lại.'
   }
 }

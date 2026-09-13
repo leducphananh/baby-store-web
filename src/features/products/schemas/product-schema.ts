@@ -61,6 +61,14 @@ export const productFormSchema = z.object({
     .min(0, 'Tồn kho tối thiểu không được âm')
     .max(1_000_000, 'Tồn kho tối thiểu vượt quá giới hạn cho phép'),
   status: z.enum(['active', 'archived']),
+  /**
+   * Storefront publishing intent (`products.is_web_visible`) — a plain
+   * boolean, independent of `status`/price/stock. Defaults to `false` at
+   * the dialog layer (`product-form-dialog.tsx`'s `toDefaultValues`), never
+   * here — this schema only validates shape, it doesn't decide business
+   * defaults.
+   */
+  isWebVisible: z.boolean(),
 })
 
 export type ProductFormValues = z.infer<typeof productFormSchema>

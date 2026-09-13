@@ -16,6 +16,7 @@ type ProductDetailRow = {
   shopee_price: number | null
   minimum_stock: number
   status: string
+  is_web_visible: boolean
   origin_country: string | null
   manufacturer: string | null
   distributor: string | null
@@ -43,7 +44,7 @@ export async function getProduct(id: string): Promise<Product | null> {
     .from('products')
     .select(
       'id, name, sku, barcode, category_id, brand, unit, description, default_purchase_price, ' +
-        'selling_price, tiktok_price, shopee_price, minimum_stock, status, origin_country, ' +
+        'selling_price, tiktok_price, shopee_price, minimum_stock, status, is_web_visible, origin_country, ' +
         'manufacturer, distributor, source_description, created_at, updated_at, categories(name), ' +
         'product_batches(remaining_quantity)',
     )
@@ -74,6 +75,7 @@ export async function getProduct(id: string): Promise<Product | null> {
     shopeePrice: data.shopee_price,
     minimumStock: data.minimum_stock,
     status: toStatus(data.status),
+    isWebVisible: data.is_web_visible,
     originCountry: data.origin_country,
     manufacturer: data.manufacturer,
     distributor: data.distributor,

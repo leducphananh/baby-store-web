@@ -1,5 +1,15 @@
 import { Link } from 'react-router'
-import { ArchiveRestore, ArchiveX, Copy, Eye, MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
+import {
+  ArchiveRestore,
+  ArchiveX,
+  Copy,
+  Eye,
+  EyeOff,
+  Globe,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+} from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -18,6 +28,7 @@ import { formatNumber } from '@/utils/number'
 import { formatUnitLabel } from '@/utils/unit'
 import { ProductStatusBadge } from '@/features/products/components/product-status-badge'
 import { ProductThumbnail } from '@/features/products/components/product-thumbnail'
+import { ProductWebVisibilityBadge } from '@/features/products/components/product-web-visibility-badge'
 import type { Product } from '@/features/products/types/product'
 
 type ProductColumnActions = {
@@ -25,6 +36,7 @@ type ProductColumnActions = {
   onEdit: (product: Product) => void
   onCopy: (product: Product) => void
   onToggleStatus: (product: Product) => void
+  onToggleWebVisibility: (product: Product) => void
   onDelete: (product: Product) => void
   /** Signed thumbnail URLs by product id, for the current page (see `getProducts`). */
   thumbnails: Map<string, string>
@@ -42,6 +54,7 @@ export function getProductColumns({
   onEdit,
   onCopy,
   onToggleStatus,
+  onToggleWebVisibility,
   onDelete,
   thumbnails,
 }: ProductColumnActions): DataTableColumn<Product>[] {
@@ -177,6 +190,15 @@ export function getProductColumns({
       cell: (product) => <ProductStatusBadge status={product.status} />,
     },
     {
+      // Deliberately its own column, separate from "Trạng thái" (kinh
+      // doanh/ngừng kinh doanh) — website visibility and business status
+      // are independent concepts (task §18); conflating them into one
+      // column would misleadingly imply one controls the other.
+      id: 'web_visibility',
+      header: 'Website',
+      cell: (product) => <ProductWebVisibilityBadge isWebVisible={product.isWebVisible} />,
+    },
+    {
       id: 'actions',
       header: 'Thao tác',
       align: 'right',
@@ -210,6 +232,10 @@ export function getProductColumns({
               <DropdownMenuItem onClick={() => onToggleStatus(product)}>
                 {isActive ? <ArchiveX /> : <ArchiveRestore />}
                 {isActive ? 'Ngừng kinh doanh' : 'Kinh doanh lại'}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onToggleWebVisibility(product)}>
+                {product.isWebVisible ? <EyeOff /> : <Globe />}
+                {product.isWebVisible ? 'Ẩn khỏi website' : 'Đăng lên website'}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem variant="destructive" onClick={() => onDelete(product)}>

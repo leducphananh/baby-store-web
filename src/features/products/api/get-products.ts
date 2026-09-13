@@ -24,6 +24,7 @@ type ProductListRow = {
   shopee_price: number | null
   minimum_stock: number
   status: string
+  is_web_visible: boolean
   origin_country: string | null
   manufacturer: string | null
   distributor: string | null
@@ -35,7 +36,7 @@ type ProductListRow = {
 
 const LIST_COLUMNS =
   'id, name, sku, barcode, category_id, brand, unit, description, default_purchase_price, ' +
-  'selling_price, tiktok_price, shopee_price, minimum_stock, status, origin_country, ' +
+  'selling_price, tiktok_price, shopee_price, minimum_stock, status, is_web_visible, origin_country, ' +
   'manufacturer, distributor, source_description, created_at, updated_at, categories(name)'
 
 function toStatus(value: string): ProductStatus {
@@ -93,6 +94,10 @@ export async function getProducts(filters: ProductFilters): Promise<ProductsPage
     query = query.eq('status', filters.status)
   }
 
+  if (filters.webVisibility !== 'all') {
+    query = query.eq('is_web_visible', filters.webVisibility === 'visible')
+  }
+
   query = query
     .order(filters.sortField, { ascending: !filters.sortDesc })
     // Stable tiebreaker so `range()` page boundaries don't shift between
@@ -127,6 +132,7 @@ export async function getProducts(filters: ProductFilters): Promise<ProductsPage
     shopeePrice: row.shopee_price,
     minimumStock: row.minimum_stock,
     status: toStatus(row.status),
+    isWebVisible: row.is_web_visible,
     originCountry: row.origin_country,
     manufacturer: row.manufacturer,
     distributor: row.distributor,
