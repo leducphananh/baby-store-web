@@ -60,6 +60,7 @@ const PRODUCT_COLUMNS_META = [
   { id: 'name', label: 'Tên sản phẩm', defaultVisible: true },
   { id: 'sku', label: 'SKU / Mã vạch', defaultVisible: true },
   { id: 'category', label: 'Danh mục', defaultVisible: true },
+  { id: 'distributor', label: 'Nhà phân phối', defaultVisible: true },
   { id: 'unit', label: 'Đơn vị bán', defaultVisible: false },
   { id: 'default_purchase_price', label: 'Giá nhập', defaultVisible: false },
   { id: 'selling_price', label: 'Giá bán', defaultVisible: true },

@@ -104,6 +104,17 @@ export function getProductColumns({
       cell: (product) => <TruncatedCell value={product.categoryName} />,
     },
     {
+      // `Product.distributor` — nguồn hàng/sourcing metadata, distinct from
+      // `suppliers` (used for purchasing/import). Already selected and
+      // mapped by `getProducts` (see `get-products.ts`), so this column is
+      // display-only wiring, no query change. Reuses the same
+      // `TruncatedCell` empty-value ("—") and truncate/tooltip convention
+      // as "Danh mục" right next to it.
+      id: 'distributor',
+      header: 'Nhà phân phối',
+      cell: (product) => <TruncatedCell value={product.distributor} />,
+    },
+    {
       id: 'unit',
       header: 'Đơn vị bán',
       cell: (product) => <span className="text-muted-foreground">{formatUnitLabel(product.unit)}</span>,
