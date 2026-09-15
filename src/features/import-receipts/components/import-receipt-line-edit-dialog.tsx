@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dialog'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { DateField } from '@/components/common/date-field'
 import { IntegerField } from '@/components/common/integer-field'
 import { useUpdateImportReceiptItem } from '@/features/import-receipts/hooks/use-update-import-receipt-item'
 import {
@@ -106,31 +107,17 @@ function ImportReceiptLineEditDialog({
             />
 
             <div className="grid grid-cols-2 gap-4">
-              <FormField
+              <DateField
                 control={form.control}
                 name="manufactureDate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Ngày sản xuất</FormLabel>
-                    <FormControl>
-                      <Input type="date" disabled={updateItem.isPending} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Ngày sản xuất"
+                disabled={updateItem.isPending}
               />
-              <FormField
+              <DateField
                 control={form.control}
                 name="expirationDate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Hạn sử dụng</FormLabel>
-                    <FormControl>
-                      <Input type="date" disabled={updateItem.isPending} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Hạn sử dụng"
+                disabled={updateItem.isPending}
               />
             </div>
           </form>

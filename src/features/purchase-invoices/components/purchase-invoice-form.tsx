@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { DateField } from '@/components/common/date-field'
 import {
   purchaseInvoiceFormSchema,
   type PurchaseInvoiceFormValues,
@@ -58,18 +59,11 @@ export function PurchaseInvoiceForm({
             )}
           />
 
-          <FormField
+          <DateField
             control={form.control}
             name="invoiceDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Ngày hóa đơn</FormLabel>
-                <FormControl>
-                  <Input type="date" disabled={isSubmitting} {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Ngày hóa đơn"
+            disabled={isSubmitting}
           />
         </div>
 

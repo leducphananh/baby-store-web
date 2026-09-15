@@ -6,6 +6,7 @@ import { Plus, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { DateField } from '@/components/common/date-field'
 import { IntegerField } from '@/components/common/integer-field'
 import { ProductComboBox } from '@/features/products/components/product-combobox'
 import type { ProductSearchResult } from '@/features/products/api/search-products'
@@ -138,32 +139,22 @@ function PendingLineForm({
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="manufactureDate"
-            render={({ field }) => (
-              <FormItem className="w-40">
-                <FormLabel>Ngày sản xuất</FormLabel>
-                <FormControl>
-                  <Input type="date" disabled={isSubmitting} {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="expirationDate"
-            render={({ field }) => (
-              <FormItem className="w-40">
-                <FormLabel>Hạn sử dụng</FormLabel>
-                <FormControl>
-                  <Input type="date" disabled={isSubmitting} {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="w-32">
+            <DateField
+              control={form.control}
+              name="manufactureDate"
+              label="Ngày sản xuất"
+              disabled={isSubmitting}
+            />
+          </div>
+          <div className="w-32">
+            <DateField
+              control={form.control}
+              name="expirationDate"
+              label="Hạn sử dụng"
+              disabled={isSubmitting}
+            />
+          </div>
 
           <Button type="submit" size="sm" disabled={isSubmitting} className="mb-0.5">
             <Plus />

@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { DateInput } from '@/components/common/date-input'
 import { useAllSuppliers } from '@/features/suppliers/hooks/use-all-suppliers'
 import type { ImportReceiptStatusFilter } from '@/features/import-receipts/types/import-receipt'
 
@@ -102,24 +103,20 @@ export function ImportReceiptFilters({
         <Label htmlFor="import-from-date" className="text-sm text-muted-foreground">
           Từ
         </Label>
-        <Input
+        <DateInput
           id="import-from-date"
-          type="date"
           className="w-40"
           value={fromDate ?? ''}
-          max={toDate ?? undefined}
-          onChange={(event) => onFromDateChange(event.target.value || null)}
+          onChange={(value) => onFromDateChange(value || null)}
         />
         <Label htmlFor="import-to-date" className="text-sm text-muted-foreground">
           đến
         </Label>
-        <Input
+        <DateInput
           id="import-to-date"
-          type="date"
           className="w-40"
           value={toDate ?? ''}
-          min={fromDate ?? undefined}
-          onChange={(event) => onToDateChange(event.target.value || null)}
+          onChange={(value) => onToDateChange(value || null)}
         />
       </div>
     </>

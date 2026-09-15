@@ -21,7 +21,7 @@ export function toImportDateISO(ymd: string): string {
   return new Date(`${ymd}T12:00:00`).toISOString()
 }
 
-/** An ISO timestamp (or `YYYY-MM-DD`) → `"YYYY-MM-DD"` for an `<input type="date">`. */
+/** An ISO timestamp (or `YYYY-MM-DD`) → `"YYYY-MM-DD"` for a `DateField`/`DateInput`. */
 export function toDateInputValue(value: string | null | undefined): string {
   if (!value) return ''
   if (YMD.test(value)) return value

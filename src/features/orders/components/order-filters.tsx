@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { DateInput } from '@/components/common/date-input'
 import type { OrderPaymentStatusFilter, OrderStatusFilter } from '@/features/orders/types/order'
 
 /**
@@ -95,24 +96,20 @@ export function OrderFilters({
         <Label htmlFor="order-from-date" className="text-sm text-muted-foreground">
           Từ
         </Label>
-        <Input
+        <DateInput
           id="order-from-date"
-          type="date"
           className="w-40"
           value={fromDate ?? ''}
-          max={toDate ?? undefined}
-          onChange={(event) => onFromDateChange(event.target.value || null)}
+          onChange={(value) => onFromDateChange(value || null)}
         />
         <Label htmlFor="order-to-date" className="text-sm text-muted-foreground">
           đến
         </Label>
-        <Input
+        <DateInput
           id="order-to-date"
-          type="date"
           className="w-40"
           value={toDate ?? ''}
-          min={fromDate ?? undefined}
-          onChange={(event) => onToDateChange(event.target.value || null)}
+          onChange={(value) => onToDateChange(value || null)}
         />
       </div>
     </>

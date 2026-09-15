@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { DateField } from '@/components/common/date-field'
 import { useAllSuppliers } from '@/features/suppliers/hooks/use-all-suppliers'
 import {
   importReceiptFormSchema,
@@ -77,18 +78,11 @@ export function ImportReceiptForm({
             )}
           />
 
-          <FormField
+          <DateField
             control={form.control}
             name="importDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Ngày nhập</FormLabel>
-                <FormControl>
-                  <Input type="date" disabled={isSubmitting} {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Ngày nhập"
+            disabled={isSubmitting}
           />
         </div>
 

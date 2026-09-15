@@ -1,6 +1,6 @@
 import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { DateInput } from '@/components/common/date-input'
 import { cn } from '@/lib/utils'
 import { formatDate } from '@/utils/date'
 import {
@@ -21,8 +21,8 @@ import type { ReportDateRange, ReportDateRangePreset } from '@/features/reports/
  * and used by the caller to gate the report query itself via
  * `isValidReportDateRange`).
  *
- * Native `<input type="date">` for the custom bounds, same as
- * `OrderFilters`' `fromDate`/`toDate` — no calendar-picker library
+ * `DateInput` (Vietnamese `dd/mm/yyyy` masked text) for the custom bounds,
+ * same as `OrderFilters`' `fromDate`/`toDate` — no calendar-picker library
  * introduced just for this (requirement §45).
  */
 export function ReportDateRangePicker({
@@ -65,22 +65,20 @@ export function ReportDateRangePicker({
             <Label htmlFor="report-range-from" className="text-sm text-muted-foreground">
               Từ
             </Label>
-            <Input
+            <DateInput
               id="report-range-from"
-              type="date"
               className="w-40"
               value={value.from}
-              onChange={(event) => onChange({ preset: 'custom', from: event.target.value, to: value.to })}
+              onChange={(from) => onChange({ preset: 'custom', from, to: value.to })}
             />
             <Label htmlFor="report-range-to" className="text-sm text-muted-foreground">
               đến
             </Label>
-            <Input
+            <DateInput
               id="report-range-to"
-              type="date"
               className="w-40"
               value={value.to}
-              onChange={(event) => onChange({ preset: 'custom', from: value.from, to: event.target.value })}
+              onChange={(to) => onChange({ preset: 'custom', from: value.from, to })}
             />
           </div>
         ) : (
