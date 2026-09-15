@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { MoreHorizontal, Pencil, Search, Trash2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -9,10 +9,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ConfirmDialog } from '@/components/common/confirm-dialog'
 import { DataTable, type DataTableColumn } from '@/components/common/data-table'
 import { EmptyState } from '@/components/common/empty-state'
 import { ErrorState } from '@/components/common/error-state'
+import { useClientSearchSort, type SortComparators } from '@/hooks/use-client-search-sort'
 import { formatCurrencyVND } from '@/utils/currency'
 import { formatDate } from '@/utils/date'
 import { formatPricePerUnit, formatQuantityWithUnit } from '@/utils/unit'
@@ -21,6 +24,29 @@ import { ImportReceiptLineEditDialog } from '@/features/import-receipts/componen
 import { useDeleteImportReceiptItem } from '@/features/import-receipts/hooks/use-delete-import-receipt-item'
 import { useImportReceiptLines } from '@/features/import-receipts/hooks/use-import-receipt-lines'
 import type { ImportReceipt, ImportReceiptLine } from '@/features/import-receipts/types/import-receipt'
+
+type LineDateFilter = 'all' | 'complete' | 'missing'
+
+function matchesLineSearch(line: ImportReceiptLine, query: string): boolean {
+  return (
+    (line.productName?.toLowerCase().includes(query) ?? false) ||
+    (line.productSku?.toLowerCase().includes(query) ?? false) ||
+    (line.lotNumber?.toLowerCase().includes(query) ?? false)
+  )
+}
+
+function matchesLineDateFilter(line: ImportReceiptLine, filter: LineDateFilter): boolean {
+  if (filter === 'all') return true
+  const hasBoth = Boolean(line.manufactureDate) && Boolean(line.expirationDate)
+  return filter === 'complete' ? hasBoth : !hasBoth
+}
+
+const LINE_COMPARATORS: SortComparators<ImportReceiptLine> = {
+  product: (a, b) => (a.productName ?? '').localeCompare(b.productName ?? '', 'vi'),
+  quantity: (a, b) => a.quantity - b.quantity,
+  price: (a, b) => a.purchasePrice - b.purchasePrice,
+  total: (a, b) => a.lineTotal - b.lineTotal,
+}
 
 function getLineColumns({
   editable,
@@ -35,6 +61,7 @@ function getLineColumns({
     {
       id: 'product',
       header: 'Sản phẩm',
+      sortable: true,
       cell: (line) => (
         <div className="flex flex-col">
           <span className="font-medium text-foreground">{line.productName ?? '—'}</span>
@@ -48,12 +75,14 @@ function getLineColumns({
       id: 'quantity',
       header: 'Số lượng',
       align: 'right',
+      sortable: true,
       cell: (line) => formatQuantityWithUnit(line.quantity, line.productUnit),
     },
     {
       id: 'price',
       header: 'Đơn giá',
       align: 'right',
+      sortable: true,
       cell: (line) => formatPricePerUnit(line.purchasePrice, line.productUnit),
     },
     {
@@ -70,6 +99,7 @@ function getLineColumns({
       id: 'total',
       header: 'Thành tiền',
       align: 'right',
+      sortable: true,
       cell: (line) => formatCurrencyVND(line.lineTotal),
     },
   ]
@@ -122,9 +152,23 @@ export function ImportReceiptLinesCard({ receipt }: { receipt: ImportReceipt }) 
 
   const [editingLine, setEditingLine] = useState<ImportReceiptLine | null>(null)
   const [removingLine, setRemovingLine] = useState<ImportReceiptLine | null>(null)
+  const [dateFilter, setDateFilter] = useState<LineDateFilter>('all')
 
-  const lines = linesQuery.data ?? []
+  const lines = useMemo(() => linesQuery.data ?? [], [linesQuery.data])
+  // The receipt's real total — always the full line set, never the
+  // currently filtered/searched view (`table-data-grid`).
   const linesValue = lines.reduce((sum, line) => sum + line.lineTotal, 0)
+  const dateFilteredLines = useMemo(
+    () => lines.filter((line) => matchesLineDateFilter(line, dateFilter)),
+    [lines, dateFilter],
+  )
+  const {
+    search,
+    setSearch,
+    sorting,
+    setSorting,
+    rows: visibleLines,
+  } = useClientSearchSort(dateFilteredLines, matchesLineSearch, LINE_COMPARATORS)
   const columns = getLineColumns({
     editable: isEditable,
     onEdit: setEditingLine,
@@ -143,7 +187,7 @@ export function ImportReceiptLinesCard({ receipt }: { receipt: ImportReceipt }) 
           </div>
         )}
 
-        <div data-tour="import-lines-table">
+        <div data-tour="import-lines-table" className="space-y-3">
           {linesQuery.isError ? (
             <ErrorState
               message="Không thể tải chi tiết hàng hóa."
@@ -162,7 +206,48 @@ export function ImportReceiptLinesCard({ receipt }: { receipt: ImportReceipt }) 
             />
           ) : (
             <>
-              <DataTable columns={columns} data={lines} getRowId={(line) => line.id} />
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="relative w-full max-w-xs">
+                  <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    value={search}
+                    onChange={(event) => setSearch(event.target.value)}
+                    placeholder="Tìm theo tên, SKU hoặc số lô..."
+                    className="pl-8"
+                    aria-label="Tìm dòng hàng theo tên, SKU hoặc số lô"
+                  />
+                </div>
+                <Select
+                  value={dateFilter}
+                  onValueChange={(value) => setDateFilter(value as LineDateFilter)}
+                >
+                  <SelectTrigger className="w-56" aria-label="Lọc theo ngày sản xuất/hạn sử dụng">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Tất cả dòng hàng</SelectItem>
+                    <SelectItem value="complete">Đã có ngày SX &amp; HSD</SelectItem>
+                    <SelectItem value="missing">Thiếu ngày SX hoặc HSD</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {visibleLines.length === 0 ? (
+                <EmptyState
+                  icon={Search}
+                  title="Không tìm thấy dòng hàng phù hợp"
+                  description="Thử điều chỉnh từ khóa tìm kiếm hoặc bộ lọc."
+                />
+              ) : (
+                <DataTable
+                  columns={columns}
+                  data={visibleLines}
+                  getRowId={(line) => line.id}
+                  sorting={sorting}
+                  onSortingChange={setSorting}
+                />
+              )}
+
               <div className="flex justify-end gap-6 border-t pt-3 text-sm">
                 <span className="text-muted-foreground">Giá trị theo dòng hàng</span>
                 <span className="font-semibold text-foreground">{formatCurrencyVND(linesValue)}</span>
