@@ -24,6 +24,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useAllCategories } from '@/features/categories/hooks/use-all-categories'
 import { IntegerField, NullableIntegerField } from '@/components/common/integer-field'
 import { productFormSchema, type ProductFormValues } from '@/features/products/schemas/product-schema'
+import { AiResearchDialog } from './ai-research-dialog'
 
 /** Sentinel for "no category" — Radix Select items can't have an empty value. */
 const NO_CATEGORY = '__none__'
@@ -95,7 +96,17 @@ export function ProductForm({
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Tên sản phẩm</FormLabel>
+                <div className="flex items-center justify-between">
+                  <FormLabel>Tên sản phẩm</FormLabel>
+                  <AiResearchDialog 
+                    initialQuery={field.value} 
+                    onApply={(data) => {
+                      if (data.name) form.setValue('name', data.name, { shouldValidate: true, shouldDirty: true })
+                      if (data.description) form.setValue('description', data.description, { shouldValidate: true, shouldDirty: true })
+                      if (data.sellingPrice > 0) form.setValue('sellingPrice', data.sellingPrice, { shouldValidate: true, shouldDirty: true })
+                    }} 
+                  />
+                </div>
                 <FormControl>
                   <Input placeholder="VD: Bỉm Moony quần size L" disabled={isSubmitting} {...field} />
                 </FormControl>
