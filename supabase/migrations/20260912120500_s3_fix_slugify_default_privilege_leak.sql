@@ -1,0 +1,23 @@
+-- Follow-up to 20260912120000_s3_public_catalog_contract: this project has
+-- an `ALTER DEFAULT PRIVILEGES ... FOR ROLE postgres IN SCHEMA public`
+-- rule that grants EXECUTE on every NEW function directly to anon,
+-- authenticated, AND service_role — verified via pg_default_acl, not
+-- assumed. `revoke ... from public` (what the prior migration did) is a
+-- no-op against this, because the default grant targets the named roles
+-- directly, not the PUBLIC pseudo-role. slugify() was only ever intended
+-- for authenticated (admin) use — it should not be anon-executable, even
+-- though it's a low-risk pure text function with no table access. Fixing
+-- explicitly rather than leaving a "currently harmless but wrong" grant in
+-- place, per this project's own Phase 9.1 precedent (security_hardening_
+-- table_grants_and_rls.sql: "a permissive-and-currently-inert grant is a
+-- latent trap").
+--
+-- Note for a future migration (not applied here — a project-wide default-
+-- privilege change is a bigger decision than this catalog phase should
+-- make unilaterally): every function created by `postgres` in `public`
+-- will keep leaking EXECUTE to anon by default until
+-- `ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public REVOKE
+-- EXECUTE ON FUNCTIONS FROM anon` (or similar) is applied project-wide, or
+-- until every future migration remembers to revoke it per-function like
+-- this one does. Flagged in the S3 completion report as a recommendation.
+revoke execute on function public.slugify(text) from anon;
