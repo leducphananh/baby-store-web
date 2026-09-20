@@ -47,6 +47,14 @@ export async function uploadProductImage({
     .upload(path, file, { contentType: validation.contentType, upsert: false })
   if (uploadError) throw uploadError
 
+  const { error: publicUploadError } = await supabase.storage
+    .from('storefront-images')
+    .upload(path, file, { contentType: validation.contentType, upsert: false })
+  if (publicUploadError) {
+    await removeQuietly(path)
+    throw publicUploadError
+  }
+
   const { data: existing, error: existingError } = await supabase
     .from('product_images')
     .select('is_primary')
@@ -76,6 +84,7 @@ export async function uploadProductImage({
 async function removeQuietly(path: string): Promise<void> {
   try {
     await supabase.storage.from(PRODUCT_IMAGES_BUCKET).remove([path])
+    await supabase.storage.from('storefront-images').remove([path])
   } catch {
     // Swallowed on purpose: the caller is already throwing the real cause,
     // and a leftover object here is recoverable (same key is unreachable

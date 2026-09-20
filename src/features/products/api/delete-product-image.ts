@@ -26,6 +26,8 @@ export async function deleteProductImage({
     .remove([image.storagePath])
   if (storageError) throw storageError
 
+  await supabase.storage.from('storefront-images').remove([image.storagePath])
+
   const { error: rowError } = await supabase.from('product_images').delete().eq('id', image.id)
   if (rowError) throw rowError
 
