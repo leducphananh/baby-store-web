@@ -35,13 +35,15 @@ export function OrderForm({
   submitLabel,
   submittingLabel,
   cancelHref,
+  showDraftButton = false,
 }: {
   defaultValues: OrderFormValues
-  onSubmit: (values: OrderFormValues) => void
+  onSubmit: (values: OrderFormValues, options: { isDraft: boolean }) => void
   isSubmitting: boolean
   submitLabel: string
   submittingLabel: string
   cancelHref: string
+  showDraftButton?: boolean
 }) {
   const navigate = useNavigate()
   const [isCreateCustomerOpen, setIsCreateCustomerOpen] = useState(false)
@@ -110,7 +112,7 @@ export function OrderForm({
   return (
     <>
       <Form {...form}>
-        <form onSubmit={handleSubmit(onSubmit)} noValidate>
+        <form onSubmit={handleSubmit((v) => onSubmit(v, { isDraft: false }))} noValidate>
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div className="flex flex-col gap-6 lg:col-span-2">
               <Card>
@@ -182,6 +184,17 @@ export function OrderForm({
                   <Button type="submit" className="w-full" disabled={isSubmitting}>
                     {isSubmitting ? submittingLabel : submitLabel}
                   </Button>
+                  {showDraftButton && (
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      className="w-full"
+                      disabled={isSubmitting}
+                      onClick={handleSubmit((v) => onSubmit(v, { isDraft: true }))}
+                    >
+                      Lưu nháp
+                    </Button>
+                  )}
                   <Button
                     type="button"
                     variant="outline"

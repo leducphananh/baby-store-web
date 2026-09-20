@@ -8,6 +8,7 @@ export type CreateOrderInput = {
     quantity: number
     unitPrice: number
   }[]
+  isDraft?: boolean
 }
 
 export type CreateOrderResult = {
@@ -39,6 +40,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
       quantity: item.quantity,
       unit_price: item.unitPrice,
     })),
+    p_is_draft: input.isDraft ?? false,
   })
   if (error) throw error
 

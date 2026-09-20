@@ -126,7 +126,7 @@ function EditOrderPage() {
 
   const orderId = order.id
 
-  function handleSubmit(values: OrderFormValues) {
+  function handleSubmit(values: OrderFormValues, _options: { isDraft: boolean }) {
     if (updateOrderDraft.isPending) return
 
     updateOrderDraft.mutate(

@@ -42,8 +42,6 @@ function OrderLineAddPanel({
       <ProductComboBox
         onSelect={setPendingProduct}
         disabled={disabled}
-        sellableOnly
-        stockLabel="Có thể bán"
         placeholder="Tìm theo tên, SKU hoặc mã vạch..."
       />
     )
@@ -74,7 +72,7 @@ function PendingLineForm({
   onSubmit: (values: OrderLineFormValues) => void
 }) {
   const form = useForm<OrderLineFormValues>({
-    resolver: zodResolver(createOrderLineFormSchema(product.stockQuantity)),
+    resolver: zodResolver(createOrderLineFormSchema()),
     defaultValues: {
       quantity: 1,
       unitPrice: product.sellingPrice,

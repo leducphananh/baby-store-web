@@ -28,13 +28,14 @@ function CreateOrderPage() {
   const navigate = useNavigate()
   const createOrder = useCreateOrder()
 
-  function handleSubmit(values: OrderFormValues) {
+  function handleSubmit(values: OrderFormValues, { isDraft }: { isDraft: boolean }) {
     if (createOrder.isPending) return
 
     createOrder.mutate(
       {
         customerId: values.customerId,
         note: values.note,
+        isDraft,
         items: values.items.map((item) => ({
           productId: item.productId,
           quantity: item.quantity,
@@ -64,9 +65,10 @@ function CreateOrderPage() {
         defaultValues={DEFAULT_VALUES}
         onSubmit={handleSubmit}
         isSubmitting={createOrder.isPending}
-        submitLabel="Tạo đơn hàng"
-        submittingLabel="Đang tạo đơn hàng..."
+        submitLabel="Hoàn thành đơn hàng"
+        submittingLabel="Đang xử lý..."
         cancelHref={ROUTES.orders}
+        showDraftButton
       />
     </PageContent>
   )

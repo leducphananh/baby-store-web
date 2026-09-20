@@ -20,10 +20,6 @@ const orderItemDraftSchema = z
     unitPrice: z.number().int('Đơn giá phải là số nguyên').min(0, 'Đơn giá không được âm'),
     availableQuantity: z.number().int(),
   })
-  .refine((item) => item.quantity <= item.availableQuantity, {
-    message: 'Số lượng vượt quá tồn kho khả dụng',
-    path: ['quantity'],
-  })
 
 export const orderFormSchema = z.object({
   /** `null` = no customer (a walk-in / "khách lẻ" sale) — `orders.customer_id` is nullable. */

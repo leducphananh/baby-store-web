@@ -13,13 +13,12 @@ import { z } from 'zod'
  * `quantity`/`unitPrice` are real `number`s (see `IntegerField`) — never
  * floats (CLAUDE.md §8: VND/quantities are integers, period).
  */
-export function createOrderLineFormSchema(maxQuantity: number) {
+export function createOrderLineFormSchema() {
   return z.object({
     quantity: z
       .number()
       .int('Số lượng phải là số nguyên')
-      .positive('Số lượng phải lớn hơn 0')
-      .max(maxQuantity, `Chỉ còn ${maxQuantity} có thể bán`),
+      .positive('Số lượng phải lớn hơn 0'),
     unitPrice: z.number().int('Đơn giá phải là số nguyên').min(0, 'Đơn giá không được âm'),
   })
 }
