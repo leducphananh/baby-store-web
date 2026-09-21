@@ -4,9 +4,7 @@ import { formatCurrencyVND } from '@/utils/currency'
 import { formatDate, formatDateTime } from '@/utils/date'
 import { formatNumber } from '@/utils/number'
 import type { StoreInfo } from '@/lib/store-info'
-import { ORDER_PAYMENT_STATUS_LABEL } from '@/features/orders/utils/order-payment-status-label'
 import { ORDER_STATUS_LABEL } from '@/features/orders/utils/order-status-label'
-import { PAYMENT_METHOD_LABEL } from '@/features/orders/utils/payment-method-label'
 import type { OrderLine, OrderDetail, OrderPayment } from '@/features/orders/types/order-detail'
 
 /**
@@ -186,9 +184,6 @@ const styles = StyleSheet.create({
     fontWeight: 700,
     marginBottom: 6,
   },
-  paymentsTable: {
-    marginBottom: 16,
-  },
   notesBlock: {
     marginBottom: 20,
   },
@@ -196,24 +191,14 @@ const styles = StyleSheet.create({
     fontSize: 9.5,
     lineHeight: 1.4,
   },
-  signatureRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  thankYouBlock: {
     marginTop: 24,
-  },
-  signatureCol: {
-    width: '40%',
+    marginBottom: 24,
     alignItems: 'center',
   },
-  signatureTitle: {
-    fontSize: 9.5,
+  thankYouText: {
+    fontSize: 10.5,
     fontWeight: 700,
-    marginBottom: 2,
-  },
-  signatureHint: {
-    fontSize: 8,
-    color: COLORS.muted,
-    marginBottom: 48,
   },
   footer: {
     position: 'absolute',
@@ -262,7 +247,17 @@ export function OrderPdfDocument({
   generatedAt: Date
 }) {
   const totalPaid = payments.reduce((sum, payment) => sum + payment.amount, 0)
-  const remaining = Math.max(order.total - totalPaid, 0)
+
+  const isDraft = order.status === 'draft' || order.status === 'confirmed'
+  const displaySubtotal = isDraft
+    ? lines.reduce((sum, line) => sum + line.quantity * line.unitPrice, 0)
+    : order.subtotal
+  const displayDiscount = isDraft
+    ? lines.reduce((sum, line) => sum + line.discount, 0)
+    : order.discount
+  const displayTotal = isDraft
+    ? lines.reduce((sum, line) => sum + line.lineTotal, 0)
+    : order.total
 
   return (
     <Document title={`Đơn hàng ${order.orderNumber}`}>
@@ -296,11 +291,6 @@ export function OrderPdfDocument({
             <Text style={styles.infoValue}>{order.customerName ?? 'Khách lẻ'}</Text>
             {order.customerPhone && <Text style={styles.infoSub}>ĐT: {order.customerPhone}</Text>}
           </View>
-          <View style={styles.infoCol}>
-            <Text style={styles.infoLabel}>Thanh toán</Text>
-            <Text style={styles.infoValue}>{ORDER_PAYMENT_STATUS_LABEL[order.paymentStatus]}</Text>
-            {order.createdByName && <Text style={styles.infoSub}>Người tạo: {order.createdByName}</Text>}
-          </View>
         </View>
 
         <View style={styles.table}>
@@ -333,57 +323,20 @@ export function OrderPdfDocument({
         <View style={styles.totalsBlock}>
           <View style={styles.totalsRow}>
             <Text style={styles.totalsLabel}>Tạm tính</Text>
-            <Text style={styles.totalsValue}>{formatCurrencyVND(order.subtotal)}</Text>
+            <Text style={styles.totalsValue}>{formatCurrencyVND(displaySubtotal)}</Text>
           </View>
           <View style={styles.totalsRow}>
             <Text style={styles.totalsLabel}>Giảm giá</Text>
-            <Text style={styles.totalsValue}>{formatCurrencyVND(order.discount)}</Text>
+            <Text style={styles.totalsValue}>{formatCurrencyVND(displayDiscount)}</Text>
           </View>
           <View style={styles.totalsGrandRow}>
             <Text style={styles.totalsGrandLabel}>Tổng cộng</Text>
-            <Text style={styles.totalsGrandValue}>{formatCurrencyVND(order.total)}</Text>
+            <Text style={styles.totalsGrandValue}>{formatCurrencyVND(displayTotal)}</Text>
           </View>
-        </View>
-
-        <View wrap={false}>
-          <Text style={styles.sectionTitle}>Tình hình thanh toán</Text>
-          <View style={styles.totalsBlock}>
-            <View style={styles.totalsRow}>
-              <Text style={styles.totalsLabel}>Đã thanh toán</Text>
-              <Text style={styles.totalsValue}>{formatCurrencyVND(totalPaid)}</Text>
-            </View>
-            <View style={styles.totalsRow}>
-              <Text style={styles.totalsLabel}>Còn lại</Text>
-              <Text style={styles.totalsValue}>{formatCurrencyVND(remaining)}</Text>
-            </View>
+          <View style={[styles.totalsRow, { marginTop: 4 }]}>
+            <Text style={styles.totalsLabel}>Đã thanh toán</Text>
+            <Text style={styles.totalsValue}>{formatCurrencyVND(totalPaid)}</Text>
           </View>
-
-          {payments.length > 0 && (
-            <View style={styles.paymentsTable}>
-              <View style={styles.tableHeaderRow}>
-                <Text style={[styles.th, { width: '30%', paddingHorizontal: 4 }]}>Ngày thanh toán</Text>
-                <Text style={[styles.th, { width: '25%', paddingHorizontal: 4 }]}>Phương thức</Text>
-                <Text style={[styles.th, { width: '20%', paddingHorizontal: 4, textAlign: 'right' }]}>Số tiền</Text>
-                <Text style={[styles.th, { width: '25%', paddingHorizontal: 4 }]}>Ghi chú</Text>
-              </View>
-              {payments.map((payment) => (
-                <View key={payment.id} style={styles.tableRow}>
-                  <Text style={[styles.td, { width: '30%', paddingHorizontal: 4 }]}>
-                    {payment.paidAt ? formatDateTime(payment.paidAt) : '—'}
-                  </Text>
-                  <Text style={[styles.td, { width: '25%', paddingHorizontal: 4 }]}>
-                    {PAYMENT_METHOD_LABEL[payment.paymentMethod]}
-                  </Text>
-                  <Text style={[styles.td, { width: '20%', paddingHorizontal: 4, textAlign: 'right' }]}>
-                    {formatCurrencyVND(payment.amount)}
-                  </Text>
-                  <Text style={[styles.tdMuted, { width: '25%', paddingHorizontal: 4 }]}>
-                    {payment.note || '—'}
-                  </Text>
-                </View>
-              ))}
-            </View>
-          )}
         </View>
 
         {order.note && (
@@ -393,15 +346,8 @@ export function OrderPdfDocument({
           </View>
         )}
 
-        <View style={styles.signatureRow} wrap={false}>
-          <View style={styles.signatureCol}>
-            <Text style={styles.signatureTitle}>Người mua hàng</Text>
-            <Text style={styles.signatureHint}>(Ký, ghi rõ họ tên)</Text>
-          </View>
-          <View style={styles.signatureCol}>
-            <Text style={styles.signatureTitle}>Người bán hàng</Text>
-            <Text style={styles.signatureHint}>(Ký, ghi rõ họ tên)</Text>
-          </View>
+        <View style={styles.thankYouBlock} wrap={false}>
+          <Text style={styles.thankYouText}>Cảm ơn quý khách và hẹn gặp lại!</Text>
         </View>
 
         <View style={styles.footer} fixed>
