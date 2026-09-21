@@ -40,7 +40,7 @@ function IntegerFieldBase<TFieldValues extends FieldValues>({
       name={name}
       render={({ field }) => (
         <FormItem>
-          <FormLabel>{label}</FormLabel>
+          {label && <FormLabel>{label}</FormLabel>}
           <FormControl>
             <Input
               inputMode="numeric"

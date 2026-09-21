@@ -56,8 +56,9 @@ function OrderCartTable({
     {
       id: 'product',
       header: 'Sản phẩm',
+      className: 'align-top',
       cell: (row) => (
-        <div className="flex flex-col">
+        <div className="flex flex-col pt-2.5">
           <span className="font-medium text-foreground">{row.productName}</span>
           <span className="font-mono text-xs text-muted-foreground">{row.productSku}</span>
         </div>
@@ -66,6 +67,7 @@ function OrderCartTable({
     {
       id: 'quantity',
       header: 'Số lượng',
+      className: 'align-top',
       cell: (row) => (
         <div className="w-28">
           <IntegerField
@@ -74,7 +76,7 @@ function OrderCartTable({
             label=""
             disabled={disabled}
           />
-          <p className="text-xs text-muted-foreground">
+          <p className="mt-1 text-xs text-muted-foreground">
             Có thể bán: {formatQuantityWithUnit(row.availableQuantity, row.unit)}
           </p>
         </div>
@@ -83,6 +85,7 @@ function OrderCartTable({
     {
       id: 'unit_price',
       header: 'Đơn giá bán',
+      className: 'align-top',
       cell: (row) => (
         <div className="w-32">
           <IntegerField
@@ -98,27 +101,33 @@ function OrderCartTable({
       id: 'total',
       header: 'Thành tiền',
       align: 'right',
+      className: 'align-top',
       cell: (row) => (
-        <span className="font-medium text-foreground">
-          {formatCurrencyVND(row.liveQuantity * row.liveUnitPrice)}
-        </span>
+        <div className="pt-2.5">
+          <span className="font-medium text-foreground">
+            {formatCurrencyVND(row.liveQuantity * row.liveUnitPrice)}
+          </span>
+        </div>
       ),
     },
     {
       id: 'actions',
       header: 'Thao tác',
       align: 'right',
+      className: 'align-top',
       cell: (row) => (
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          disabled={disabled}
-          onClick={() => onRemove(row.index)}
-          aria-label={`Xóa ${row.productName} khỏi đơn hàng`}
-        >
-          <Trash2 className="size-4" />
-        </Button>
+        <div className="pt-1">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            disabled={disabled}
+            onClick={() => onRemove(row.index)}
+            aria-label={`Xóa ${row.productName} khỏi đơn hàng`}
+          >
+            <Trash2 className="size-4" />
+          </Button>
+        </div>
       ),
     },
   ]
