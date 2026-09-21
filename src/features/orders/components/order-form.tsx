@@ -90,9 +90,10 @@ export function OrderForm({
         ...existing,
         // Same product added again: merge into the existing line rather
         // than a second row for it, capped at what's actually sellable.
-        quantity: Math.min(existing.quantity + quantity, product.stockQuantity),
+        quantity: Math.min(existing.quantity + quantity, product.sellableQuantity),
         unitPrice,
-        availableQuantity: product.stockQuantity,
+        availableQuantity: product.sellableQuantity,
+        totalQuantity: product.stockQuantity,
       })
     } else {
       append({
@@ -102,7 +103,8 @@ export function OrderForm({
         unit: product.unit,
         quantity,
         unitPrice,
-        availableQuantity: product.stockQuantity,
+        availableQuantity: product.sellableQuantity,
+        totalQuantity: product.stockQuantity,
       })
     }
   }

@@ -108,20 +108,24 @@ function EditOrderPage() {
     )
   }
 
-  const stockMap = stockMapQuery.data ?? new Map<string, number>()
+  const stockMap = stockMapQuery.data ?? new Map<string, { total: number; sellable: number }>()
   const defaultValues: OrderFormValues = {
     customerId: order.customerId,
     customerName: order.customerName,
     note: order.note ?? '',
-    items: (linesQuery.data ?? []).map((line) => ({
-      productId: line.productId ?? '',
-      productName: line.productName ?? '',
-      productSku: line.productSku ?? '',
-      unit: line.productUnit ?? '',
-      quantity: line.quantity,
-      unitPrice: line.unitPrice,
-      availableQuantity: line.productId ? (stockMap.get(line.productId) ?? 0) : 0,
-    })),
+    items: (linesQuery.data ?? []).map((line) => {
+      const stock = line.productId ? (stockMap.get(line.productId) ?? { total: 0, sellable: 0 }) : { total: 0, sellable: 0 }
+      return {
+        productId: line.productId ?? '',
+        productName: line.productName ?? '',
+        productSku: line.productSku ?? '',
+        unit: line.productUnit ?? '',
+        quantity: line.quantity,
+        unitPrice: line.unitPrice,
+        availableQuantity: stock.sellable,
+        totalQuantity: stock.total,
+      }
+    }),
   }
 
   const orderId = order.id

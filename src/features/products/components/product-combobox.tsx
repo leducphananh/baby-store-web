@@ -11,7 +11,7 @@ import {
   CommandList,
 } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { formatQuantityWithUnit } from '@/utils/unit'
+import { formatNumber } from '@/utils/number'
 import { useSearchProducts } from '@/features/products/hooks/use-search-products'
 import type { ProductSearchResult } from '@/features/products/api/search-products'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
@@ -32,15 +32,12 @@ function ProductComboBox({
   disabled,
   placeholder = 'Tìm theo tên hoặc SKU...',
   sellableOnly = false,
-  stockLabel = 'Tồn',
 }: {
   onSelect: (product: ProductSearchResult) => void
   disabled?: boolean
   placeholder?: string
   /** Passed straight through to `useSearchProducts` — see its doc comment. */
   sellableOnly?: boolean
-  /** Prefix before the stock figure, e.g. "Tồn" or "Có thể bán". */
-  stockLabel?: string
 }) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
@@ -100,7 +97,7 @@ function ProductComboBox({
                         <span className="font-mono text-xs text-muted-foreground">{product.sku}</span>
                       </div>
                       <span className="text-xs text-muted-foreground">
-                        {stockLabel}: {formatQuantityWithUnit(product.stockQuantity, product.unit)}
+                        Tồn kho: {formatNumber(product.stockQuantity)} · Có thể bán: {formatNumber(product.sellableQuantity)} {product.unit ? `(${product.unit})` : ''}
                       </span>
                     </CommandItem>
                   ))}

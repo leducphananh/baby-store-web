@@ -19,6 +19,7 @@ const orderItemDraftSchema = z
     quantity: z.number().int('Số lượng phải là số nguyên').positive('Số lượng phải lớn hơn 0'),
     unitPrice: z.number().int('Đơn giá phải là số nguyên').min(0, 'Đơn giá không được âm'),
     availableQuantity: z.number().int(),
+    totalQuantity: z.number().int(),
   })
 
 export const orderFormSchema = z.object({

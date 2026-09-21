@@ -6,7 +6,7 @@ import { Plus, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'
 import { IntegerField } from '@/components/common/integer-field'
-import { formatQuantityWithUnit } from '@/utils/unit'
+import { formatNumber } from '@/utils/number'
 import { ProductComboBox } from '@/features/products/components/product-combobox'
 import type { ProductSearchResult } from '@/features/products/api/search-products'
 import {
@@ -101,8 +101,8 @@ function PendingLineForm({
         <div className="flex items-start justify-between gap-2">
           <div>
             <p className="text-sm font-medium text-foreground">{product.name}</p>
-            <p className="font-mono text-xs text-muted-foreground">
-              {product.sku} · Có thể bán: {formatQuantityWithUnit(product.stockQuantity, product.unit)}
+            <p className="mt-0.5 font-mono text-xs text-muted-foreground">
+              {product.sku} · Tồn kho: {formatNumber(product.stockQuantity)} · Có thể bán: {formatNumber(product.sellableQuantity)} {product.unit ? `(${product.unit})` : ''}
             </p>
           </div>
           <Button

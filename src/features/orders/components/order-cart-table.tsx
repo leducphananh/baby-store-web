@@ -6,7 +6,7 @@ import { DataTable, type DataTableColumn } from '@/components/common/data-table'
 import { EmptyState } from '@/components/common/empty-state'
 import { IntegerField } from '@/components/common/integer-field'
 import { formatCurrencyVND } from '@/utils/currency'
-import { formatQuantityWithUnit } from '@/utils/unit'
+import { formatNumber } from '@/utils/number'
 import type { OrderFormValues } from '@/features/orders/schemas/order-form-schema'
 
 type CartRow = FieldArrayWithId<OrderFormValues, 'items', 'id'> & {
@@ -65,6 +65,27 @@ function OrderCartTable({
       ),
     },
     {
+      id: 'unit',
+      header: 'Đơn vị',
+      className: 'align-top',
+      cell: (row) => (
+        <div className="pt-2.5">
+          <span className="text-foreground">{row.unit}</span>
+        </div>
+      ),
+    },
+    {
+      id: 'stock',
+      header: 'Tồn kho',
+      className: 'align-top',
+      cell: (row) => (
+        <div className="flex flex-col pt-2.5">
+          <span className="text-foreground">{formatNumber(row.totalQuantity)}</span>
+          <span className="text-xs text-muted-foreground">Có thể bán: {formatNumber(row.availableQuantity)}</span>
+        </div>
+      ),
+    },
+    {
       id: 'quantity',
       header: 'Số lượng',
       className: 'align-top',
@@ -76,9 +97,6 @@ function OrderCartTable({
             label=""
             disabled={disabled}
           />
-          <p className="mt-1 text-xs text-muted-foreground">
-            Có thể bán: {formatQuantityWithUnit(row.availableQuantity, row.unit)}
-          </p>
         </div>
       ),
     },

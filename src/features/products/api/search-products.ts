@@ -8,19 +8,12 @@ export type ProductSearchResult = {
   unit: string
   defaultPurchasePrice: number
   sellingPrice: number
-  stockQuantity: number
+  stockQuantity: number // total stock
+  sellableQuantity: number // unexpired stock
 }
 
 export type ProductSearchOptions = {
-  /**
-   * When true, `stockQuantity` sums only batches that are unexpired
-   * (`expiration_date IS NULL OR expiration_date >= today`) — the same
-   * condition `complete_order()`'s FEFO allocation uses, so what the order
-   * screen shows as "available" always matches what can actually be sold.
-   * Default false (every batch's remaining quantity), which is what
-   * import-receipt line entry wants: receiving more stock isn't gated by
-   * whether existing batches have expired.
-   */
+  // No longer used, searchProducts always returns both total and sellable quantities.
   sellableOnly?: boolean
 }
 
@@ -38,7 +31,7 @@ const RESULT_LIMIT = 20
  */
 export async function searchProducts(
   query: string,
-  options: ProductSearchOptions = {},
+  _options: ProductSearchOptions = {},
 ): Promise<ProductSearchResult[]> {
   let request = supabase
     .from('products')
@@ -62,17 +55,21 @@ export async function searchProducts(
 
   const rows = data ?? []
   const ids = rows.map((row) => row.id)
-  const stockByProduct = await getStockByProduct(ids, options.sellableOnly ?? false)
+  const stockByProduct = await getStockByProduct(ids)
 
-  return rows.map((row) => ({
-    id: row.id,
-    name: row.name,
-    sku: row.sku,
-    unit: row.unit,
-    defaultPurchasePrice: row.default_purchase_price,
-    sellingPrice: row.selling_price,
-    stockQuantity: stockByProduct.get(row.id) ?? 0,
-  }))
+  return rows.map((row) => {
+    const stock = stockByProduct.get(row.id) ?? { total: 0, sellable: 0 }
+    return {
+      id: row.id,
+      name: row.name,
+      sku: row.sku,
+      unit: row.unit,
+      defaultPurchasePrice: row.default_purchase_price,
+      sellingPrice: row.selling_price,
+      stockQuantity: stock.total,
+      sellableQuantity: stock.sellable,
+    }
+  })
 }
 
 /**
@@ -83,26 +80,29 @@ export async function searchProducts(
  */
 export async function getStockByProduct(
   productIds: string[],
-  sellableOnly: boolean,
-): Promise<Map<string, number>> {
-  const byProduct = new Map<string, number>()
+): Promise<Map<string, { total: number; sellable: number }>> {
+  const byProduct = new Map<string, { total: number; sellable: number }>()
   if (productIds.length === 0) return byProduct
 
-  let request = supabase
+  const { data, error } = await supabase
     .from('product_batches')
-    .select('product_id, remaining_quantity')
+    .select('product_id, remaining_quantity, expiration_date')
     .in('product_id', productIds)
 
-  if (sellableOnly) {
-    request = request.or(`expiration_date.is.null,expiration_date.gte.${todayYmd()}`)
-  }
-
-  const { data, error } = await request
   if (error) throw error
+
+  const today = todayYmd()
 
   for (const row of data ?? []) {
     if (!row.product_id) continue
-    byProduct.set(row.product_id, (byProduct.get(row.product_id) ?? 0) + row.remaining_quantity)
+    const current = byProduct.get(row.product_id) ?? { total: 0, sellable: 0 }
+    
+    current.total += row.remaining_quantity
+    if (!row.expiration_date || row.expiration_date >= today) {
+      current.sellable += row.remaining_quantity
+    }
+    
+    byProduct.set(row.product_id, current)
   }
   return byProduct
 }

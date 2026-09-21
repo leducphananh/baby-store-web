@@ -12,7 +12,7 @@ import { productKeys } from '@/features/products/api/query-keys'
 export function useProductStockMap(productIds: string[]) {
   return useQuery({
     queryKey: productKeys.stockMap(productIds),
-    queryFn: () => getStockByProduct(productIds, true),
+    queryFn: () => getStockByProduct(productIds),
     enabled: productIds.length > 0,
   })
 }
