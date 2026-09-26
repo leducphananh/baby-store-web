@@ -4,7 +4,6 @@ import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { useOrderLines } from '@/features/orders/hooks/use-order-lines'
-import { useOrderPayments } from '@/features/orders/hooks/use-order-payments'
 import { downloadOrderPdf } from '@/features/orders/utils/generate-order-pdf'
 import type { OrderDetail } from '@/features/orders/types/order-detail'
 
@@ -19,18 +18,16 @@ import type { OrderDetail } from '@/features/orders/types/order-detail'
  */
 export function ExportOrderPdfButton({ order }: { order: OrderDetail }) {
   const linesQuery = useOrderLines(order.id)
-  const paymentsQuery = useOrderPayments(order.id)
   const [isGenerating, setIsGenerating] = useState(false)
 
   const lines = linesQuery.data
-  const payments = paymentsQuery.data
-  const isDataReady = lines !== undefined && payments !== undefined
+  const isDataReady = lines !== undefined
 
   async function handleExport() {
-    if (!lines || !payments) return
+    if (!lines) return
     setIsGenerating(true)
     try {
-      await downloadOrderPdf({ order, lines, payments })
+      await downloadOrderPdf({ order, lines })
     } catch {
       toast.error('Không thể xuất PDF đơn hàng. Vui lòng thử lại.')
     } finally {

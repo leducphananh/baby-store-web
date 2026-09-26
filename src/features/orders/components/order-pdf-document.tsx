@@ -1,11 +1,10 @@
 import { Document, Font, Page, StyleSheet, Text, View } from '@react-pdf/renderer'
 
 import { formatCurrencyVND } from '@/utils/currency'
-import { formatDate, formatDateTime } from '@/utils/date'
+import { formatDateTime } from '@/utils/date'
 import { formatNumber } from '@/utils/number'
 import type { StoreInfo } from '@/lib/store-info'
-import { ORDER_STATUS_LABEL } from '@/features/orders/utils/order-status-label'
-import type { OrderLine, OrderDetail, OrderPayment } from '@/features/orders/types/order-detail'
+import type { OrderLine, OrderDetail } from '@/features/orders/types/order-detail'
 
 /**
  * `Nunito` — same family as the on-screen UI (`index.html`) — registered
@@ -33,197 +32,96 @@ Font.register({
 Font.registerHyphenationCallback((word) => [word])
 
 const COLORS = {
-  text: '#18181b',
-  muted: '#71717a',
-  border: '#d4d4d8',
-  headerBg: '#f4f4f5',
+  text: '#000000',
 }
 
 const styles = StyleSheet.create({
   page: {
     fontFamily: 'Nunito',
-    fontSize: 9.5,
-    color: COLORS.text,
-    paddingTop: 36,
-    paddingBottom: 56,
-    paddingHorizontal: 40,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 14,
-  },
-  storeName: {
-    fontSize: 13,
-    fontWeight: 800,
-    marginBottom: 3,
-  },
-  storeLine: {
     fontSize: 9,
-    color: COLORS.muted,
-    marginBottom: 1,
+    color: COLORS.text,
+    padding: 12,
+  },
+  centerText: {
+    textAlign: 'center',
+  },
+  bold: {
+    fontWeight: 700,
+  },
+  date: {
+    marginBottom: 8,
   },
   titleBlock: {
-    alignItems: 'flex-end',
+    alignItems: 'center',
+    marginBottom: 8,
   },
   title: {
-    fontSize: 16,
-    fontWeight: 800,
-    letterSpacing: 0.5,
-    marginBottom: 4,
+    fontSize: 12,
+    fontWeight: 700,
+    marginBottom: 0,
   },
   orderNumber: {
-    fontSize: 11,
-    fontWeight: 700,
-    marginBottom: 2,
-  },
-  metaLine: {
-    fontSize: 9,
-    color: COLORS.muted,
-  },
-  divider: {
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
-    marginBottom: 12,
-  },
-  infoGrid: {
-    flexDirection: 'row',
-    marginBottom: 16,
-  },
-  infoCol: {
-    flex: 1,
-  },
-  infoLabel: {
-    fontSize: 8.5,
-    color: COLORS.muted,
-    marginBottom: 3,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  infoValue: {
     fontSize: 10,
-    fontWeight: 600,
+    fontWeight: 700,
+  },
+  infoBlock: {
+    marginBottom: 4,
+    lineHeight: 1.4,
+  },
+  dashedDivider: {
+    borderBottomWidth: 1,
+    borderBottomStyle: 'dashed',
+    borderBottomColor: COLORS.text,
+    marginVertical: 4,
+  },
+  tableHeader: {
+    flexDirection: 'row',
+    fontWeight: 700,
     marginBottom: 2,
   },
-  infoSub: {
-    fontSize: 9,
-    color: COLORS.muted,
+  colPrice: {
+    flex: 1,
+    textAlign: 'left',
   },
-  table: {
-    marginBottom: 14,
+  colQty: {
+    width: 30,
+    textAlign: 'center',
   },
-  tableHeaderRow: {
+  colTotal: {
+    flex: 1,
+    textAlign: 'right',
+  },
+  itemBlock: {
+    marginTop: 4,
+  },
+  itemName: {
+    marginBottom: 2,
+    lineHeight: 1.3,
+  },
+  itemRow: {
     flexDirection: 'row',
-    backgroundColor: COLORS.headerBg,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: COLORS.border,
-    paddingVertical: 5,
   },
-  tableRow: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderColor: COLORS.border,
-    paddingVertical: 5,
-  },
-  th: {
-    fontSize: 8.5,
-    fontWeight: 700,
-    textTransform: 'uppercase',
-  },
-  td: {
-    fontSize: 9.5,
-  },
-  tdMuted: {
-    fontSize: 8,
-    color: COLORS.muted,
-  },
-  colIndex: { width: '5%', paddingHorizontal: 4 },
-  colProduct: { width: '32%', paddingHorizontal: 4 },
-  colUnit: { width: '10%', paddingHorizontal: 4, textAlign: 'center' },
-  colQty: { width: '10%', paddingHorizontal: 4, textAlign: 'right' },
-  colPrice: { width: '15%', paddingHorizontal: 4, textAlign: 'right' },
-  colDiscount: { width: '13%', paddingHorizontal: 4, textAlign: 'right' },
-  colTotal: { width: '15%', paddingHorizontal: 4, textAlign: 'right' },
   totalsBlock: {
-    alignSelf: 'flex-end',
-    width: '45%',
-    marginBottom: 16,
+    marginTop: 8,
+    alignItems: 'flex-end',
+    lineHeight: 1.5,
   },
   totalsRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 2.5,
+    justifyContent: 'flex-end',
   },
   totalsLabel: {
-    fontSize: 9.5,
-    color: COLORS.muted,
+    width: 80,
+    textAlign: 'right',
+    marginRight: 4,
   },
   totalsValue: {
-    fontSize: 9.5,
-    fontWeight: 600,
-  },
-  totalsGrandRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderTopWidth: 1,
-    borderColor: COLORS.border,
-    marginTop: 3,
-    paddingTop: 5,
-  },
-  totalsGrandLabel: {
-    fontSize: 10.5,
-    fontWeight: 800,
-  },
-  totalsGrandValue: {
-    fontSize: 12,
-    fontWeight: 800,
-  },
-  sectionTitle: {
-    fontSize: 10.5,
-    fontWeight: 700,
-    marginBottom: 6,
-  },
-  notesBlock: {
-    marginBottom: 20,
-  },
-  notesText: {
-    fontSize: 9.5,
-    lineHeight: 1.4,
-  },
-  thankYouBlock: {
-    marginTop: 24,
-    marginBottom: 24,
-    alignItems: 'center',
-  },
-  thankYouText: {
-    fontSize: 10.5,
-    fontWeight: 700,
-  },
-  footer: {
-    position: 'absolute',
-    bottom: 24,
-    left: 40,
-    right: 40,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    fontSize: 8,
-    color: COLORS.muted,
-    borderTopWidth: 1,
-    borderColor: COLORS.border,
-    paddingTop: 6,
+    width: 60,
+    textAlign: 'right',
   },
 })
 
-const LINE_COLUMNS: { key: keyof typeof styles; header: string }[] = [
-  { key: 'colIndex', header: 'STT' },
-  { key: 'colProduct', header: 'Sản phẩm' },
-  { key: 'colUnit', header: 'ĐVT' },
-  { key: 'colQty', header: 'SL' },
-  { key: 'colPrice', header: 'Đơn giá' },
-  { key: 'colDiscount', header: 'Giảm giá' },
-  { key: 'colTotal', header: 'Thành tiền' },
-]
+
 
 /**
  * Print-friendly A4 document for one order (Phase 6.6). Pure presentation —
@@ -236,17 +134,14 @@ const LINE_COLUMNS: { key: keyof typeof styles; header: string }[] = [
 export function OrderPdfDocument({
   order,
   lines,
-  payments,
   storeInfo,
   generatedAt,
 }: {
   order: OrderDetail
   lines: OrderLine[]
-  payments: OrderPayment[]
   storeInfo: StoreInfo | null
   generatedAt: Date
 }) {
-  const totalPaid = payments.reduce((sum, payment) => sum + payment.amount, 0)
 
   const isDraft = order.status === 'draft' || order.status === 'confirmed'
   const displaySubtotal = isDraft
@@ -262,101 +157,65 @@ export function OrderPdfDocument({
 
   return (
     <Document title={`Đơn hàng ${order.orderNumber}`}>
-      <Page size="A4" style={styles.page} wrap>
-        <View style={styles.headerRow} fixed>
-          <View>
-            {storeInfo ? (
-              <>
-                <Text style={styles.storeName}>{storeInfo.name}</Text>
-                {storeInfo.address && <Text style={styles.storeLine}>{storeInfo.address}</Text>}
-                {storeInfo.phone && <Text style={styles.storeLine}>ĐT: {storeInfo.phone}</Text>}
-                {storeInfo.taxCode && <Text style={styles.storeLine}>MST: {storeInfo.taxCode}</Text>}
-              </>
-            ) : (
-              <Text style={styles.storeName}>Baby Wale</Text>
-            )}
-          </View>
-          <View style={styles.titleBlock}>
-            <Text style={styles.title}>ĐƠN HÀNG</Text>
-            <Text style={styles.orderNumber}>{order.orderNumber}</Text>
-            <Text style={styles.metaLine}>Ngày đặt: {formatDate(order.orderDate)}</Text>
-            <Text style={styles.metaLine}>Trạng thái: {ORDER_STATUS_LABEL[order.status]}</Text>
-          </View>
+      <Page size={[226.77, 'auto']} style={styles.page}>
+        <View style={[styles.centerText, { marginBottom: 4, lineHeight: 1.2 }]}>
+          <Text style={[styles.title, { marginBottom: 2 }]}>{'\u200B' + (storeInfo?.name || 'Baby Wale')}</Text>
+          <Text>{storeInfo?.address || 'Địa chỉ: (Chưa cập nhật)'}</Text>
+          <Text>ĐT: {storeInfo?.phone || '(Chưa cập nhật)'}</Text>
+        </View>
+        
+        <View style={styles.dashedDivider} />
+        <Text style={styles.date}>Ngày bán: {formatDateTime(generatedAt)}</Text>
+        
+        <View style={styles.titleBlock}>
+          <Text style={styles.title}>PHIẾU ĐẶT HÀNG</Text>
+          <Text style={styles.orderNumber}>{order.orderNumber}</Text>
         </View>
 
-        <View style={styles.divider} />
-
-        <View style={styles.infoGrid}>
-          <View style={styles.infoCol}>
-            <Text style={styles.infoLabel}>Khách hàng</Text>
-            <Text style={styles.infoValue}>{order.customerName ?? 'Khách lẻ'}</Text>
-            {order.customerPhone && <Text style={styles.infoSub}>ĐT: {order.customerPhone}</Text>}
-          </View>
+        <View style={styles.infoBlock}>
+          <Text>Khách hàng: {order.customerName ?? 'Khách lẻ'}</Text>
         </View>
 
-        <View style={styles.table}>
-          <View style={styles.tableHeaderRow} fixed>
-            {LINE_COLUMNS.map((column) => (
-              <Text key={column.key} style={[styles.th, styles[column.key]]}>
-                {column.header}
-              </Text>
-            ))}
-          </View>
+        <View style={styles.dashedDivider} />
 
-          {lines.map((line, index) => (
-            <View key={line.id} style={styles.tableRow} wrap={false}>
-              <Text style={[styles.td, styles.colIndex]}>{index + 1}</Text>
-              <View style={styles.colProduct}>
-                <Text style={styles.td}>{line.productName ?? '—'}</Text>
-                {line.productSku && <Text style={styles.tdMuted}>{line.productSku}</Text>}
+        <View style={styles.tableHeader}>
+          <Text style={styles.colPrice}>Đơn giá</Text>
+          <Text style={styles.colQty}>SL</Text>
+          <Text style={styles.colTotal}>Thành tiền</Text>
+        </View>
+
+        <View style={styles.dashedDivider} />
+
+        {lines.map((line) => (
+          <View key={line.id}>
+            <View style={styles.itemBlock}>
+              <Text style={styles.itemName}>{line.productName ?? '—'}</Text>
+              <View style={styles.itemRow}>
+                <Text style={styles.colPrice}>{formatCurrencyVND(line.unitPrice)}</Text>
+                <Text style={styles.colQty}>{formatNumber(line.quantity)}</Text>
+                <Text style={styles.colTotal}>{formatCurrencyVND(line.lineTotal)}</Text>
               </View>
-              <Text style={[styles.td, styles.colUnit]}>{line.productUnit ?? '—'}</Text>
-              <Text style={[styles.td, styles.colQty]}>{formatNumber(line.quantity)}</Text>
-              <Text style={[styles.td, styles.colPrice]}>{formatCurrencyVND(line.unitPrice)}</Text>
-              <Text style={[styles.td, styles.colDiscount]}>
-                {line.discount > 0 ? formatCurrencyVND(line.discount) : '—'}
-              </Text>
-              <Text style={[styles.td, styles.colTotal]}>{formatCurrencyVND(line.lineTotal)}</Text>
             </View>
-          ))}
-        </View>
+            <View style={styles.dashedDivider} />
+          </View>
+        ))}
 
         <View style={styles.totalsBlock}>
           <View style={styles.totalsRow}>
-            <Text style={styles.totalsLabel}>Tạm tính</Text>
+            <Text style={styles.totalsLabel}>Tổng tiền hàng:</Text>
             <Text style={styles.totalsValue}>{formatCurrencyVND(displaySubtotal)}</Text>
           </View>
           <View style={styles.totalsRow}>
-            <Text style={styles.totalsLabel}>Giảm giá</Text>
+            <Text style={styles.totalsLabel}>Chiết khấu:</Text>
             <Text style={styles.totalsValue}>{formatCurrencyVND(displayDiscount)}</Text>
           </View>
-          <View style={styles.totalsGrandRow}>
-            <Text style={styles.totalsGrandLabel}>Tổng cộng</Text>
-            <Text style={styles.totalsGrandValue}>{formatCurrencyVND(displayTotal)}</Text>
-          </View>
-          <View style={[styles.totalsRow, { marginTop: 4 }]}>
-            <Text style={styles.totalsLabel}>Đã thanh toán</Text>
-            <Text style={styles.totalsValue}>{formatCurrencyVND(totalPaid)}</Text>
+          <View style={[styles.totalsRow, styles.bold]}>
+            <Text style={styles.totalsLabel}>Tổng cộng:</Text>
+            <Text style={styles.totalsValue}>{formatCurrencyVND(displayTotal)}</Text>
           </View>
         </View>
 
-        {order.note && (
-          <View style={styles.notesBlock} wrap={false}>
-            <Text style={styles.sectionTitle}>Ghi chú</Text>
-            <Text style={styles.notesText}>{order.note}</Text>
-          </View>
-        )}
-
-        <View style={styles.thankYouBlock} wrap={false}>
-          <Text style={styles.thankYouText}>Cảm ơn quý khách và hẹn gặp lại!</Text>
-        </View>
-
-        <View style={styles.footer} fixed>
-          <Text>Xuất lúc {formatDateTime(generatedAt)}</Text>
-          <Text
-            render={({ pageNumber, totalPages }) => `Trang ${pageNumber}/${totalPages}`}
-          />
-        </View>
+        <Text style={[styles.centerText, { marginTop: 16 }]}>Xin cảm ơn quý khách và hẹn gặp lại!</Text>
       </Page>
     </Document>
   )

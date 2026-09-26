@@ -1,5 +1,5 @@
 import { getStoreInfo } from '@/lib/store-info'
-import type { OrderDetail, OrderLine, OrderPayment } from '@/features/orders/types/order-detail'
+import type { OrderDetail, OrderLine } from '@/features/orders/types/order-detail'
 
 /** e.g. `buildOrderPdfFileName('ORD-001')` → `"don-hang-ORD-001.pdf"`. */
 function buildOrderPdfFileName(orderNumber: string): string {
@@ -23,11 +23,9 @@ function buildOrderPdfFileName(orderNumber: string): string {
 export async function downloadOrderPdf({
   order,
   lines,
-  payments,
 }: {
   order: OrderDetail
   lines: OrderLine[]
-  payments: OrderPayment[]
 }): Promise<void> {
   const [{ pdf }, { OrderPdfDocument }] = await Promise.all([
     import('@react-pdf/renderer'),
@@ -38,7 +36,6 @@ export async function downloadOrderPdf({
     <OrderPdfDocument
       order={order}
       lines={lines}
-      payments={payments}
       storeInfo={getStoreInfo()}
       generatedAt={new Date()}
     />,
