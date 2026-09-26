@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
-import { Ban, Pencil } from 'lucide-react'
+import { Ban, Pencil, Check } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { ConfirmDialog } from '@/components/common/confirm-dialog'
@@ -19,6 +19,7 @@ import { OrderStatusBadge } from '@/features/orders/components/order-status-badg
 import { PaymentStatusBadge } from '@/features/orders/components/payment-status-badge'
 import { useCancelDraftOrder } from '@/features/orders/hooks/use-cancel-draft-order'
 import { useCancelOrder } from '@/features/orders/hooks/use-cancel-order'
+import { useCompleteOrder } from '@/features/orders/hooks/use-complete-order'
 import { useOrder } from '@/features/orders/hooks/use-order'
 import { useOrderLines } from '@/features/orders/hooks/use-order-lines'
 import { useOrderPayments } from '@/features/orders/hooks/use-order-payments'
@@ -56,9 +57,11 @@ function OrderDetailPage() {
   useOrderPayments(id ?? '')
   const cancelDraftOrder = useCancelDraftOrder()
   const cancelOrder = useCancelOrder()
+  const completeOrder = useCompleteOrder()
 
   const [isCancelDraftOpen, setIsCancelDraftOpen] = useState(false)
   const [isCancelCompletedOpen, setIsCancelCompletedOpen] = useState(false)
+  const [isCompleteOrderOpen, setIsCompleteOrderOpen] = useState(false)
 
   if (orderQuery.isLoading) {
     return <PageLoading />
@@ -112,15 +115,26 @@ function OrderDetailPage() {
                 <Button
                   variant="outline"
                   className="text-destructive hover:text-destructive"
-                  disabled={cancelDraftOrder.isPending}
+                  disabled={cancelDraftOrder.isPending || completeOrder.isPending}
                   onClick={() => setIsCancelDraftOpen(true)}
                 >
                   <Ban />
                   Hủy đơn nháp
                 </Button>
-                <Button onClick={() => navigate(ROUTES.editOrder(order.id))}>
+                <Button
+                  variant="outline"
+                  disabled={cancelDraftOrder.isPending || completeOrder.isPending}
+                  onClick={() => navigate(ROUTES.editOrder(order.id))}
+                >
                   <Pencil />
                   Sửa
+                </Button>
+                <Button
+                  disabled={cancelDraftOrder.isPending || completeOrder.isPending}
+                  onClick={() => setIsCompleteOrderOpen(true)}
+                >
+                  <Check />
+                  Hoàn thành
                 </Button>
               </>
             ) : isCompleted ? (
@@ -163,6 +177,24 @@ function OrderDetailPage() {
         isConfirming={cancelDraftOrder.isPending}
         onConfirm={() =>
           cancelDraftOrder.mutate(order.id, { onSettled: () => setIsCancelDraftOpen(false) })
+        }
+      />
+
+      <ConfirmDialog
+        open={isCompleteOrderOpen}
+        onOpenChange={setIsCompleteOrderOpen}
+        title="Hoàn thành đơn hàng"
+        description={
+          <>
+            Bạn có chắc chắn muốn hoàn thành đơn hàng <strong>{order.orderNumber}</strong>? Hành động này sẽ
+            chốt các dòng hàng, tính toán tổng tiền, và ghi nhận trừ tồn kho cho các sản phẩm trong đơn.
+            Sau khi hoàn thành, bạn có thể ghi nhận thanh toán.
+          </>
+        }
+        confirmLabel="Hoàn thành đơn"
+        isConfirming={completeOrder.isPending}
+        onConfirm={() =>
+          completeOrder.mutate(order.id, { onSettled: () => setIsCompleteOrderOpen(false) })
         }
       />
 
