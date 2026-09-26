@@ -113,6 +113,7 @@ function EditOrderPage() {
     customerId: order.customerId,
     customerName: order.customerName,
     note: order.note ?? '',
+    discount: order.discount ?? 0,
     items: (linesQuery.data ?? []).map((line) => {
       const stock = line.productId ? (stockMap.get(line.productId) ?? { total: 0, sellable: 0 }) : { total: 0, sellable: 0 }
       return {
@@ -122,6 +123,7 @@ function EditOrderPage() {
         unit: line.productUnit ?? '',
         quantity: line.quantity,
         unitPrice: line.unitPrice,
+        discount: line.discount,
         availableQuantity: stock.sellable,
         totalQuantity: stock.total,
       }
@@ -138,10 +140,12 @@ function EditOrderPage() {
         orderId,
         customerId: values.customerId,
         note: values.note,
+        discount: values.discount,
         items: values.items.map((item) => ({
           productId: item.productId,
           quantity: item.quantity,
           unitPrice: item.unitPrice,
+          discount: item.discount,
         })),
       },
       {

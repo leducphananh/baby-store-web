@@ -13,6 +13,7 @@ type CartRow = FieldArrayWithId<OrderFormValues, 'items', 'id'> & {
   index: number
   liveQuantity: number
   liveUnitPrice: number
+  liveDiscount: number
 }
 
 /**
@@ -50,6 +51,7 @@ function OrderCartTable({
     index,
     liveQuantity: watchedItems?.[index]?.quantity ?? field.quantity,
     liveUnitPrice: watchedItems?.[index]?.unitPrice ?? field.unitPrice,
+    liveDiscount: watchedItems?.[index]?.discount ?? field.discount,
   }))
 
   const columns: DataTableColumn<CartRow>[] = [
@@ -116,17 +118,33 @@ function OrderCartTable({
       ),
     },
     {
+      id: 'discount',
+      header: 'Giảm giá',
+      className: 'align-top',
+      cell: (row) => (
+        <div className="w-32">
+          <IntegerField
+            control={control}
+            name={`items.${row.index}.discount`}
+            label=""
+            disabled={disabled}
+          />
+        </div>
+      ),
+    },
+    {
       id: 'total',
       header: 'Thành tiền',
       align: 'right',
       className: 'align-top',
-      cell: (row) => (
-        <div className="pt-2.5">
-          <span className="font-medium text-foreground">
-            {formatCurrencyVND(row.liveQuantity * row.liveUnitPrice)}
-          </span>
-        </div>
-      ),
+      cell: (row) => {
+        const total = Math.max(0, row.liveQuantity * row.liveUnitPrice - row.liveDiscount)
+        return (
+          <div className="pt-2.5">
+            <span className="font-medium text-foreground">{formatCurrencyVND(total)}</span>
+          </div>
+        )
+      },
     },
     {
       id: 'actions',

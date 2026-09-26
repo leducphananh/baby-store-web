@@ -8,7 +8,9 @@ export type UpdateOrderDraftInput = {
     productId: string
     quantity: number
     unitPrice: number
+    discount: number
   }[]
+  discount: number
 }
 
 /**
@@ -31,7 +33,9 @@ export async function updateOrderDraft(input: UpdateOrderDraftInput): Promise<vo
       product_id: item.productId,
       quantity: item.quantity,
       unit_price: item.unitPrice,
+      discount: item.discount,
     })),
-  })
+    p_discount: input.discount,
+  } as any)
   if (error) throw error
 }

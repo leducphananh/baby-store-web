@@ -11,6 +11,7 @@ import { formatCurrencyVND } from '@/utils/currency'
 import { formatQuantityWithUnit } from '@/utils/unit'
 import { CustomerComboBox } from '@/features/customers/components/customer-combobox'
 import { CustomerFormDialog } from '@/features/customers/components/customer-form-dialog'
+import { IntegerField } from '@/components/common/integer-field'
 import type { CustomerSearchResult } from '@/features/customers/api/search-customers'
 import { OrderCartTable } from '@/features/orders/components/order-cart-table'
 import { OrderLineAddPanel } from '@/features/orders/components/order-line-add-panel'
@@ -58,11 +59,14 @@ export function OrderForm({
 
   const customerName = useWatch({ control, name: 'customerName' })
   const watchedItems = useWatch({ control, name: 'items' })
+  const watchedDiscount = useWatch({ control, name: 'discount' }) ?? 0
+  
   const itemCount = watchedItems?.length ?? 0
-  const total = (watchedItems ?? []).reduce(
-    (sum, item) => sum + (item.quantity || 0) * (item.unitPrice || 0),
+  const subtotal = (watchedItems ?? []).reduce(
+    (sum, item) => sum + Math.max(0, (item.quantity || 0) * (item.unitPrice || 0) - (item.discount || 0)),
     0,
   )
+  const total = Math.max(0, subtotal - watchedDiscount)
 
   function handleSelectCustomer(customer: CustomerSearchResult) {
     setValue('customerId', customer.id)
@@ -103,6 +107,7 @@ export function OrderForm({
         unit: product.unit,
         quantity,
         unitPrice,
+        discount: 0,
         availableQuantity: product.sellableQuantity,
         totalQuantity: product.stockQuantity,
       })
@@ -177,6 +182,21 @@ export function OrderForm({
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Số sản phẩm</span>
                     <span className="text-foreground">{formatQuantityWithUnit(itemCount, 'sản phẩm')}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Tạm tính</span>
+                    <span className="text-foreground">{formatCurrencyVND(subtotal)}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Giảm giá thêm</span>
+                    <div className="w-32">
+                      <IntegerField
+                        control={control}
+                        name="discount"
+                        label=""
+                        disabled={isSubmitting}
+                      />
+                    </div>
                   </div>
                   <div className="flex items-center justify-between border-t pt-4 text-base font-semibold">
                     <span className="text-foreground">Tổng tiền</span>

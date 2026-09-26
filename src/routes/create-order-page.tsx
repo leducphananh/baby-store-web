@@ -14,6 +14,7 @@ const DEFAULT_VALUES: OrderFormValues = {
   customerId: null,
   customerName: null,
   note: '',
+  discount: 0,
   items: [],
 }
 
@@ -36,10 +37,12 @@ function CreateOrderPage() {
         customerId: values.customerId,
         note: values.note,
         isDraft,
+        discount: values.discount,
         items: values.items.map((item) => ({
           productId: item.productId,
           quantity: item.quantity,
           unitPrice: item.unitPrice,
+          discount: item.discount,
         })),
       },
       {

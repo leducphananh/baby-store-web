@@ -18,6 +18,7 @@ const orderItemDraftSchema = z
     unit: z.string(),
     quantity: z.number().int('Số lượng phải là số nguyên').positive('Số lượng phải lớn hơn 0'),
     unitPrice: z.number().int('Đơn giá phải là số nguyên').min(0, 'Đơn giá không được âm'),
+    discount: z.number().int('Giảm giá phải là số nguyên').min(0, 'Giảm giá không được âm'),
     availableQuantity: z.number().int(),
     totalQuantity: z.number().int(),
   })
@@ -27,6 +28,7 @@ export const orderFormSchema = z.object({
   customerId: z.string().nullable(),
   customerName: z.string().nullable(),
   note: z.string().trim().max(500, 'Ghi chú tối đa 500 ký tự'),
+  discount: z.number().int('Giảm giá phải là số nguyên').min(0, 'Giảm giá không được âm'),
   items: z.array(orderItemDraftSchema).min(1, 'Đơn hàng phải có ít nhất một sản phẩm'),
 })
 

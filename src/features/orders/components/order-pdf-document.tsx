@@ -252,11 +252,12 @@ export function OrderPdfDocument({
   const displaySubtotal = isDraft
     ? lines.reduce((sum, line) => sum + line.quantity * line.unitPrice, 0)
     : order.subtotal
+  const itemDiscounts = lines.reduce((sum, line) => sum + line.discount, 0)
   const displayDiscount = isDraft
-    ? lines.reduce((sum, line) => sum + line.discount, 0)
-    : order.discount
+    ? itemDiscounts + (order.discount ?? 0)
+    : itemDiscounts + order.discount
   const displayTotal = isDraft
-    ? lines.reduce((sum, line) => sum + line.lineTotal, 0)
+    ? Math.max(0, lines.reduce((sum, line) => sum + Math.max(0, line.quantity * line.unitPrice - line.discount), 0) - (order.discount ?? 0))
     : order.total
 
   return (

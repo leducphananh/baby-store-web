@@ -7,7 +7,9 @@ export type CreateOrderInput = {
     productId: string
     quantity: number
     unitPrice: number
+    discount: number
   }[]
+  discount: number
   isDraft?: boolean
 }
 
@@ -39,9 +41,11 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
       product_id: item.productId,
       quantity: item.quantity,
       unit_price: item.unitPrice,
+      discount: item.discount,
     })),
     p_is_draft: input.isDraft ?? false,
-  })
+    p_discount: input.discount,
+  } as any)
   if (error) throw error
 
   const result = data as { id: string; order_number: string }

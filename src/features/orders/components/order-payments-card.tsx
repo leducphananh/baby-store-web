@@ -83,7 +83,7 @@ export function OrderPaymentsCard({ order }: { order: OrderDetail }) {
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           <Stat label="Tạm tính" value={formatCurrencyVND(order.subtotal)} />
-          <Stat label="Giảm giá" value={formatCurrencyVND(order.discount)} />
+          <Stat label="Giảm giá" value={formatCurrencyVND(Math.max(0, order.subtotal - order.total))} />
           <Stat label="Tổng cộng" value={formatCurrencyVND(order.total)} />
           <Stat label="Đã thanh toán" value={formatCurrencyVND(totalPaid)} />
           <Stat label="Còn lại" value={formatCurrencyVND(Math.max(remaining, 0))} />
