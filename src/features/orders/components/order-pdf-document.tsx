@@ -60,6 +60,16 @@ const styles = StyleSheet.create({
     fontWeight: 700,
     marginBottom: 0,
   },
+  storeName: {
+    fontSize: 16,
+    fontWeight: 700,
+    marginBottom: 4,
+  },
+  receiptTitle: {
+    fontSize: 14,
+    fontWeight: 700,
+    marginBottom: 2,
+  },
   orderNumber: {
     fontSize: 10,
     fontWeight: 700,
@@ -159,7 +169,7 @@ export function OrderPdfDocument({
     <Document title={`Đơn hàng ${order.orderNumber}`}>
       <Page size={[226.77, 'auto']} style={styles.page}>
         <View style={[styles.centerText, { marginBottom: 4, lineHeight: 1.2 }]}>
-          <Text style={[styles.title, { marginBottom: 2 }]}>{'\u200B' + (storeInfo?.name || 'Baby Wale')}</Text>
+          <Text style={styles.storeName}>{'\u200B' + (storeInfo?.name || 'Baby Wale')}</Text>
           <Text>{storeInfo?.address || 'Địa chỉ: (Chưa cập nhật)'}</Text>
           <Text>ĐT: {storeInfo?.phone || '(Chưa cập nhật)'}</Text>
         </View>
@@ -168,7 +178,7 @@ export function OrderPdfDocument({
         <Text style={styles.date}>Ngày bán: {formatDateTime(generatedAt)}</Text>
         
         <View style={styles.titleBlock}>
-          <Text style={styles.title}>PHIẾU ĐẶT HÀNG</Text>
+          <Text style={styles.receiptTitle}>PHIẾU ĐẶT HÀNG</Text>
           <Text style={styles.orderNumber}>{order.orderNumber}</Text>
         </View>
 
@@ -209,9 +219,9 @@ export function OrderPdfDocument({
             <Text style={styles.totalsLabel}>Chiết khấu:</Text>
             <Text style={styles.totalsValue}>{formatCurrencyVND(displayDiscount)}</Text>
           </View>
-          <View style={[styles.totalsRow, styles.bold]}>
-            <Text style={styles.totalsLabel}>Tổng cộng:</Text>
-            <Text style={styles.totalsValue}>{formatCurrencyVND(displayTotal)}</Text>
+          <View style={[styles.totalsRow, styles.bold, { marginTop: 4 }]}>
+            <Text style={[styles.totalsLabel, { fontSize: 11 }]}>Tổng cộng:</Text>
+            <Text style={[styles.totalsValue, { fontSize: 11 }]}>{formatCurrencyVND(displayTotal)}</Text>
           </View>
         </View>
 
