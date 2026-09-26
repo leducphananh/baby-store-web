@@ -12,6 +12,7 @@ import { PageLoading } from '@/components/common/page-loading'
 import { ROUTES } from '@/routes/route-paths'
 import { BackLink } from '@/components/common/back-link'
 import { ExportOrderPdfButton } from '@/features/orders/components/export-order-pdf-button'
+import { ExportOrderImageButton } from '@/features/orders/components/export-order-image-button'
 import { OrderDetailHeader } from '@/features/orders/components/order-detail-header'
 import { OrderLinesCard } from '@/features/orders/components/order-lines-card'
 import { OrderPaymentsCard } from '@/features/orders/components/order-payments-card'
@@ -109,6 +110,7 @@ function OrderDetailPage() {
         description={order.customerName ? `Khách hàng: ${order.customerName}` : 'Khách lẻ'}
         actions={
           <div className="flex flex-wrap items-center gap-2">
+            <ExportOrderImageButton order={order} />
             <ExportOrderPdfButton order={order} />
             {isDraft ? (
               <>
